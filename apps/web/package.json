@@ -21,7 +21,7 @@
     "react-dom": "19.3.0",
     "tailwindcss": "4.3.3",
     "@bruno/table": "workspace:*",
-    "@bruno/rust-view-server": "workspace:*",
+    "@bruno/view-server-client": "workspace:*",
     "@bruno/shadcn": "workspace:*",
     "effect": "4.0.0-rc.111"
   },

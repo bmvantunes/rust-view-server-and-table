@@ -1,0 +1,21 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "lib": [
+      "ESNext",
+      "DOM",
+      "DOM.Iterable"
+    ],
+    "types": [
+      "node"
+    ]
+  },
+  "include": [
+    "scripts/**/*.ts",
+    "config/**/*.ts",
+    "proto/**/*.ts",
+    "tests/integration/**/*.ts",
+    "vite.config.ts",
+    "packages/ui/*.config.ts"
+  ]
+}

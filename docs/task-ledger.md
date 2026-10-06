@@ -1,5 +1,7 @@
 # Implementation ledger
 
+Cleanup in progress on `refactor/typescript-tooling`, based on `202833c`. The qualification below records the previous delivered product; it does not qualify the in-progress tooling migration. Fresh integrated acceptance through the new tooling remains required.
+
 The integrated product and full local campaign are qualified at `468e40cb9eefc4198499d98fed27141d7b057e5d`. Final documentation records those frozen executable bytes. See [qualification](qualification.md) and its [machine-readable evidence](qualification.json).
 
 ## Final status

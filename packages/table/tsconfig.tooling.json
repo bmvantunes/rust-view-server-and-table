@@ -1,0 +1,19 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "types": ["node"],
+    "lib": ["ESNext", "DOM"],
+    "erasableSyntaxOnly": true,
+    "resolveJsonModule": true
+  },
+  "include": [
+    "scripts/**/*.ts",
+    "scripts/**/*.tsx",
+    "config/**/*.ts",
+    "*.config.ts",
+    "../../config/isolated-process-environment.ts",
+    "../../config/react-compiler-options.ts",
+    "../../config/react-compiler.ts"
+  ],
+  "exclude": []
+}

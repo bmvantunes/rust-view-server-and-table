@@ -1,5 +1,4 @@
-import type { Reporter } from "vitest/reporters";
-import type { Vitest } from "vitest/node";
+import type { Reporter, Vitest } from "vite-plus/test/node";
 
 // Vitest 4 / Tinybench 2 can swallow a warmup error and leave the benchmark
 // running without measurements. Fail closed until the upstream runner fixes it.
@@ -18,10 +17,16 @@ export default class BenchmarkCompletenessReporter implements Reporter {
       for (const test of module.children.allTests()) {
         if (!test.meta().benchmark || test.result().state === "skipped") continue;
         const task = this.context?.state.idMap.get(test.id);
-        const result = task?.result?.benchmark;
+        const result: unknown =
+          task?.result && "benchmark" in task.result ? task.result.benchmark : undefined;
         if (
           task?.result?.state !== "pass" ||
-          result === undefined ||
+          typeof result !== "object" ||
+          result === null ||
+          !("sampleCount" in result) ||
+          typeof result.sampleCount !== "number" ||
+          !("mean" in result) ||
+          typeof result.mean !== "number" ||
           !Number.isInteger(result.sampleCount) ||
           result.sampleCount < 1 ||
           !Number.isFinite(result.mean)

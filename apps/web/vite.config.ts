@@ -1,10 +1,9 @@
 import { defineConfig } from "vite-plus";
-import { reactCompiler } from "../../config/react-compiler";
+import { reactCompiler, react as viteReact } from "../../config/react-compiler";
 import { devtools } from "@tanstack/devtools-vite";
 
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 
-import viteReact from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import { lazyPlugins } from "vite-plus";
 

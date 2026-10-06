@@ -1,4 +1,6 @@
-# Local qualification
+# Original product qualification
+
+This report is historical evidence for the pre-cleanup implementation. Current cleanup/split verification is recorded separately in [cleanup-split.md](cleanup-split.md).
 
 The full campaign passed on `468e40cb9eefc4198499d98fed27141d7b057e5d` on 2026-10-06. The fresh clone also passed frozen installation, generation, build, check and the full fast suite with a clean tracked working tree. The machine-readable record is [qualification.json](qualification.json); the exact raw evidence remains in `.local/e2e/e2e-fcab61f0c80341d7/` and is excluded from Git.
 
@@ -8,7 +10,7 @@ The full campaign passed on `468e40cb9eefc4198499d98fed27141d7b057e5d` on 2026-1
 | --- | --- | --- |
 | Official Vite+ scaffolds and pinned source imports | DONE | [Provenance](provenance.md), registry resolutions and root locks |
 | Current selected toolchains and numeric React Compiler | DONE | [Toolchain decisions](toolchain-decisions.md), development/production numeric gates |
-| Shared native/WASM engine and isolated production Provider fixtures | DONE | [SDK qualification](../packages/rust-view-server/QUALIFICATION.json), 101 browser tests, native parity and controlled mutation failure |
+| Shared native/WASM engine and isolated production Provider fixtures | DONE | [SDK qualification](../packages/view-server-client/QUALIFICATION.json), 101 browser tests, native parity and controlled mutation failure |
 | Ordinary table semantics and public Client/Server integration | DONE | 1,176 table tests, pinned Effect oracle, source/emitted type consumers |
 | Scoped OrbStack Kafka and real two-topic campaign | DONE | Exact image digest, transaction/read_committed probes, all 12 full campaign checks |
 | Fresh clone generate/build/check/fast suite | DONE | All composed commands exited zero; no VP task-cache hits; clean tracked working tree |

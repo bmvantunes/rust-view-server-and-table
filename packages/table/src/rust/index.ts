@@ -1,6 +1,6 @@
 import {useEffect,useId,useMemo,useState} from 'react';
-import type {BrowserProductProvider} from '@bruno/rust-view-server/react';
-import type {BrowserCatalog,Schema} from '@bruno/rust-view-server/schema';
+import type {BrowserProductProvider} from '@bruno/view-server-client/react';
+import type {BrowserCatalog,Schema} from '@bruno/view-server-client/schema';
 import {admitCatalog,completeSelect,compile,decodeCompleteRows} from './translate.ts';
 import {createController,type ProviderPort} from './controller.ts';
 import type {Chrome,CompatRow,CompatResult,Query,WholeResult} from './types.ts';

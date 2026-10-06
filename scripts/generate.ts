@@ -1,0 +1,10 @@
+import { mkdirSync, writeFileSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
+mkdirSync('.local', { recursive: true });
+execFileSync('vp', ['exec', 'buf', 'build', '-o', '.local/proto-descriptors.binpb'], { stdio: 'inherit' });
+execFileSync(process.execPath, ['scripts/generate-proto-topics.ts'], { stdio: 'inherit' });
+const { topics } = await import('../proto/topic-config.ts');
+const metadata = Object.entries(topics).map(([topic, source]) => `${JSON.stringify(topic)}:{keyFields:keyFields[${JSON.stringify(source.keyMessage)}],identity:${JSON.stringify(source.identity)}}`);
+for (const name of ['client_orders','server_orders']) metadata.push(`${JSON.stringify(name)}:{keyFields:keyFields.SimpleKey,identity:{source_policy:'compact',components:[{source:'key',field:'id'}]}}`);
+writeFileSync('packages/view-server-client/src/generated/source-metadata.ts', "// Generated from proto/topic-config.ts and protobuf key descriptors. Do not edit.\nimport {keyFields} from './topics.ts';\nexport const sources={"+metadata.join(',')+"} as const;\n");
+writeFileSync('packages/view-server-client/src/generated/demo-catalog.ts', "// Topic aliases share the single proto-authored Orders schema.\nimport {catalog as generated} from './topics.ts';\nexport const catalog={client_orders:generated.orders,server_orders:generated.orders} as const;\n");

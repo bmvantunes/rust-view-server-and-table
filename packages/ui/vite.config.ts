@@ -1,8 +1,7 @@
 import tailwindcss from "@tailwindcss/vite";
-import react from "@vitejs/plugin-react";
 import { defineConfig, type UserConfig } from "vite-plus";
 
-import { reactCompiler } from "../../config/react-compiler";
+import { react, reactCompiler } from "../../config/react-compiler";
 
 const reactWithCompiler = () => [
   reactCompiler(),

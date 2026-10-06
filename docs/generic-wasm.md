@@ -1,23 +1,23 @@
 # Generic WASM and isolated Provider fixtures
 
-`@bruno/rust-view-server/testing` exposes `createTestViewServer`. It creates a real generic Rust engine in a dedicated browser Worker, then returns the production Provider and hooks interface. No socket server, Kafka process, JavaScript query evaluator, telemetry exporter or application HTTP transport is involved. A missing precompiled module is loaded as a static package WASM asset; test-runner traffic and this static fetch are distinct from application transport.
+`@bruno/view-server-client/testing` exposes `createTestViewServer`. It creates a real generic Rust engine in a dedicated browser Worker, then returns the production Provider and hooks interface. No socket server, Kafka process, JavaScript query evaluator, telemetry exporter or application HTTP transport is involved. A missing precompiled module is loaded as a static package WASM asset; test-runner traffic and this static fetch are distinct from application transport.
 
 ## Package boundary and build
 
 `packages/rust-view-server/crates/core` contains the portable schema, typed key/rowId admission, mutation runtime, incremental raw/grouped/join evaluation, semantic profile and retention policy normalization. `crates/runtime` owns Kafka, native sockets, canonical durability and recovery. Its scalar protobuf decoder delegates admitted typed values to the same `TypedSource` as WASM. Expanded protobuf decoding remains native and shares the portable schema/evaluator boundary. `crates/wasm` binds the core using an explicit handle-based ABI. Each instance owns its runtime, memory and retention indexes.
 
-`python3 scripts/build-wasm.py --clean` compiles both current generic WASM and the retained legacy product-only WASM from an empty artifact directory with the pinned Rust compiler and locked dependencies. It writes source hashes and binary hashes to `.local/wasm-build.json`; no old binary is copied. The generic fixture always selects `generic_engine.wasm`. The product asset exists only to preserve the pre-existing local Provider API and its regression tests.
+`vp exec node scripts/build-wasm.ts --clean` compiles both current generic WASM and the retained legacy product-only WASM from an empty artifact directory with the pinned Rust compiler and locked dependencies. It writes source hashes and binary hashes to `.local/wasm-build.json`; no old binary is copied. The generic fixture always selects `generic_engine.wasm`. The product asset exists only to preserve the pre-existing local Provider API and its regression tests.
 
-`vp run build:sdk` builds typed ESM exports into `dist`, bundles all Worker entry points, and includes both fresh WASM assets. Public exports resolve emitted `.mjs` and `.d.mts`, not private TypeScript source. The browser fixture tests import these public exports. Vite-compatible consumers resolve the package-relative Worker and WASM URLs. This packaging has been exercised with the repository Vite application and Chromium test runner; other bundlers are not claimed as qualified.
+`vp run build:wasm` compiles the unchanged Rust crate boundaries into `artifacts/wasm`. `stage:client-wasm` verifies the source receipt, artifact hashes and actual WASM export signatures before staging assets into the client. `vp run build:sdk` depends on both stages and builds typed ESM exports into `dist`, bundles all Worker entry points, and includes both fresh WASM assets. Public exports resolve emitted `.mjs` and `.d.mts`, not private TypeScript source. The browser fixture tests import these public exports. Vite-compatible consumers resolve the package-relative Worker and WASM URLs. This packaging has been exercised with the repository Vite application and Chromium test runner; other bundlers are not claimed as qualified.
 
 ## Typed fixture example
 
 ```tsx
-import {createTestViewServer} from '@bruno/rust-view-server/testing';
-import {createTopicHooks} from '@bruno/rust-view-server/react';
-import {catalog} from '@bruno/rust-view-server/generated/demo-catalog';
-import {sources} from '@bruno/rust-view-server/generated/source-metadata';
-import {uint64, decimal} from '@bruno/rust-view-server/schema';
+import {createTestViewServer} from '@bruno/view-server-client/testing';
+import {createTopicHooks} from '@bruno/view-server-client/react';
+import {catalog} from '@bruno/view-server-client/generated/demo-catalog';
+import {sources} from '@bruno/view-server-client/generated/source-metadata';
+import {uint64, decimal} from '@bruno/view-server-client/schema';
 
 const fixture = await createTestViewServer({
   catalog, sources, clock: {nowMs: 0},
@@ -66,12 +66,12 @@ Browser installation must use `PLAYWRIGHT_SKIP_BROWSER_GC=1` to preserve unrelat
 
 `crates/wasm/tests/typed_parity.rs` and the browser fixture consume the same `tests/fixtures/native-wasm-parity.json`. Generated Orders schema and SimpleKey metadata drive six source/time cuts. Every native Runtime result equals the local binding result, including keys, versions, raw projections and grouped rows. The browser Provider checks those same raw/grouped cuts. The native reference schedules expiry independently with the shared checked clock policy; it does not call the local retention index.
 
-Run `python3 packages/rust-view-server/scripts/check-engine-mutation.py` after building the SDK to repeat the mutation check. It copies only the portable crates into a scoped temporary workspace, deliberately makes the engine ignore admitted deletes, compiles that copy, and runs the actual emitted React consumer with that WASM. The observed failure is the retained `changed:0` row after a deletion when the DOM must be empty. A successful build or a module-loading failure cannot satisfy the gate. The script restores the scratch source exactly, verifies production source hashes are unchanged, removes the scoped scratch tree, and records `.local/engine-mutation.json` plus its test log. Production artifacts are never replaced by the defective asset.
+Run `vp exec node tests/integration/check-engine-mutation.ts` after building the SDK to repeat the mutation check. It copies only the portable crates into a scoped temporary workspace, deliberately makes the engine ignore admitted deletes, compiles that copy, and runs the actual emitted React consumer with that WASM. The observed failure is the retained `changed:0` row after a deletion when the DOM must be empty. A successful build or a module-loading failure cannot satisfy the gate. The script restores the scratch source exactly, verifies production source hashes are unchanged, removes the scoped scratch tree, and records `.local/engine-mutation.json` plus its test log. Production artifacts are never replaced by the defective asset.
 
 `tsconfig.contracts.json` preserves the generated-schema compile contracts. `tsconfig.emitted.json` separately checks the emitted React declarations with `skipLibCheck: false`. Explicit public hook interfaces prevent recursive query-check types from expanding into a 110 KB inferred return declaration; the qualified emitted Provider declaration is approximately 17 KB and its strict import check completes in under a second on this host.
 
 ## Qualification receipt
 
-The checked-in [`QUALIFICATION.json`](../packages/rust-view-server/QUALIFICATION.json) records the 2026-10-06 candidate: 208 default native tests, five fixture-mode socket tests, 94 browser tests across 12 files, and 14 generated-schema type-contract files passed. Eleven native cases remain explicitly ignored for broker opt-in or subprocess-helper invocation; they are classified in the receipt. The strict emitted React import check passed in 0.188 seconds with library checking enabled.
+The checked-in [`QUALIFICATION.json`](../packages/view-server-client/QUALIFICATION.json) records the 2026-10-06 candidate: 208 default native tests, five fixture-mode socket tests, 94 browser tests across 12 files, and 14 generated-schema type-contract files passed. Eleven native cases remain explicitly ignored for broker opt-in or subprocess-helper invocation; they are classified in the receipt. The strict emitted React import check passed in 0.188 seconds with library checking enabled.
 
 The browser suite separately verifies a genuine missing static WASM asset: initialization rejects within its bound before allocating a Worker, then an explicit retry using the valid asset publishes and queries successfully. It also exercises the real 250 ms retention scheduler and verifies that direct Provider disposal clears fixture maintenance immediately with no pending receipts. These checks are separate from remote transport failure. The clean-build artifact hashes and deliberate engine-mutation failure are recorded in the same compact receipt. Large real-broker acceptance is reported independently.

@@ -4,9 +4,9 @@ import {createRequire} from 'node:module';
 import {appendFileSync,writeFileSync} from 'node:fs';
 import {createInterface} from 'node:readline';
 import {fileURLToPath} from 'node:url';
-import type {catalog} from '../../packages/rust-view-server/src/generated/demo-catalog.ts';
+import type {catalog} from '../../packages/view-server-client/src/generated/demo-catalog.ts';
 import type {CompatRow} from '../../packages/table/src/rust/types.ts';
-import type {BrowserProductProvider,HealthObservation} from '../../packages/rust-view-server/src/product-provider.tsx';
+import type {BrowserProductProvider,HealthObservation} from '../../packages/view-server-client/src/product-provider.tsx';
 import type {queryCases} from '../../apps/web/src/e2e-queries.ts';
 
 type SourceRow=CompatRow<typeof catalog.client_orders.schema>;

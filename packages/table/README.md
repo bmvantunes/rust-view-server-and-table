@@ -13,26 +13,6 @@ stores, and server-query translation are private implementation details.
 The package establishes strict TypeScript contracts for columns, client sources, server viewport
 sources, filters, sorts, and the `BrunoTableClient` and `BrunoTableServer` composition roots.
 
-## Agent skills
-
-This package ships version-matched BrunoTable guidance for coding agents. In a pnpm consumer
-workspace, run `pnpm dlx @tanstack/intent@latest install`, then use
-`pnpm dlx @tanstack/intent@latest list` to discover the installed skills and
-`pnpm dlx @tanstack/intent@latest load @bruno/table#<skill>` to load only the concern needed for the
-current task. Use the equivalent one-shot command from another workspace's declared package manager
-rather than invoking npm inside a pnpm-enforced workspace. Configure an explicit `package.json`
-`intent.skills` package allowlist and `intent.exclude` entries for skills the project must not
-surface.
-
-Intent's optional editor hooks improve discovery and remind an agent to load matching guidance, but
-they are not a trust boundary. Safe discovery reads installed package metadata and skill files
-without importing package exports or running dependency scripts, exports, hooks, or lifecycle code.
-Repository validation, source acknowledgements, the package allowlist, explicit exclusions, and the
-published-tarball assertion remain authoritative even when no editor hook is installed.
-Every authoritative document named by a shipped skill is also included byte-for-byte under
-`skills/references/`; source validation rejects a missing or divergent packaged reference before
-publication.
-
 Use one plain column array with `satisfies`. Optional helpers supply coherent exact value semantics
 and presentation defaults without generating identity or hiding the resulting column definition:
 

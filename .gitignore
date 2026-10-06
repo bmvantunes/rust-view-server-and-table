@@ -37,4 +37,16 @@ target/
 artifacts/
 *.tsbuildinfo
 
-packages/rust-view-server/src/*.wasm
+packages/view-server-client/src/*.wasm
+
+packages/view-server-client/v5-browser-counters.json
+packages/view-server-client/v5-browser-runtime.json
+
+# Declaration compiler outputs for shared build helpers
+/config/react-compiler.d.ts
+/config/react-compiler-options.d.ts
+
+# Browser-runner failure evidence (retained locally)
+/packages/ui/.vitest/
+/packages/table/.vitest/
+/packages/view-server-client/.vitest/

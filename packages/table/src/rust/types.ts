@@ -1,6 +1,6 @@
 import type * as BigDecimal from 'effect/BigDecimal';
-import type {Schema, Field, FieldName} from '@bruno/rust-view-server/schema';
-import type {LiveQueryStatus, ProductViewportWindow, ProductViewportGeneration} from '@bruno/rust-view-server/react';
+import type {Schema, Field, FieldName} from '@bruno/view-server-client/schema';
+import type {LiveQueryStatus, ProductViewportWindow, ProductViewportGeneration} from '@bruno/view-server-client/react';
 export type Value<F extends Field> = F extends Field ? (F['kind'] extends 'int64'|'uint64' ? bigint : F['kind'] extends 'decimal' ? BigDecimal.BigDecimal : F['kind'] extends 'boolean' ? boolean : F['kind'] extends 'number' ? number : F['kind'] extends 'string' ? string : never) | (F['nullable'] extends true ? null : never) : never;
 type Fields<S extends Schema> = S['fields'][number];
 export type CompatRow<S extends Schema> = {readonly rowId:string} & {readonly [F in Fields<S> as F['optional'] extends false?F['name']:never]:Value<F>} & {readonly [F in Fields<S> as F['optional'] extends true?F['name']:never]?:Value<F>};

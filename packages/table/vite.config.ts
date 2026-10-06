@@ -1,8 +1,7 @@
-import react from "@vitejs/plugin-react";
 import { defineConfig, type UserConfig } from "vite-plus";
 
-import { reactCompiler } from "../../config/react-compiler";
-import { BrunoTableProductionDefines } from "./config/production-defines.js";
+import { react, reactCompiler } from "../../config/react-compiler";
+import { BrunoTableProductionDefines } from "./config/production-defines.ts";
 
 const reactWithCompiler = () => [
   reactCompiler(),
@@ -76,7 +75,14 @@ const config: UserConfig = defineConfig({
             import: serverExport,
             default: serverExport,
           },
-          "./rust": typeof rustExport === "string" ? { types: rustExport.replace(/\.mjs$/, ".d.mts"), import: rustExport, default: rustExport } : rustExport,
+          "./rust":
+            typeof rustExport === "string"
+              ? {
+                  types: rustExport.replace(/\.mjs$/, ".d.mts"),
+                  import: rustExport,
+                  default: rustExport,
+                }
+              : rustExport,
           "./package.json": "./package.json",
         };
       },

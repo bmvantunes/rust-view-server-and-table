@@ -1,0 +1,114 @@
+{
+  "baseline": "202833c9211cae9f9720c46a6ddff4f1dffc7594",
+  "before": {
+    "counts": {
+      "python": 14,
+      "javascript": 31,
+      "declarationMts": 5
+    },
+    "files": [
+      "config/isolated-process-environment.mjs",
+      "config/react-compiler-options.d.mts",
+      "config/react-compiler-options.mjs",
+      "fixtures/rowid-before/projector.d.mts",
+      "fixtures/rowid-before/projector.mjs",
+      "packages/rust-view-server/scripts/check-engine-mutation.py",
+      "packages/rust-view-server/scripts/copy-assets.mjs",
+      "packages/rust-view-server/src/row-delta.d.mts",
+      "packages/rust-view-server/src/row-delta.mjs",
+      "packages/rust-view-server/src/row-id.d.mts",
+      "packages/rust-view-server/src/row-id.mjs",
+      "packages/rust-view-server/src/wire/msgpack.d.mts",
+      "packages/rust-view-server/src/wire/msgpack.mjs",
+      "packages/rust-view-server/src/wire/scan.mjs",
+      "packages/rust-view-server/src/wire/values.mjs",
+      "packages/table/config/production-defines.js",
+      "packages/table/scripts/agent-skills-contract.mjs",
+      "packages/table/scripts/agent-skills-contract.test.mjs",
+      "packages/table/scripts/assert-agent-skills-package.mjs",
+      "packages/table/scripts/assert-build-output.mjs",
+      "packages/table/scripts/assert-compiler-production.mjs",
+      "packages/table/scripts/assert-installed-hydration.mjs",
+      "packages/table/scripts/assert-installed-intent.mjs",
+      "packages/table/scripts/assert-intent-discovery.mjs",
+      "packages/table/scripts/assert-intent-staleness.mjs",
+      "packages/table/scripts/emitted-consumer-runtime-contract.test.mjs",
+      "packages/table/scripts/fixtures/packed-consumer/diagnostics.config.mjs",
+      "packages/table/scripts/fixtures/packed-consumer/diagnostics.mjs",
+      "packages/table/scripts/fixtures/production-defines/src/entry.js",
+      "packages/table/scripts/production-build-contract.test.mjs",
+      "packages/table/scripts/release-package.test.mjs",
+      "packages/table/scripts/runtime-chunk-contract.test.mjs",
+      "scripts/build-wasm.py",
+      "scripts/control.py",
+      "scripts/demo_config.py",
+      "scripts/dev.py",
+      "scripts/e2e.py",
+      "scripts/generate-expanded-topics.mjs",
+      "scripts/generate-proto-source-config.mjs",
+      "scripts/generate-proto-topics.mjs",
+      "scripts/generate.mjs",
+      "scripts/kafka.py",
+      "scripts/rust.py",
+      "scripts/schema-id.mjs",
+      "scripts/seed.py",
+      "scripts/test_demo_seed.py",
+      "scripts/test_kafka_lifecycle.py",
+      "scripts/test_rust_toolchain.py",
+      "tests/integration/control_test.py",
+      "tests/integration/e2e_runner_test.py"
+    ]
+  },
+  "after": {
+    "counts": {
+      "python": 0,
+      "javascript": 1,
+      "declarationMts": 1
+    },
+    "files": [
+      "fixtures/rowid-before/projector.d.mts",
+      "fixtures/rowid-before/projector.mjs"
+    ]
+  },
+  "remainingExceptions": [
+    {
+      "paths": [
+        "fixtures/rowid-before/projector.d.mts",
+        "fixtures/rowid-before/projector.mjs"
+      ],
+      "reason": "Frozen independent pre-migration rowId projection oracle, implementation SHA-256 enforced by repository-policy.ts"
+    }
+  ],
+  "generatedExclusions": [
+    "dist",
+    "target",
+    "artifacts",
+    "node_modules",
+    ".local",
+    "apps/web/.output",
+    "apps/web/.tanstack",
+    "config/react-compiler.d.ts",
+    "config/react-compiler-options.d.ts",
+    "packages/{ui,table,view-server-client}/.vitest"
+  ],
+  "thirdPartyExclusions": [
+    "packages/rust-view-server/crates/vendor"
+  ],
+  "declarationTsAudit": {
+    "before": [
+      "config/react-compiler.d.ts",
+      "packages/table/config/production-defines.d.ts",
+      "packages/table/src/internal/development.d.ts"
+    ],
+    "removedAuthoredTwins": [
+      "config/react-compiler.d.ts",
+      "packages/table/config/production-defines.d.ts"
+    ],
+    "remaining": [
+      {
+        "path": "packages/table/src/internal/development.d.ts",
+        "reason": "Ambient compile-time replacement constant, with no runtime implementation/signature twin"
+      }
+    ]
+  }
+}

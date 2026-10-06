@@ -14,7 +14,7 @@ fn generated_typed_source_and_controlled_cuts_match_native_local_and_browser_cor
  let mut native=Runtime::new(Catalog::new(manifest.clone()).unwrap(),32).unwrap();let mut local=LocalEngine::default();
  let policy:RetentionPolicy=serde_json::from_value(json!({"maxRetentionMinutes":0.00002})).unwrap();let age=policy.normalize(rust_differential_product_core::typed_source::SourcePolicy::Compact,32).unwrap().max_age_ms.unwrap();
  call(&mut local,&json!({"command":"initialize","catalog":manifest,"max_rows":32,"sources":{"client_orders":metadata},"retention":{"client_orders":policy},"now_ms":0}));
- let corpus:Value=serde_json::from_str(include_str!("../../../tests/fixtures/native-wasm-parity.json")).unwrap();
+ let corpus:Value=serde_json::from_str(include_str!("../../../../../fixtures/native-wasm-parity.json")).unwrap();
  for (name,query) in corpus["queries"].as_object().unwrap(){native.open(name,"client_orders",&fp,serde_json::from_value(query.clone()).unwrap()).unwrap();call(&mut local,&json!({"command":"open","subscription":name,"topic":"client_orders","schema":fp,"query":query}));}
  let mut now=0;let mut expiry=BTreeMap::<String,u64>::new();
  for (cut,step) in corpus["actions"].as_array().unwrap().iter().enumerate(){let command=&step["command"];

@@ -2,7 +2,7 @@ import {it,expect,vi} from 'vitest';
 const state=vi.hoisted(()=>{const effects:Array<()=>void|(()=>void)>=[];return {effects};});
 vi.mock('react',async()=>{const actual=await vi.importActual<typeof import('react')>('react');return {...actual,useId:()=>`strict-${state.effects.length}`,useMemo:(f:()=>unknown)=>f(),useEffect:(f:()=>void|(()=>void))=>{state.effects.push(f);},useState:(v:unknown)=>[v,()=>{}]};});
 import {createBrunoTableHooks} from '../../src/rust/index.ts';
-import {catalog} from '@bruno/rust-view-server/generated/topics';
+import {catalog} from '@bruno/view-server-client/generated/topics';
 import type {ProviderPort} from '../../src/rust/controller.ts';
 it('effect replay preserves viewport and independent whole hook, true unmount closes both next microtask',async()=>{
  const listeners=new Map<string,Parameters<ProviderPort['watch']>[2]>();

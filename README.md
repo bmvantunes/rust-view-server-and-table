@@ -1,6 +1,6 @@
 # Rust View Server and BrunoTable
 
-Private local workspace joining the proto-first Rust view engine with `BrunoTableClient` and `BrunoTableServer` in one TanStack Start app. See the [qualification report](docs/qualification.md) for the full 200,000-row-per-topic campaign and its measured limits.
+Private local workspace joining the proto-first Rust view engine with `BrunoTableClient` and `BrunoTableServer` in one TanStack Start app. The [cleanup and package split](docs/cleanup-split.md) records current verification; the [original qualification report](docs/qualification.md) retains the earlier campaign and measured limits.
 
 ## Start here
 
@@ -31,6 +31,7 @@ Interrupting the dev command stops its owned services and broker while preservin
 | `vp run build` | Fresh native/WASM assets, SDK, UI, table and app packages |
 | `vp run dev` | Owned Kafka + native Rust + native web app |
 | `vp run seed` | Deterministic private protobuf producer; see command help for run selection |
+| `vp run test:packaged` | Isolated installed SDK/Worker/WASM and table/Compiler consumer checks |
 | `vp run test:e2e` | Finite real 200,000-row-per-topic browser campaign |
 | `vp run verify` | Finite composed local acceptance sequence |
 
@@ -38,12 +39,13 @@ Fast checks do not access Kafka or OrbStack. Browser tests still require their p
 
 ## Boundaries
 
-- `packages/rust-view-server`: shared generic Rust engine, native adapters, typed SDK, Workers and React testing fixture.
-- `packages/table`: public Client/Server tables and the Rust adapter; optional Effect numeric integration stays separate.
+- `packages/rust-view-server`: Rust core/runtime/admission/wire/WASM crates, native tests and a private VP task adapter.
+- `packages/view-server-client` (`@bruno/view-server-client`): SDK, Provider/hooks, Workers, protocol validation, generated TypeScript and isolated browser fixtures.
+- `packages/table`: public Client/Server tables and the Rust adapter; genuine Effect BigDecimal values and exact conversions are preserved.
 - `packages/ui`: the table's actual required UI primitives and retained notices.
 - `apps/server`: thin native Rust binary; `apps/web`: client-owned provider and simultaneous tables.
 - `proto`: illustrative business schemas, authored once; company-specific Decimal plugin input remains independently unavailable.
 
 The Server grid delivers bounded windows and independent facets. The Client grid acquires a bounded chunked snapshot plus ordered live tail, and stays loading until a coherent completion boundary. Its fully materialized data necessarily consumes browser memory.
 
-Source provenance and exclusions are in [provenance](docs/provenance.md). Imported licenses retain their original scope; no new root project license has been selected. No package publication or remote push is configured by this work.
+Source provenance and exclusions are in [provenance](docs/provenance.md). Imported licenses retain their original scope; no new root project license has been selected. Package publication is not configured. The cleanup/split branch is local and is not pushed.

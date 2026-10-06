@@ -1,6 +1,6 @@
 import {createBrunoTableHooks,type CompatRow,type CompleteSelect,type CompatResult} from '@bruno/table/rust';
-import {catalog} from '@bruno/rust-view-server/generated/topics';
-import type {BrowserProductProvider} from '@bruno/rust-view-server/react';
+import {catalog} from '@bruno/view-server-client/generated/topics';
+import type {BrowserProductProvider} from '@bruno/view-server-client/react';
 import {BrunoTableServer,type BrunoTableColumns} from '@bruno/table';
 import type {LiveQueryViewportBaseRow,LiveQueryViewportQueryAuthority,LiveQueryViewportRouteBy} from 'effect-view-server/react/viewport-base-row';
 import type * as BigDecimal from 'effect/BigDecimal';
@@ -51,7 +51,7 @@ const falselyString:string=unionMinRow.low;
 void[unionSumValue,unionMinValue,falselyOnlyInteger,falselyString];
 
 // The SDK profile preserves every aggregate domain when a field is chosen dynamically.
-import {defineSchema,type QueryResult,type AggregateDecimal,type AggregateInteger} from '@bruno/rust-view-server/schema';
+import {defineSchema,type QueryResult,type AggregateDecimal,type AggregateInteger} from '@bruno/view-server-client/schema';
 const profileSchema=defineSchema({format:2,id:'profileTypes',version:2,key:'rowId',fields:[{name:'g',kind:'string',optional:false,nullable:false},{name:'n',kind:'number',optional:true,nullable:false},{name:'i',kind:'int64',optional:false,nullable:false}]} as const);
 declare const profileField:'n'|'i';
 const profileQuery={semanticProfile:'effect-4.2.8',groupBy:['g'],aggregates:{total:{aggFunc:'sum',field:profileField},mean:{aggFunc:'avg',field:'n'},minimum:{aggFunc:'min',field:'n'}},orderBy:[]} as const;

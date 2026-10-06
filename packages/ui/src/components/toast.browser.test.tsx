@@ -284,8 +284,7 @@ describe("persistent toast accessibility", () => {
     expect(root?.getAttribute("aria-live")).toBe("off");
     const alert = screen.getByRole("alert");
     expect(alert.length).toBe(1);
-    await expect.element(alert).toHaveTextContent("Save failed");
-    await expect.element(alert).toHaveTextContent("The save was not confirmed.");
+    await expect.element(alert).toHaveTextContent("Save failedThe save was not confirmed.");
     await expect
       .element(screen.getByRole("dialog", { name: "Save failed" }))
       .not.toBeInTheDocument();

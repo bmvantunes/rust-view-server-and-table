@@ -32,7 +32,9 @@ test("hydrates the installed compiled grid and shadcn controls from Node SSR", a
     await page.getByRole("button", { name: "Clicks: 0" }).click();
     await expect.element(page.getByRole("button", { name: "Clicks: 1" })).toBeVisible();
     await page.getByRole("searchbox", { name: "Quick Filter" }).fill("grace");
-    await expect.element(page.getByRole("status", { name: "Result rows" })).toHaveTextContent("1");
+    await expect
+      .element(page.getByRole("status", { name: "Result rows" }))
+      .toHaveTextContent("1 result row");
     await expect.element(page.getByRole("gridcell", { name: "Grace", exact: true })).toBeVisible();
     await expect
       .element(page.getByRole("gridcell", { name: "Ada", exact: true }))

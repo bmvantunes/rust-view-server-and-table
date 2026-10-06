@@ -1,9 +1,9 @@
 import {describe,it,expect} from 'vitest';
 import * as BigDecimal from 'effect/BigDecimal';
-import {catalog} from '@bruno/rust-view-server/generated/topics';
+import {catalog} from '@bruno/view-server-client/generated/topics';
 import {compile,decodeRows,completeSelect,decodeCompleteRows,encodeCompatRow} from '../../src/rust/translate.ts';
 import {createController,type ProviderPort} from '../../src/rust/controller.ts';
-import type {ProductResult,ConnectionStatus} from '@bruno/rust-view-server/react';
+import type {ProductResult,ConnectionStatus} from '@bruno/view-server-client/react';
 const entry=catalog.orders;
 const raw={select:['units','price'],where:[],orderBy:[{field:'units',direction:'asc'}]} as const;
 const c=(query:unknown)=>compile(entry.schema,'orders',entry.fingerprint,query);
