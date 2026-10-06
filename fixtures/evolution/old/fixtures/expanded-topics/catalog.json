@@ -1,0 +1,54 @@
+{
+  "format": 1,
+  "schemas": [
+    {
+      "format": 3,
+      "id": "evolved_v3",
+      "version": 3,
+      "key": "rowId",
+      "fields": [
+        {
+          "name": "label",
+          "kind": "string",
+          "optional": false,
+          "nullable": false
+        },
+        {
+          "name": "detail.name",
+          "kind": "string",
+          "optional": true,
+          "nullable": false
+        }
+      ],
+      "expansion": {
+        "message": "evolution.Row",
+        "parents": [
+          {
+            "path": "detail",
+            "message": "evolution.Detail",
+            "required": false
+          }
+        ],
+        "leaves": [
+          {
+            "path": "label",
+            "presence": "explicit",
+            "required": true
+          },
+          {
+            "path": "detail.name",
+            "presence": "explicit",
+            "required": true
+          }
+        ],
+        "enums": {}
+      }
+    }
+  ],
+  "topics": [
+    {
+      "topic": "evolved",
+      "schema": "47d1278f87d356dfde17e98d4c06757556aa375c6bfeb600aa03fcfce5691213"
+    }
+  ]
+}

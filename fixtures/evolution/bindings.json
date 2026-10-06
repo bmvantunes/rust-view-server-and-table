@@ -1,0 +1,380 @@
+{
+  "old": {
+    "evolution.Detail": {
+      "descriptor": {
+        "schema_id": 100,
+        "message_index": 0,
+        "descriptor_hex": "0ab1010a0f65766f6c7574696f6e2e70726f746f120965766f6c7574696f6e221d0a034b6579120f0a026964180120012809480088010142050a035f696422240a0644657461696c12110a046e616d65180120012809480088010142070a055f6e616d6522460a03526f7712120a056c6162656c180120012809480088010112210a0664657461696c18022001280b32112e65766f6c7574696f6e2e44657461696c42080a065f6c6162656c620670726f746f33",
+        "message_name": "evolution.Detail"
+      },
+      "schema": {
+        "format": 3,
+        "id": "identity_key_v3",
+        "version": 3,
+        "key": "rowId",
+        "fields": [
+          {
+            "name": "name",
+            "kind": "string",
+            "optional": false,
+            "nullable": false
+          }
+        ],
+        "expansion": {
+          "message": "evolution.Detail",
+          "parents": [],
+          "leaves": [
+            {
+              "path": "name",
+              "presence": "explicit",
+              "required": true
+            }
+          ],
+          "enums": {}
+        }
+      },
+      "mapping": [
+        {
+          "field": "name",
+          "tag": 1
+        }
+      ],
+      "key_fields": [
+        {
+          "name": "name",
+          "tag": 1,
+          "kind": "string"
+        }
+      ]
+    },
+    "evolution.Key": {
+      "descriptor": {
+        "schema_id": 101,
+        "message_index": 0,
+        "descriptor_hex": "0ab1010a0f65766f6c7574696f6e2e70726f746f120965766f6c7574696f6e221d0a034b6579120f0a026964180120012809480088010142050a035f696422240a0644657461696c12110a046e616d65180120012809480088010142070a055f6e616d6522460a03526f7712120a056c6162656c180120012809480088010112210a0664657461696c18022001280b32112e65766f6c7574696f6e2e44657461696c42080a065f6c6162656c620670726f746f33",
+        "message_name": "evolution.Key"
+      },
+      "schema": {
+        "format": 3,
+        "id": "identity_key_v3",
+        "version": 3,
+        "key": "rowId",
+        "fields": [
+          {
+            "name": "id",
+            "kind": "string",
+            "optional": false,
+            "nullable": false
+          }
+        ],
+        "expansion": {
+          "message": "evolution.Key",
+          "parents": [],
+          "leaves": [
+            {
+              "path": "id",
+              "presence": "explicit",
+              "required": true
+            }
+          ],
+          "enums": {}
+        }
+      },
+      "mapping": [
+        {
+          "field": "id",
+          "tag": 1
+        }
+      ],
+      "key_fields": [
+        {
+          "name": "id",
+          "tag": 1,
+          "kind": "string"
+        }
+      ]
+    },
+    "evolution.Row": {
+      "descriptor": {
+        "schema_id": 102,
+        "message_index": 0,
+        "descriptor_hex": "0ab1010a0f65766f6c7574696f6e2e70726f746f120965766f6c7574696f6e221d0a034b6579120f0a026964180120012809480088010142050a035f696422240a0644657461696c12110a046e616d65180120012809480088010142070a055f6e616d6522460a03526f7712120a056c6162656c180120012809480088010112210a0664657461696c18022001280b32112e65766f6c7574696f6e2e44657461696c42080a065f6c6162656c620670726f746f33",
+        "message_name": "evolution.Row"
+      },
+      "schema": {
+        "format": 3,
+        "id": "evolved_v3",
+        "version": 3,
+        "key": "rowId",
+        "fields": [
+          {
+            "name": "label",
+            "kind": "string",
+            "optional": false,
+            "nullable": false
+          },
+          {
+            "name": "detail.name",
+            "kind": "string",
+            "optional": true,
+            "nullable": false
+          }
+        ],
+        "expansion": {
+          "message": "evolution.Row",
+          "parents": [
+            {
+              "path": "detail",
+              "message": "evolution.Detail",
+              "required": false
+            }
+          ],
+          "leaves": [
+            {
+              "path": "label",
+              "presence": "explicit",
+              "required": true
+            },
+            {
+              "path": "detail.name",
+              "presence": "explicit",
+              "required": true
+            }
+          ],
+          "enums": {}
+        }
+      },
+      "mapping": [
+        {
+          "field": "label",
+          "tag": 1
+        },
+        {
+          "field": "detail.name",
+          "tag": 1
+        }
+      ],
+      "key_fields": [
+        {
+          "name": "label",
+          "tag": 1,
+          "kind": "string"
+        },
+        {
+          "name": "detail.name",
+          "tag": 1,
+          "kind": "string"
+        }
+      ]
+    }
+  },
+  "next": {
+    "evolution.Detail": {
+      "descriptor": {
+        "schema_id": 100,
+        "message_index": 0,
+        "descriptor_hex": "0acd010a0f65766f6c7574696f6e2e70726f746f120965766f6c7574696f6e221d0a034b6579120f0a026964180120012809480088010142050a035f696422400a0644657461696c12110a046e616d65180120012809480088010112110a046e6f7465180220012809480188010142070a055f6e616d6542070a055f6e6f746522460a03526f7712120a056c6162656c180120012809480088010112210a0664657461696c18022001280b32112e65766f6c7574696f6e2e44657461696c42080a065f6c6162656c620670726f746f33",
+        "message_name": "evolution.Detail"
+      },
+      "schema": {
+        "format": 3,
+        "id": "identity_key_v3",
+        "version": 3,
+        "key": "rowId",
+        "fields": [
+          {
+            "name": "name",
+            "kind": "string",
+            "optional": false,
+            "nullable": false
+          },
+          {
+            "name": "note",
+            "kind": "string",
+            "optional": true,
+            "nullable": false
+          }
+        ],
+        "expansion": {
+          "message": "evolution.Detail",
+          "parents": [],
+          "leaves": [
+            {
+              "path": "name",
+              "presence": "explicit",
+              "required": true
+            },
+            {
+              "path": "note",
+              "presence": "explicit",
+              "required": false
+            }
+          ],
+          "enums": {}
+        }
+      },
+      "mapping": [
+        {
+          "field": "name",
+          "tag": 1
+        },
+        {
+          "field": "note",
+          "tag": 2
+        }
+      ],
+      "key_fields": [
+        {
+          "name": "name",
+          "tag": 1,
+          "kind": "string"
+        },
+        {
+          "name": "note",
+          "tag": 2,
+          "kind": "string"
+        }
+      ]
+    },
+    "evolution.Key": {
+      "descriptor": {
+        "schema_id": 101,
+        "message_index": 0,
+        "descriptor_hex": "0acd010a0f65766f6c7574696f6e2e70726f746f120965766f6c7574696f6e221d0a034b6579120f0a026964180120012809480088010142050a035f696422400a0644657461696c12110a046e616d65180120012809480088010112110a046e6f7465180220012809480188010142070a055f6e616d6542070a055f6e6f746522460a03526f7712120a056c6162656c180120012809480088010112210a0664657461696c18022001280b32112e65766f6c7574696f6e2e44657461696c42080a065f6c6162656c620670726f746f33",
+        "message_name": "evolution.Key"
+      },
+      "schema": {
+        "format": 3,
+        "id": "identity_key_v3",
+        "version": 3,
+        "key": "rowId",
+        "fields": [
+          {
+            "name": "id",
+            "kind": "string",
+            "optional": false,
+            "nullable": false
+          }
+        ],
+        "expansion": {
+          "message": "evolution.Key",
+          "parents": [],
+          "leaves": [
+            {
+              "path": "id",
+              "presence": "explicit",
+              "required": true
+            }
+          ],
+          "enums": {}
+        }
+      },
+      "mapping": [
+        {
+          "field": "id",
+          "tag": 1
+        }
+      ],
+      "key_fields": [
+        {
+          "name": "id",
+          "tag": 1,
+          "kind": "string"
+        }
+      ]
+    },
+    "evolution.Row": {
+      "descriptor": {
+        "schema_id": 900,
+        "message_index": 0,
+        "descriptor_hex": "0acd010a0f65766f6c7574696f6e2e70726f746f120965766f6c7574696f6e221d0a034b6579120f0a026964180120012809480088010142050a035f696422400a0644657461696c12110a046e616d65180120012809480088010112110a046e6f7465180220012809480188010142070a055f6e616d6542070a055f6e6f746522460a03526f7712120a056c6162656c180120012809480088010112210a0664657461696c18022001280b32112e65766f6c7574696f6e2e44657461696c42080a065f6c6162656c620670726f746f33",
+        "message_name": "evolution.Row"
+      },
+      "schema": {
+        "format": 3,
+        "id": "evolved_v3",
+        "version": 3,
+        "key": "rowId",
+        "fields": [
+          {
+            "name": "label",
+            "kind": "string",
+            "optional": false,
+            "nullable": false
+          },
+          {
+            "name": "detail.name",
+            "kind": "string",
+            "optional": true,
+            "nullable": false
+          },
+          {
+            "name": "detail.note",
+            "kind": "string",
+            "optional": true,
+            "nullable": false
+          }
+        ],
+        "expansion": {
+          "message": "evolution.Row",
+          "parents": [
+            {
+              "path": "detail",
+              "message": "evolution.Detail",
+              "required": false
+            }
+          ],
+          "leaves": [
+            {
+              "path": "label",
+              "presence": "explicit",
+              "required": true
+            },
+            {
+              "path": "detail.name",
+              "presence": "explicit",
+              "required": true
+            },
+            {
+              "path": "detail.note",
+              "presence": "explicit",
+              "required": false
+            }
+          ],
+          "enums": {}
+        }
+      },
+      "mapping": [
+        {
+          "field": "label",
+          "tag": 1
+        },
+        {
+          "field": "detail.name",
+          "tag": 1
+        },
+        {
+          "field": "detail.note",
+          "tag": 2
+        }
+      ],
+      "key_fields": [
+        {
+          "name": "label",
+          "tag": 1,
+          "kind": "string"
+        },
+        {
+          "name": "detail.name",
+          "tag": 1,
+          "kind": "string"
+        },
+        {
+          "name": "detail.note",
+          "tag": 2,
+          "kind": "string"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "products": {
+    "schema": {
+      "format": 1,
+      "id": "comparison_products_v1",
+      "version": 1,
+      "key": "id",
+      "fields": [
+        {
+          "name": "id",
+          "kind": "string",
+          "optional": false,
+          "nullable": false
+        },
+        {
+          "name": "category",
+          "kind": "string",
+          "optional": false,
+          "nullable": false
+        },
+        {
+          "name": "quantity",
+          "kind": "int64",
+          "optional": false,
+          "nullable": false
+        },
+        {
+          "name": "amount",
+          "kind": "decimal",
+          "optional": false,
+          "nullable": false
+        },
+        {
+          "name": "label",
+          "kind": "string",
+          "optional": true,
+          "nullable": false
+        }
+      ]
+    },
+    "fingerprint": "5f21676e37018fa29a3bde6a4acc73082b426cfeff360e7f77d1da8863a074f2"
+  }
+}

@@ -1,0 +1,944 @@
+{
+  "example.OtherShit": {
+    "descriptor": {
+      "schema_id": 100,
+      "message_index": 0,
+      "descriptor_hex": "0add020a0d6578616d706c652e70726f746f12076578616d706c6522660a045368697412230a026f6f18012001280b32172e6578616d706c652e636f6d6d6f6e2e44657461696c73122a0a09616c7465726e61746518022001280b32172e6578616d706c652e636f6d6d6f6e2e44657461696c73120d0a056c6162656c180320012809228e010a08506f736974696f6e12280a0764657461696c7318012001280b32172e6578616d706c652e636f6d6d6f6e2e44657461696c73121c0a047065657218022001280b320e2e6f746865722e44657461696c7312240a046d65746118032001280b32162e6578616d706c652e506f736974696f6e2e4d6574611a140a044d657461120c0a046e616d6518012001280922270a055468697264121e0a026f6f18012001280b32122e6578616d706c652e4f746865725368697422190a094f7468657253686974120c0a046e616d65180120012809620670726f746f330a92030a146578616d706c655f636f6d6d6f6e2e70726f746f120e6578616d706c652e636f6d6d6f6e22d0010a0744657461696c73120c0a046e616d6518012001280912260a0673746174757318022001280e32162e6578616d706c652e636f6d6d6f6e2e53746174757312120a057072696365180320012809480088010112220a0a70726963655f6e756c6c1804200128084801520970726963654e756c6c88010112110a046e6f7465180520012809480288010112150a087175616e74697479180620012804480388010142080a065f7072696365420d0a0b5f70726963655f6e756c6c42070a055f6e6f7465420b0a095f7175616e7469747922210a074b657950617274120f0a026964180120012809480088010142050a035f6964222f0a034b657912280a076163636f756e7418012001280b32172e6578616d706c652e636f6d6d6f6e2e4b6579506172742a3b0a06537461747573120b0a07554e4b4e4f574e100012080a044f50454e1001120a0a064143544956451001120a0a06434c4f53454410021a021001620670726f746f330a750a0b6f746865722e70726f746f12056f7468657222360a0744657461696c73120c0a046e616d65180120012809121d0a0673746174757318022001280e320d2e6f746865722e5374617475732a1f0a06537461747573120b0a07554e4b4e4f574e100012080a044f50454e1001620670726f746f33",
+      "message_name": "example.OtherShit"
+    },
+    "schema": {
+      "format": 3,
+      "id": "identity_key_v3",
+      "version": 3,
+      "key": "rowId",
+      "fields": [
+        {
+          "name": "name",
+          "kind": "string",
+          "optional": false,
+          "nullable": false
+        }
+      ],
+      "expansion": {
+        "message": "example.OtherShit",
+        "parents": [],
+        "leaves": [
+          {
+            "path": "name",
+            "presence": "implicit",
+            "required": true
+          }
+        ],
+        "enums": {}
+      }
+    },
+    "mapping": [
+      {
+        "field": "name",
+        "tag": 1
+      }
+    ],
+    "key_fields": [
+      {
+        "name": "name",
+        "tag": 1,
+        "kind": "string"
+      }
+    ]
+  },
+  "example.Position": {
+    "descriptor": {
+      "schema_id": 101,
+      "message_index": 0,
+      "descriptor_hex": "0add020a0d6578616d706c652e70726f746f12076578616d706c6522660a045368697412230a026f6f18012001280b32172e6578616d706c652e636f6d6d6f6e2e44657461696c73122a0a09616c7465726e61746518022001280b32172e6578616d706c652e636f6d6d6f6e2e44657461696c73120d0a056c6162656c180320012809228e010a08506f736974696f6e12280a0764657461696c7318012001280b32172e6578616d706c652e636f6d6d6f6e2e44657461696c73121c0a047065657218022001280b320e2e6f746865722e44657461696c7312240a046d65746118032001280b32162e6578616d706c652e506f736974696f6e2e4d6574611a140a044d657461120c0a046e616d6518012001280922270a055468697264121e0a026f6f18012001280b32122e6578616d706c652e4f746865725368697422190a094f7468657253686974120c0a046e616d65180120012809620670726f746f330a92030a146578616d706c655f636f6d6d6f6e2e70726f746f120e6578616d706c652e636f6d6d6f6e22d0010a0744657461696c73120c0a046e616d6518012001280912260a0673746174757318022001280e32162e6578616d706c652e636f6d6d6f6e2e53746174757312120a057072696365180320012809480088010112220a0a70726963655f6e756c6c1804200128084801520970726963654e756c6c88010112110a046e6f7465180520012809480288010112150a087175616e74697479180620012804480388010142080a065f7072696365420d0a0b5f70726963655f6e756c6c42070a055f6e6f7465420b0a095f7175616e7469747922210a074b657950617274120f0a026964180120012809480088010142050a035f6964222f0a034b657912280a076163636f756e7418012001280b32172e6578616d706c652e636f6d6d6f6e2e4b6579506172742a3b0a06537461747573120b0a07554e4b4e4f574e100012080a044f50454e1001120a0a064143544956451001120a0a06434c4f53454410021a021001620670726f746f330a750a0b6f746865722e70726f746f12056f7468657222360a0744657461696c73120c0a046e616d65180120012809121d0a0673746174757318022001280e320d2e6f746865722e5374617475732a1f0a06537461747573120b0a07554e4b4e4f574e100012080a044f50454e1001620670726f746f33",
+      "message_name": "example.Position"
+    },
+    "schema": {
+      "format": 3,
+      "id": "nested_positions_v3",
+      "version": 3,
+      "key": "rowId",
+      "fields": [
+        {
+          "name": "details.name",
+          "kind": "string",
+          "optional": true,
+          "nullable": false
+        },
+        {
+          "name": "details.status",
+          "kind": "enum",
+          "optional": true,
+          "nullable": false
+        },
+        {
+          "name": "details.price",
+          "kind": "decimal",
+          "optional": true,
+          "nullable": true
+        },
+        {
+          "name": "details.note",
+          "kind": "string",
+          "optional": true,
+          "nullable": false
+        },
+        {
+          "name": "details.quantity",
+          "kind": "uint64",
+          "optional": true,
+          "nullable": false
+        },
+        {
+          "name": "peer.name",
+          "kind": "string",
+          "optional": true,
+          "nullable": false
+        },
+        {
+          "name": "peer.status",
+          "kind": "enum",
+          "optional": true,
+          "nullable": false
+        },
+        {
+          "name": "meta.name",
+          "kind": "string",
+          "optional": true,
+          "nullable": false
+        }
+      ],
+      "expansion": {
+        "message": "example.Position",
+        "parents": [
+          {
+            "path": "details",
+            "message": "example.common.Details",
+            "required": false
+          },
+          {
+            "path": "peer",
+            "message": "other.Details",
+            "required": false
+          },
+          {
+            "path": "meta",
+            "message": "example.Position.Meta",
+            "required": false
+          }
+        ],
+        "leaves": [
+          {
+            "path": "details.name",
+            "presence": "implicit",
+            "required": true
+          },
+          {
+            "path": "details.status",
+            "presence": "implicit",
+            "required": true,
+            "enum_domain": "example.common.Status"
+          },
+          {
+            "path": "details.price",
+            "presence": "explicit",
+            "required": false
+          },
+          {
+            "path": "details.note",
+            "presence": "explicit",
+            "required": false
+          },
+          {
+            "path": "details.quantity",
+            "presence": "explicit",
+            "required": false
+          },
+          {
+            "path": "peer.name",
+            "presence": "implicit",
+            "required": true
+          },
+          {
+            "path": "peer.status",
+            "presence": "implicit",
+            "required": true,
+            "enum_domain": "other.Status"
+          },
+          {
+            "path": "meta.name",
+            "presence": "implicit",
+            "required": true
+          }
+        ],
+        "enums": {
+          "example.common.Status": {
+            "ACTIVE": 1,
+            "CLOSED": 2,
+            "OPEN": 1,
+            "UNKNOWN": 0
+          },
+          "other.Status": {
+            "OPEN": 1,
+            "UNKNOWN": 0
+          }
+        }
+      }
+    },
+    "mapping": [
+      {
+        "field": "details.name",
+        "tag": 1
+      },
+      {
+        "field": "details.status",
+        "tag": 2
+      },
+      {
+        "field": "details.price",
+        "tag": 3,
+        "null_tag": 4
+      },
+      {
+        "field": "details.note",
+        "tag": 5
+      },
+      {
+        "field": "details.quantity",
+        "tag": 6
+      },
+      {
+        "field": "peer.name",
+        "tag": 1
+      },
+      {
+        "field": "peer.status",
+        "tag": 2
+      },
+      {
+        "field": "meta.name",
+        "tag": 1
+      }
+    ],
+    "key_fields": [
+      {
+        "name": "details.name",
+        "tag": 1,
+        "kind": "string"
+      },
+      {
+        "name": "details.status",
+        "tag": 2,
+        "kind": "enum"
+      },
+      {
+        "name": "details.price",
+        "tag": 3,
+        "kind": "decimal"
+      },
+      {
+        "name": "details.note",
+        "tag": 5,
+        "kind": "string"
+      },
+      {
+        "name": "details.quantity",
+        "tag": 6,
+        "kind": "uint64"
+      },
+      {
+        "name": "peer.name",
+        "tag": 1,
+        "kind": "string"
+      },
+      {
+        "name": "peer.status",
+        "tag": 2,
+        "kind": "enum"
+      },
+      {
+        "name": "meta.name",
+        "tag": 1,
+        "kind": "string"
+      }
+    ]
+  },
+  "example.Position.Meta": {
+    "descriptor": {
+      "schema_id": 102,
+      "message_index": 0,
+      "descriptor_hex": "0add020a0d6578616d706c652e70726f746f12076578616d706c6522660a045368697412230a026f6f18012001280b32172e6578616d706c652e636f6d6d6f6e2e44657461696c73122a0a09616c7465726e61746518022001280b32172e6578616d706c652e636f6d6d6f6e2e44657461696c73120d0a056c6162656c180320012809228e010a08506f736974696f6e12280a0764657461696c7318012001280b32172e6578616d706c652e636f6d6d6f6e2e44657461696c73121c0a047065657218022001280b320e2e6f746865722e44657461696c7312240a046d65746118032001280b32162e6578616d706c652e506f736974696f6e2e4d6574611a140a044d657461120c0a046e616d6518012001280922270a055468697264121e0a026f6f18012001280b32122e6578616d706c652e4f746865725368697422190a094f7468657253686974120c0a046e616d65180120012809620670726f746f330a92030a146578616d706c655f636f6d6d6f6e2e70726f746f120e6578616d706c652e636f6d6d6f6e22d0010a0744657461696c73120c0a046e616d6518012001280912260a0673746174757318022001280e32162e6578616d706c652e636f6d6d6f6e2e53746174757312120a057072696365180320012809480088010112220a0a70726963655f6e756c6c1804200128084801520970726963654e756c6c88010112110a046e6f7465180520012809480288010112150a087175616e74697479180620012804480388010142080a065f7072696365420d0a0b5f70726963655f6e756c6c42070a055f6e6f7465420b0a095f7175616e7469747922210a074b657950617274120f0a026964180120012809480088010142050a035f6964222f0a034b657912280a076163636f756e7418012001280b32172e6578616d706c652e636f6d6d6f6e2e4b6579506172742a3b0a06537461747573120b0a07554e4b4e4f574e100012080a044f50454e1001120a0a064143544956451001120a0a06434c4f53454410021a021001620670726f746f330a750a0b6f746865722e70726f746f12056f7468657222360a0744657461696c73120c0a046e616d65180120012809121d0a0673746174757318022001280e320d2e6f746865722e5374617475732a1f0a06537461747573120b0a07554e4b4e4f574e100012080a044f50454e1001620670726f746f33",
+      "message_name": "example.Position.Meta"
+    },
+    "schema": {
+      "format": 3,
+      "id": "identity_key_v3",
+      "version": 3,
+      "key": "rowId",
+      "fields": [
+        {
+          "name": "name",
+          "kind": "string",
+          "optional": false,
+          "nullable": false
+        }
+      ],
+      "expansion": {
+        "message": "example.Position.Meta",
+        "parents": [],
+        "leaves": [
+          {
+            "path": "name",
+            "presence": "implicit",
+            "required": true
+          }
+        ],
+        "enums": {}
+      }
+    },
+    "mapping": [
+      {
+        "field": "name",
+        "tag": 1
+      }
+    ],
+    "key_fields": [
+      {
+        "name": "name",
+        "tag": 1,
+        "kind": "string"
+      }
+    ]
+  },
+  "example.Shit": {
+    "descriptor": {
+      "schema_id": 103,
+      "message_index": 0,
+      "descriptor_hex": "0add020a0d6578616d706c652e70726f746f12076578616d706c6522660a045368697412230a026f6f18012001280b32172e6578616d706c652e636f6d6d6f6e2e44657461696c73122a0a09616c7465726e61746518022001280b32172e6578616d706c652e636f6d6d6f6e2e44657461696c73120d0a056c6162656c180320012809228e010a08506f736974696f6e12280a0764657461696c7318012001280b32172e6578616d706c652e636f6d6d6f6e2e44657461696c73121c0a047065657218022001280b320e2e6f746865722e44657461696c7312240a046d65746118032001280b32162e6578616d706c652e506f736974696f6e2e4d6574611a140a044d657461120c0a046e616d6518012001280922270a055468697264121e0a026f6f18012001280b32122e6578616d706c652e4f746865725368697422190a094f7468657253686974120c0a046e616d65180120012809620670726f746f330a92030a146578616d706c655f636f6d6d6f6e2e70726f746f120e6578616d706c652e636f6d6d6f6e22d0010a0744657461696c73120c0a046e616d6518012001280912260a0673746174757318022001280e32162e6578616d706c652e636f6d6d6f6e2e53746174757312120a057072696365180320012809480088010112220a0a70726963655f6e756c6c1804200128084801520970726963654e756c6c88010112110a046e6f7465180520012809480288010112150a087175616e74697479180620012804480388010142080a065f7072696365420d0a0b5f70726963655f6e756c6c42070a055f6e6f7465420b0a095f7175616e7469747922210a074b657950617274120f0a026964180120012809480088010142050a035f6964222f0a034b657912280a076163636f756e7418012001280b32172e6578616d706c652e636f6d6d6f6e2e4b6579506172742a3b0a06537461747573120b0a07554e4b4e4f574e100012080a044f50454e1001120a0a064143544956451001120a0a06434c4f53454410021a021001620670726f746f330a750a0b6f746865722e70726f746f12056f7468657222360a0744657461696c73120c0a046e616d65180120012809121d0a0673746174757318022001280e320d2e6f746865722e5374617475732a1f0a06537461747573120b0a07554e4b4e4f574e100012080a044f50454e1001620670726f746f33",
+      "message_name": "example.Shit"
+    },
+    "schema": {
+      "format": 3,
+      "id": "shit_v3",
+      "version": 3,
+      "key": "rowId",
+      "fields": [
+        {
+          "name": "oo.name",
+          "kind": "string",
+          "optional": true,
+          "nullable": false
+        },
+        {
+          "name": "oo.status",
+          "kind": "enum",
+          "optional": true,
+          "nullable": false
+        },
+        {
+          "name": "oo.price",
+          "kind": "decimal",
+          "optional": true,
+          "nullable": true
+        },
+        {
+          "name": "oo.note",
+          "kind": "string",
+          "optional": true,
+          "nullable": false
+        },
+        {
+          "name": "oo.quantity",
+          "kind": "uint64",
+          "optional": true,
+          "nullable": false
+        },
+        {
+          "name": "alternate.name",
+          "kind": "string",
+          "optional": true,
+          "nullable": false
+        },
+        {
+          "name": "alternate.status",
+          "kind": "enum",
+          "optional": true,
+          "nullable": false
+        },
+        {
+          "name": "alternate.price",
+          "kind": "decimal",
+          "optional": true,
+          "nullable": true
+        },
+        {
+          "name": "alternate.note",
+          "kind": "string",
+          "optional": true,
+          "nullable": false
+        },
+        {
+          "name": "alternate.quantity",
+          "kind": "uint64",
+          "optional": true,
+          "nullable": false
+        },
+        {
+          "name": "label",
+          "kind": "string",
+          "optional": false,
+          "nullable": false
+        }
+      ],
+      "expansion": {
+        "message": "example.Shit",
+        "parents": [
+          {
+            "path": "oo",
+            "message": "example.common.Details",
+            "required": false
+          },
+          {
+            "path": "alternate",
+            "message": "example.common.Details",
+            "required": false
+          }
+        ],
+        "leaves": [
+          {
+            "path": "oo.name",
+            "presence": "implicit",
+            "required": true
+          },
+          {
+            "path": "oo.status",
+            "presence": "implicit",
+            "required": true,
+            "enum_domain": "example.common.Status"
+          },
+          {
+            "path": "oo.price",
+            "presence": "explicit",
+            "required": false
+          },
+          {
+            "path": "oo.note",
+            "presence": "explicit",
+            "required": false
+          },
+          {
+            "path": "oo.quantity",
+            "presence": "explicit",
+            "required": false
+          },
+          {
+            "path": "alternate.name",
+            "presence": "implicit",
+            "required": true
+          },
+          {
+            "path": "alternate.status",
+            "presence": "implicit",
+            "required": true,
+            "enum_domain": "example.common.Status"
+          },
+          {
+            "path": "alternate.price",
+            "presence": "explicit",
+            "required": false
+          },
+          {
+            "path": "alternate.note",
+            "presence": "explicit",
+            "required": false
+          },
+          {
+            "path": "alternate.quantity",
+            "presence": "explicit",
+            "required": false
+          },
+          {
+            "path": "label",
+            "presence": "implicit",
+            "required": true
+          }
+        ],
+        "enums": {
+          "example.common.Status": {
+            "ACTIVE": 1,
+            "CLOSED": 2,
+            "OPEN": 1,
+            "UNKNOWN": 0
+          }
+        }
+      }
+    },
+    "mapping": [
+      {
+        "field": "oo.name",
+        "tag": 1
+      },
+      {
+        "field": "oo.status",
+        "tag": 2
+      },
+      {
+        "field": "oo.price",
+        "tag": 3,
+        "null_tag": 4
+      },
+      {
+        "field": "oo.note",
+        "tag": 5
+      },
+      {
+        "field": "oo.quantity",
+        "tag": 6
+      },
+      {
+        "field": "alternate.name",
+        "tag": 1
+      },
+      {
+        "field": "alternate.status",
+        "tag": 2
+      },
+      {
+        "field": "alternate.price",
+        "tag": 3,
+        "null_tag": 4
+      },
+      {
+        "field": "alternate.note",
+        "tag": 5
+      },
+      {
+        "field": "alternate.quantity",
+        "tag": 6
+      },
+      {
+        "field": "label",
+        "tag": 3
+      }
+    ],
+    "key_fields": [
+      {
+        "name": "oo.name",
+        "tag": 1,
+        "kind": "string"
+      },
+      {
+        "name": "oo.status",
+        "tag": 2,
+        "kind": "enum"
+      },
+      {
+        "name": "oo.price",
+        "tag": 3,
+        "kind": "decimal"
+      },
+      {
+        "name": "oo.note",
+        "tag": 5,
+        "kind": "string"
+      },
+      {
+        "name": "oo.quantity",
+        "tag": 6,
+        "kind": "uint64"
+      },
+      {
+        "name": "alternate.name",
+        "tag": 1,
+        "kind": "string"
+      },
+      {
+        "name": "alternate.status",
+        "tag": 2,
+        "kind": "enum"
+      },
+      {
+        "name": "alternate.price",
+        "tag": 3,
+        "kind": "decimal"
+      },
+      {
+        "name": "alternate.note",
+        "tag": 5,
+        "kind": "string"
+      },
+      {
+        "name": "alternate.quantity",
+        "tag": 6,
+        "kind": "uint64"
+      },
+      {
+        "name": "label",
+        "tag": 3,
+        "kind": "string"
+      }
+    ]
+  },
+  "example.Third": {
+    "descriptor": {
+      "schema_id": 104,
+      "message_index": 0,
+      "descriptor_hex": "0add020a0d6578616d706c652e70726f746f12076578616d706c6522660a045368697412230a026f6f18012001280b32172e6578616d706c652e636f6d6d6f6e2e44657461696c73122a0a09616c7465726e61746518022001280b32172e6578616d706c652e636f6d6d6f6e2e44657461696c73120d0a056c6162656c180320012809228e010a08506f736974696f6e12280a0764657461696c7318012001280b32172e6578616d706c652e636f6d6d6f6e2e44657461696c73121c0a047065657218022001280b320e2e6f746865722e44657461696c7312240a046d65746118032001280b32162e6578616d706c652e506f736974696f6e2e4d6574611a140a044d657461120c0a046e616d6518012001280922270a055468697264121e0a026f6f18012001280b32122e6578616d706c652e4f746865725368697422190a094f7468657253686974120c0a046e616d65180120012809620670726f746f330a92030a146578616d706c655f636f6d6d6f6e2e70726f746f120e6578616d706c652e636f6d6d6f6e22d0010a0744657461696c73120c0a046e616d6518012001280912260a0673746174757318022001280e32162e6578616d706c652e636f6d6d6f6e2e53746174757312120a057072696365180320012809480088010112220a0a70726963655f6e756c6c1804200128084801520970726963654e756c6c88010112110a046e6f7465180520012809480288010112150a087175616e74697479180620012804480388010142080a065f7072696365420d0a0b5f70726963655f6e756c6c42070a055f6e6f7465420b0a095f7175616e7469747922210a074b657950617274120f0a026964180120012809480088010142050a035f6964222f0a034b657912280a076163636f756e7418012001280b32172e6578616d706c652e636f6d6d6f6e2e4b6579506172742a3b0a06537461747573120b0a07554e4b4e4f574e100012080a044f50454e1001120a0a064143544956451001120a0a06434c4f53454410021a021001620670726f746f330a750a0b6f746865722e70726f746f12056f7468657222360a0744657461696c73120c0a046e616d65180120012809121d0a0673746174757318022001280e320d2e6f746865722e5374617475732a1f0a06537461747573120b0a07554e4b4e4f574e100012080a044f50454e1001620670726f746f33",
+      "message_name": "example.Third"
+    },
+    "schema": {
+      "format": 3,
+      "id": "nested_third_v3",
+      "version": 3,
+      "key": "rowId",
+      "fields": [
+        {
+          "name": "oo.name",
+          "kind": "string",
+          "optional": true,
+          "nullable": false
+        }
+      ],
+      "expansion": {
+        "message": "example.Third",
+        "parents": [
+          {
+            "path": "oo",
+            "message": "example.OtherShit",
+            "required": false
+          }
+        ],
+        "leaves": [
+          {
+            "path": "oo.name",
+            "presence": "implicit",
+            "required": true
+          }
+        ],
+        "enums": {}
+      }
+    },
+    "mapping": [
+      {
+        "field": "oo.name",
+        "tag": 1
+      }
+    ],
+    "key_fields": [
+      {
+        "name": "oo.name",
+        "tag": 1,
+        "kind": "string"
+      }
+    ]
+  },
+  "example.common.Details": {
+    "descriptor": {
+      "schema_id": 105,
+      "message_index": 0,
+      "descriptor_hex": "0add020a0d6578616d706c652e70726f746f12076578616d706c6522660a045368697412230a026f6f18012001280b32172e6578616d706c652e636f6d6d6f6e2e44657461696c73122a0a09616c7465726e61746518022001280b32172e6578616d706c652e636f6d6d6f6e2e44657461696c73120d0a056c6162656c180320012809228e010a08506f736974696f6e12280a0764657461696c7318012001280b32172e6578616d706c652e636f6d6d6f6e2e44657461696c73121c0a047065657218022001280b320e2e6f746865722e44657461696c7312240a046d65746118032001280b32162e6578616d706c652e506f736974696f6e2e4d6574611a140a044d657461120c0a046e616d6518012001280922270a055468697264121e0a026f6f18012001280b32122e6578616d706c652e4f746865725368697422190a094f7468657253686974120c0a046e616d65180120012809620670726f746f330a92030a146578616d706c655f636f6d6d6f6e2e70726f746f120e6578616d706c652e636f6d6d6f6e22d0010a0744657461696c73120c0a046e616d6518012001280912260a0673746174757318022001280e32162e6578616d706c652e636f6d6d6f6e2e53746174757312120a057072696365180320012809480088010112220a0a70726963655f6e756c6c1804200128084801520970726963654e756c6c88010112110a046e6f7465180520012809480288010112150a087175616e74697479180620012804480388010142080a065f7072696365420d0a0b5f70726963655f6e756c6c42070a055f6e6f7465420b0a095f7175616e7469747922210a074b657950617274120f0a026964180120012809480088010142050a035f6964222f0a034b657912280a076163636f756e7418012001280b32172e6578616d706c652e636f6d6d6f6e2e4b6579506172742a3b0a06537461747573120b0a07554e4b4e4f574e100012080a044f50454e1001120a0a064143544956451001120a0a06434c4f53454410021a021001620670726f746f330a750a0b6f746865722e70726f746f12056f7468657222360a0744657461696c73120c0a046e616d65180120012809121d0a0673746174757318022001280e320d2e6f746865722e5374617475732a1f0a06537461747573120b0a07554e4b4e4f574e100012080a044f50454e1001620670726f746f33",
+      "message_name": "example.common.Details"
+    },
+    "schema": {
+      "format": 3,
+      "id": "identity_key_v3",
+      "version": 3,
+      "key": "rowId",
+      "fields": [
+        {
+          "name": "name",
+          "kind": "string",
+          "optional": false,
+          "nullable": false
+        },
+        {
+          "name": "status",
+          "kind": "enum",
+          "optional": false,
+          "nullable": false
+        },
+        {
+          "name": "price",
+          "kind": "decimal",
+          "optional": true,
+          "nullable": true
+        },
+        {
+          "name": "note",
+          "kind": "string",
+          "optional": true,
+          "nullable": false
+        },
+        {
+          "name": "quantity",
+          "kind": "uint64",
+          "optional": true,
+          "nullable": false
+        }
+      ],
+      "expansion": {
+        "message": "example.common.Details",
+        "parents": [],
+        "leaves": [
+          {
+            "path": "name",
+            "presence": "implicit",
+            "required": true
+          },
+          {
+            "path": "status",
+            "presence": "implicit",
+            "required": true,
+            "enum_domain": "example.common.Status"
+          },
+          {
+            "path": "price",
+            "presence": "explicit",
+            "required": false
+          },
+          {
+            "path": "note",
+            "presence": "explicit",
+            "required": false
+          },
+          {
+            "path": "quantity",
+            "presence": "explicit",
+            "required": false
+          }
+        ],
+        "enums": {
+          "example.common.Status": {
+            "ACTIVE": 1,
+            "CLOSED": 2,
+            "OPEN": 1,
+            "UNKNOWN": 0
+          }
+        }
+      }
+    },
+    "mapping": [
+      {
+        "field": "name",
+        "tag": 1
+      },
+      {
+        "field": "status",
+        "tag": 2
+      },
+      {
+        "field": "price",
+        "tag": 3,
+        "null_tag": 4
+      },
+      {
+        "field": "note",
+        "tag": 5
+      },
+      {
+        "field": "quantity",
+        "tag": 6
+      }
+    ],
+    "key_fields": [
+      {
+        "name": "name",
+        "tag": 1,
+        "kind": "string"
+      },
+      {
+        "name": "status",
+        "tag": 2,
+        "kind": "enum"
+      },
+      {
+        "name": "price",
+        "tag": 3,
+        "kind": "decimal"
+      },
+      {
+        "name": "note",
+        "tag": 5,
+        "kind": "string"
+      },
+      {
+        "name": "quantity",
+        "tag": 6,
+        "kind": "uint64"
+      }
+    ]
+  },
+  "example.common.Key": {
+    "descriptor": {
+      "schema_id": 106,
+      "message_index": 0,
+      "descriptor_hex": "0add020a0d6578616d706c652e70726f746f12076578616d706c6522660a045368697412230a026f6f18012001280b32172e6578616d706c652e636f6d6d6f6e2e44657461696c73122a0a09616c7465726e61746518022001280b32172e6578616d706c652e636f6d6d6f6e2e44657461696c73120d0a056c6162656c180320012809228e010a08506f736974696f6e12280a0764657461696c7318012001280b32172e6578616d706c652e636f6d6d6f6e2e44657461696c73121c0a047065657218022001280b320e2e6f746865722e44657461696c7312240a046d65746118032001280b32162e6578616d706c652e506f736974696f6e2e4d6574611a140a044d657461120c0a046e616d6518012001280922270a055468697264121e0a026f6f18012001280b32122e6578616d706c652e4f746865725368697422190a094f7468657253686974120c0a046e616d65180120012809620670726f746f330a92030a146578616d706c655f636f6d6d6f6e2e70726f746f120e6578616d706c652e636f6d6d6f6e22d0010a0744657461696c73120c0a046e616d6518012001280912260a0673746174757318022001280e32162e6578616d706c652e636f6d6d6f6e2e53746174757312120a057072696365180320012809480088010112220a0a70726963655f6e756c6c1804200128084801520970726963654e756c6c88010112110a046e6f7465180520012809480288010112150a087175616e74697479180620012804480388010142080a065f7072696365420d0a0b5f70726963655f6e756c6c42070a055f6e6f7465420b0a095f7175616e7469747922210a074b657950617274120f0a026964180120012809480088010142050a035f6964222f0a034b657912280a076163636f756e7418012001280b32172e6578616d706c652e636f6d6d6f6e2e4b6579506172742a3b0a06537461747573120b0a07554e4b4e4f574e100012080a044f50454e1001120a0a064143544956451001120a0a06434c4f53454410021a021001620670726f746f330a750a0b6f746865722e70726f746f12056f7468657222360a0744657461696c73120c0a046e616d65180120012809121d0a0673746174757318022001280e320d2e6f746865722e5374617475732a1f0a06537461747573120b0a07554e4b4e4f574e100012080a044f50454e1001620670726f746f33",
+      "message_name": "example.common.Key"
+    },
+    "schema": {
+      "format": 3,
+      "id": "identity_key_v3",
+      "version": 3,
+      "key": "rowId",
+      "fields": [
+        {
+          "name": "account.id",
+          "kind": "string",
+          "optional": false,
+          "nullable": false
+        }
+      ],
+      "expansion": {
+        "message": "example.common.Key",
+        "parents": [
+          {
+            "path": "account",
+            "message": "example.common.KeyPart",
+            "required": true
+          }
+        ],
+        "leaves": [
+          {
+            "path": "account.id",
+            "presence": "explicit",
+            "required": true
+          }
+        ],
+        "enums": {}
+      }
+    },
+    "mapping": [
+      {
+        "field": "account.id",
+        "tag": 1
+      }
+    ],
+    "key_fields": [
+      {
+        "name": "account.id",
+        "tag": 1,
+        "kind": "string"
+      }
+    ]
+  },
+  "example.common.KeyPart": {
+    "descriptor": {
+      "schema_id": 107,
+      "message_index": 0,
+      "descriptor_hex": "0add020a0d6578616d706c652e70726f746f12076578616d706c6522660a045368697412230a026f6f18012001280b32172e6578616d706c652e636f6d6d6f6e2e44657461696c73122a0a09616c7465726e61746518022001280b32172e6578616d706c652e636f6d6d6f6e2e44657461696c73120d0a056c6162656c180320012809228e010a08506f736974696f6e12280a0764657461696c7318012001280b32172e6578616d706c652e636f6d6d6f6e2e44657461696c73121c0a047065657218022001280b320e2e6f746865722e44657461696c7312240a046d65746118032001280b32162e6578616d706c652e506f736974696f6e2e4d6574611a140a044d657461120c0a046e616d6518012001280922270a055468697264121e0a026f6f18012001280b32122e6578616d706c652e4f746865725368697422190a094f7468657253686974120c0a046e616d65180120012809620670726f746f330a92030a146578616d706c655f636f6d6d6f6e2e70726f746f120e6578616d706c652e636f6d6d6f6e22d0010a0744657461696c73120c0a046e616d6518012001280912260a0673746174757318022001280e32162e6578616d706c652e636f6d6d6f6e2e53746174757312120a057072696365180320012809480088010112220a0a70726963655f6e756c6c1804200128084801520970726963654e756c6c88010112110a046e6f7465180520012809480288010112150a087175616e74697479180620012804480388010142080a065f7072696365420d0a0b5f70726963655f6e756c6c42070a055f6e6f7465420b0a095f7175616e7469747922210a074b657950617274120f0a026964180120012809480088010142050a035f6964222f0a034b657912280a076163636f756e7418012001280b32172e6578616d706c652e636f6d6d6f6e2e4b6579506172742a3b0a06537461747573120b0a07554e4b4e4f574e100012080a044f50454e1001120a0a064143544956451001120a0a06434c4f53454410021a021001620670726f746f330a750a0b6f746865722e70726f746f12056f7468657222360a0744657461696c73120c0a046e616d65180120012809121d0a0673746174757318022001280e320d2e6f746865722e5374617475732a1f0a06537461747573120b0a07554e4b4e4f574e100012080a044f50454e1001620670726f746f33",
+      "message_name": "example.common.KeyPart"
+    },
+    "schema": {
+      "format": 3,
+      "id": "identity_key_v3",
+      "version": 3,
+      "key": "rowId",
+      "fields": [
+        {
+          "name": "id",
+          "kind": "string",
+          "optional": false,
+          "nullable": false
+        }
+      ],
+      "expansion": {
+        "message": "example.common.KeyPart",
+        "parents": [],
+        "leaves": [
+          {
+            "path": "id",
+            "presence": "explicit",
+            "required": true
+          }
+        ],
+        "enums": {}
+      }
+    },
+    "mapping": [
+      {
+        "field": "id",
+        "tag": 1
+      }
+    ],
+    "key_fields": [
+      {
+        "name": "id",
+        "tag": 1,
+        "kind": "string"
+      }
+    ]
+  },
+  "other.Details": {
+    "descriptor": {
+      "schema_id": 108,
+      "message_index": 0,
+      "descriptor_hex": "0add020a0d6578616d706c652e70726f746f12076578616d706c6522660a045368697412230a026f6f18012001280b32172e6578616d706c652e636f6d6d6f6e2e44657461696c73122a0a09616c7465726e61746518022001280b32172e6578616d706c652e636f6d6d6f6e2e44657461696c73120d0a056c6162656c180320012809228e010a08506f736974696f6e12280a0764657461696c7318012001280b32172e6578616d706c652e636f6d6d6f6e2e44657461696c73121c0a047065657218022001280b320e2e6f746865722e44657461696c7312240a046d65746118032001280b32162e6578616d706c652e506f736974696f6e2e4d6574611a140a044d657461120c0a046e616d6518012001280922270a055468697264121e0a026f6f18012001280b32122e6578616d706c652e4f746865725368697422190a094f7468657253686974120c0a046e616d65180120012809620670726f746f330a92030a146578616d706c655f636f6d6d6f6e2e70726f746f120e6578616d706c652e636f6d6d6f6e22d0010a0744657461696c73120c0a046e616d6518012001280912260a0673746174757318022001280e32162e6578616d706c652e636f6d6d6f6e2e53746174757312120a057072696365180320012809480088010112220a0a70726963655f6e756c6c1804200128084801520970726963654e756c6c88010112110a046e6f7465180520012809480288010112150a087175616e74697479180620012804480388010142080a065f7072696365420d0a0b5f70726963655f6e756c6c42070a055f6e6f7465420b0a095f7175616e7469747922210a074b657950617274120f0a026964180120012809480088010142050a035f6964222f0a034b657912280a076163636f756e7418012001280b32172e6578616d706c652e636f6d6d6f6e2e4b6579506172742a3b0a06537461747573120b0a07554e4b4e4f574e100012080a044f50454e1001120a0a064143544956451001120a0a06434c4f53454410021a021001620670726f746f330a750a0b6f746865722e70726f746f12056f7468657222360a0744657461696c73120c0a046e616d65180120012809121d0a0673746174757318022001280e320d2e6f746865722e5374617475732a1f0a06537461747573120b0a07554e4b4e4f574e100012080a044f50454e1001620670726f746f33",
+      "message_name": "other.Details"
+    },
+    "schema": {
+      "format": 3,
+      "id": "identity_key_v3",
+      "version": 3,
+      "key": "rowId",
+      "fields": [
+        {
+          "name": "name",
+          "kind": "string",
+          "optional": false,
+          "nullable": false
+        },
+        {
+          "name": "status",
+          "kind": "enum",
+          "optional": false,
+          "nullable": false
+        }
+      ],
+      "expansion": {
+        "message": "other.Details",
+        "parents": [],
+        "leaves": [
+          {
+            "path": "name",
+            "presence": "implicit",
+            "required": true
+          },
+          {
+            "path": "status",
+            "presence": "implicit",
+            "required": true,
+            "enum_domain": "other.Status"
+          }
+        ],
+        "enums": {
+          "other.Status": {
+            "OPEN": 1,
+            "UNKNOWN": 0
+          }
+        }
+      }
+    },
+    "mapping": [
+      {
+        "field": "name",
+        "tag": 1
+      },
+      {
+        "field": "status",
+        "tag": 2
+      }
+    ],
+    "key_fields": [
+      {
+        "name": "name",
+        "tag": 1,
+        "kind": "string"
+      },
+      {
+        "name": "status",
+        "tag": 2,
+        "kind": "enum"
+      }
+    ]
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "generator": "protobufjs",
+  "version": "8.8.0",
+  "license": "BSD-3-Clause",
+  "generator_sha256": "488ad47841968d42a3d84b71f8d00eaeed6661a4183e0b5b8f1948df529406f9",
+  "schema_id_validator_sha256": "179b69fdc0d5c48a9b9ecf03a5ca5aa0bd31428bb59a3168533d014dd3f1a351",
+  "descriptor_options_sha256": "6310d4d5af4bb1912b1164fd8273fa6b2d2ff0c75da712fb1bb318c2f07519da",
+  "options": {
+    "keepCase": true,
+    "syntax": "proto3",
+    "flatScalarOnly": true,
+    "compatibilityExamples": false
+  },
+  "inputs": {
+    "topics.proto": "7124182670e71e1caa0710b66d207c78ce074cd20543611c9a2e394c80e11b71",
+    "view-options.proto": "fc49b43ba3f5d04b207c672a3b00d735d53f3baca7b0c3b023344da1d5bdb546"
+  },
+  "outputs": {
+    "packages/rust-view-server/src/generated/topics.ts": "6ee35c6bdf2f907542813aced95131d358cf1d243d82b0c021294bdf338f4bac",
+    "fixtures/proto-topics/catalog.json": "6d0c338cf3c6d2d78ccef0ee52773ebf4942aafdf916c649d6aa6d44f022ea6b",
+    "fixtures/proto-topics/browser-catalog.json": "92a536aba5d74feffbb39c1d3a153f62553bc3bcd63654c75b4b94edace51554",
+    "fixtures/proto-topics/source-bindings.json": "a881f987baf07b0cafa57de2040b910e3c2c8ac819985ae468d65c81b2fa3a6d"
+  }
+}

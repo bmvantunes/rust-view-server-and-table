@@ -1,0 +1,4 @@
+syntax="proto3";package evolution;import "view-options.proto";
+message Key { optional string id=1; }
+message Detail { optional string name=1; optional string note=2 [(view.optional)=true]; }
+message Row { option (view.schema_id)="evolved";option (view.expanded)=true;optional string label=1;Detail detail=2; }

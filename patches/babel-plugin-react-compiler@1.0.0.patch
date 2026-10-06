@@ -1,0 +1,67 @@
+diff --git a/dist/index.d.ts b/dist/index.d.ts
+index 81c3f3d0186b23617612b55916a61717119841f1..da184d9c0743a998817fdf25159672fe8edf4fd7 100644
+--- a/dist/index.d.ts
++++ b/dist/index.d.ts
+@@ -1018,7 +1018,7 @@ type InstructionValue = LoadLocal | LoadContext | {
+     loc: SourceLocation;
+ } | Destructure | {
+     kind: 'Primitive';
+-    value: number | boolean | string | null | undefined;
++    value: number | bigint | boolean | string | null | undefined;
+     loc: SourceLocation;
+ } | JSXText | {
+     kind: 'BinaryExpression';
+diff --git a/dist/index.js b/dist/index.js
+index ac4a79e741a176252312419e439be74cc80998e5..869acdedcaecd3ace2ffa2adf9ee62400f01ba79 100644
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -74146,6 +74146,8 @@ function printInstructionValue(instrValue) {
+     case "Primitive": {
+       if (instrValue.value === void 0) {
+         value = "<undefined>";
++      } else if (typeof instrValue.value === "bigint") {
++        value = instrValue.value.toString() + "n";
+       } else {
+         value = JSON.stringify(instrValue.value);
+       }
+@@ -79418,7 +79420,12 @@ function lowerObjectMethod(builder, property) {
+ function lowerObjectPropertyKey(builder, property) {
+   var _a, _b;
+   const key2 = property.get("key");
+-  if (key2.isStringLiteral()) {
++  if (key2.isBigIntLiteral()) {
++    return {
++      kind: "string",
++      name: String(BigInt(key2.node.value))
++    };
++  } else if (key2.isStringLiteral()) {
+     return {
+       kind: "string",
+       name: key2.node.value
+@@ -79478,6 +79485,13 @@ function lowerExpression(builder, exprPath) {
+         loc: exprLoc
+       };
+     }
++    case "BigIntLiteral": {
++      return {
++        kind: "Primitive",
++        value: BigInt(exprPath.node.value),
++        loc: exprLoc
++      };
++    }
+     case "BooleanLiteral":
+     case "NumericLiteral":
+     case "StringLiteral": {
+@@ -92615,7 +92629,11 @@ function codegenLValue(cx, pattern) {
+   }
+ }
+ function codegenValue(cx, loc, value) {
+-  if (typeof value === "number") {
++  if (typeof value === "bigint") {
++    return value < 0n
++      ? t3.unaryExpression("-", t3.bigIntLiteral((-value).toString()), false)
++      : t3.bigIntLiteral(value.toString());
++  } else if (typeof value === "number") {
+     if (value < 0) {
+       return t3.unaryExpression("-", t3.numericLiteral(-value), false);
+     } else {

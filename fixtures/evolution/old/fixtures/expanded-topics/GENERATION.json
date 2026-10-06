@@ -1,0 +1,16 @@
+{
+  "generator": "protobufjs",
+  "version": "8.8.0",
+  "generator_sha256": "0d782333db2c8f12783bfe10a501110310a9ee4091842b832ff2035b3a1946cc",
+  "extension_sha256": "f39d72c8956dfab7c8732f50734f1eedff88d907f48d46c8a72526cf15696260",
+  "inputs": {
+    "topics.proto": "a2c25150bc8eb61aeea0a58977899a84bd0a4dceb2004b9d5ad2d7e7607056f9",
+    "view-options.proto": "fc49b43ba3f5d04b207c672a3b00d735d53f3baca7b0c3b023344da1d5bdb546"
+  },
+  "outputs": {
+    "browser/src/generated/expanded-topics.ts": "e2cc8020a436ca91ece07a07533a32afc17918feb9a249eba6f79efc6795b7d3",
+    "fixtures/expanded-topics/catalog.json": "e1235a2a124775374c378ff3e1b74d011c73d1e86f8e0701cdf4c003a9afa4f5",
+    "fixtures/expanded-topics/browser-catalog.json": "8cbcf61a07b94627a48895723d114674da03449265abcc2cd4a668a1b5228135",
+    "fixtures/expanded-topics/source-bindings.json": "7a3bbf83b937960eb7ff94c3eb4350dd502c6cb42ccf1ec9f17c681a4f4ae2c3"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "source_sha256": "7570870afeea547a81cacb70f206cf6e41772fa57a13f8d72de5b8f3675acd67",
+  "source": "supplied work/browser/src/product-provider.tsx createTopicHooks.project",
+  "transformation": "Export exact original generic projection function with two TypeScript type annotations removed; same field copy semantics",
+  "source_excerpt": "    project(row,fields){const selected:Record<string,unknown>={};for(const name of fields)if(Object.hasOwn(row,name))selected[name]=(row as Record<string,unknown>)[name];return selected;}",
+  "output_sha256": "63a41823077887f4670f9a8f01f1e78b3fda752f8d3eff6b2b60850ea3cfdada"
+}

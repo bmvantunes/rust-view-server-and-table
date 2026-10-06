@@ -1,0 +1,89 @@
+{
+  "date": "2026-10-06",
+  "scope": "Local Kafka infrastructure and explicit 100-row-per-topic native smoke only",
+  "full200kPerTopic": "NOT RUN / NOT QUALIFIED",
+  "image": "apache/kafka:4.1.2@sha256:5cc2a2fd93fa2687b44015eee04fb2c3edd9e526bd64bf8bec5ff1e268772e0e",
+  "context": "orbstack",
+  "composeProject": "rvs-95fd7b7501ba-infrastructure-20261006",
+  "run": "infrastructure-20261006",
+  "clusterId": "-RWl_vx4S4mRwEfJwnqOLg",
+  "nativeProbe": {
+    "advertisedHost": "127.0.0.1",
+    "advertisedPort": 19092,
+    "bootstrap": "127.0.0.1:19092",
+    "nativeTransactionalProbe": "passed",
+    "partitions": 2,
+    "records": {
+      "read_committed": [
+        [
+          0,
+          2,
+          "committed"
+        ],
+        [
+          1,
+          2,
+          "committed"
+        ]
+      ],
+      "read_uncommitted": [
+        [
+          0,
+          0,
+          "aborted"
+        ],
+        [
+          0,
+          2,
+          "committed"
+        ],
+        [
+          1,
+          0,
+          "aborted"
+        ],
+        [
+          1,
+          2,
+          "committed"
+        ]
+      ]
+    },
+    "topic": "infra_native_probe_32471_1791306577154010000"
+  },
+  "containerMetadataProduceConsume": "PASS",
+  "dataSurvivedContainerRecreation": true,
+  "nativeSmoke": {
+    "acknowledgedDistinctIdentities": {
+      "client_orders": 100,
+      "server_orders": 100
+    },
+    "partitionsPerTopic": 2,
+    "sourceNextPerPartition": 50,
+    "durableNextPerPartition": 50,
+    "derivedNextPerPartition": 50,
+    "servingNextPerPartition": 50,
+    "activePayloadRowsPerTopic": 100,
+    "healthReady": true
+  },
+  "compiler": "Actual release build selected Cargo/Rustc 1.99.0 through scripts/rust.py",
+  "fastTests": {
+    "lifecycle": 6,
+    "deterministicSeed": 3
+  },
+  "cleanup": "Native development orchestrator exited 0 after SIGINT; owned container/network stopped, named data volume retained",
+  "rawEvidence": [
+    ".local/kafka/native-probe-rust199.log",
+    ".local/kafka/persistence-check.log",
+    ".local/kafka/effective-broker-config.log",
+    ".local/kafka/release-build.log",
+    ".local/kafka/native-dev-smoke.log"
+  ],
+  "limits": [
+    "No browser/table qualification in this infrastructure smoke",
+    "No source audit independent of producer receipts and native health yet",
+    "Ported F1 socket regressions not yet executed",
+    "Separate reviewer pending",
+    "Release strip tool warned about missing libLLVM; binary execution passed"
+  ]
+}

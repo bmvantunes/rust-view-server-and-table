@@ -1,0 +1,1568 @@
+{
+  "name": "product-core-100-row-v1",
+  "commands": [
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-000",
+        "category": "c0",
+        "quantity": "9007199254740992",
+        "amount": {
+          "coefficient": "10",
+          "scale": 2
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-001",
+        "category": "c1",
+        "quantity": "9007199254740993",
+        "amount": {
+          "coefficient": "20",
+          "scale": 2
+        },
+        "label": {
+          "state": "null"
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-002",
+        "category": "c2",
+        "quantity": "9007199254740994",
+        "amount": {
+          "coefficient": "30",
+          "scale": 2
+        },
+        "label": {
+          "state": "value",
+          "value": ""
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-003",
+        "category": "c3",
+        "quantity": "9007199254740995",
+        "amount": {
+          "coefficient": "40",
+          "scale": 2
+        },
+        "label": {
+          "state": "value",
+          "value": "label-003"
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-004",
+        "category": "c0",
+        "quantity": "9007199254740996",
+        "amount": {
+          "coefficient": "50",
+          "scale": 2
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-005",
+        "category": "c1",
+        "quantity": "9007199254740997",
+        "amount": {
+          "coefficient": "60",
+          "scale": 2
+        },
+        "label": {
+          "state": "null"
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-006",
+        "category": "c2",
+        "quantity": "9007199254740998",
+        "amount": {
+          "coefficient": "70",
+          "scale": 2
+        },
+        "label": {
+          "state": "value",
+          "value": ""
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-007",
+        "category": "c3",
+        "quantity": "9007199254740999",
+        "amount": {
+          "coefficient": "80",
+          "scale": 2
+        },
+        "label": {
+          "state": "value",
+          "value": "label-007"
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-008",
+        "category": "c0",
+        "quantity": "9007199254741000",
+        "amount": {
+          "coefficient": "90",
+          "scale": 2
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-009",
+        "category": "c1",
+        "quantity": "9007199254741001",
+        "amount": {
+          "coefficient": "100",
+          "scale": 2
+        },
+        "label": {
+          "state": "null"
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-010",
+        "category": "c2",
+        "quantity": "9007199254741002",
+        "amount": {
+          "coefficient": "110",
+          "scale": 2
+        },
+        "label": {
+          "state": "value",
+          "value": ""
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-011",
+        "category": "c3",
+        "quantity": "9007199254741003",
+        "amount": {
+          "coefficient": "120",
+          "scale": 2
+        },
+        "label": {
+          "state": "value",
+          "value": "label-011"
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-012",
+        "category": "c0",
+        "quantity": "9007199254741004",
+        "amount": {
+          "coefficient": "130",
+          "scale": 2
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-013",
+        "category": "c1",
+        "quantity": "9007199254741005",
+        "amount": {
+          "coefficient": "140",
+          "scale": 2
+        },
+        "label": {
+          "state": "null"
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-014",
+        "category": "c2",
+        "quantity": "9007199254741006",
+        "amount": {
+          "coefficient": "150",
+          "scale": 2
+        },
+        "label": {
+          "state": "value",
+          "value": ""
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-015",
+        "category": "c3",
+        "quantity": "9007199254741007",
+        "amount": {
+          "coefficient": "160",
+          "scale": 2
+        },
+        "label": {
+          "state": "value",
+          "value": "label-015"
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-016",
+        "category": "c0",
+        "quantity": "9007199254741008",
+        "amount": {
+          "coefficient": "170",
+          "scale": 2
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-017",
+        "category": "c1",
+        "quantity": "9007199254741009",
+        "amount": {
+          "coefficient": "180",
+          "scale": 2
+        },
+        "label": {
+          "state": "null"
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-018",
+        "category": "c2",
+        "quantity": "9007199254741010",
+        "amount": {
+          "coefficient": "190",
+          "scale": 2
+        },
+        "label": {
+          "state": "value",
+          "value": ""
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-019",
+        "category": "c3",
+        "quantity": "9007199254741011",
+        "amount": {
+          "coefficient": "200",
+          "scale": 2
+        },
+        "label": {
+          "state": "value",
+          "value": "label-019"
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-020",
+        "category": "c0",
+        "quantity": "9007199254741012",
+        "amount": {
+          "coefficient": "210",
+          "scale": 2
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-021",
+        "category": "c1",
+        "quantity": "9007199254741013",
+        "amount": {
+          "coefficient": "220",
+          "scale": 2
+        },
+        "label": {
+          "state": "null"
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-022",
+        "category": "c2",
+        "quantity": "9007199254741014",
+        "amount": {
+          "coefficient": "230",
+          "scale": 2
+        },
+        "label": {
+          "state": "value",
+          "value": ""
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-023",
+        "category": "c3",
+        "quantity": "9007199254741015",
+        "amount": {
+          "coefficient": "240",
+          "scale": 2
+        },
+        "label": {
+          "state": "value",
+          "value": "label-023"
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-024",
+        "category": "c0",
+        "quantity": "9007199254741016",
+        "amount": {
+          "coefficient": "250",
+          "scale": 2
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-025",
+        "category": "c1",
+        "quantity": "9007199254741017",
+        "amount": {
+          "coefficient": "260",
+          "scale": 2
+        },
+        "label": {
+          "state": "null"
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-026",
+        "category": "c2",
+        "quantity": "9007199254741018",
+        "amount": {
+          "coefficient": "270",
+          "scale": 2
+        },
+        "label": {
+          "state": "value",
+          "value": ""
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-027",
+        "category": "c3",
+        "quantity": "9007199254741019",
+        "amount": {
+          "coefficient": "280",
+          "scale": 2
+        },
+        "label": {
+          "state": "value",
+          "value": "label-027"
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-028",
+        "category": "c0",
+        "quantity": "9007199254741020",
+        "amount": {
+          "coefficient": "290",
+          "scale": 2
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-029",
+        "category": "c1",
+        "quantity": "9007199254741021",
+        "amount": {
+          "coefficient": "300",
+          "scale": 2
+        },
+        "label": {
+          "state": "null"
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-030",
+        "category": "c2",
+        "quantity": "9007199254741022",
+        "amount": {
+          "coefficient": "310",
+          "scale": 2
+        },
+        "label": {
+          "state": "value",
+          "value": ""
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-031",
+        "category": "c3",
+        "quantity": "9007199254741023",
+        "amount": {
+          "coefficient": "320",
+          "scale": 2
+        },
+        "label": {
+          "state": "value",
+          "value": "label-031"
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-032",
+        "category": "c0",
+        "quantity": "9007199254741024",
+        "amount": {
+          "coefficient": "330",
+          "scale": 2
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-033",
+        "category": "c1",
+        "quantity": "9007199254741025",
+        "amount": {
+          "coefficient": "340",
+          "scale": 2
+        },
+        "label": {
+          "state": "null"
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-034",
+        "category": "c2",
+        "quantity": "9007199254741026",
+        "amount": {
+          "coefficient": "350",
+          "scale": 2
+        },
+        "label": {
+          "state": "value",
+          "value": ""
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-035",
+        "category": "c3",
+        "quantity": "9007199254741027",
+        "amount": {
+          "coefficient": "360",
+          "scale": 2
+        },
+        "label": {
+          "state": "value",
+          "value": "label-035"
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-036",
+        "category": "c0",
+        "quantity": "9007199254741028",
+        "amount": {
+          "coefficient": "370",
+          "scale": 2
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-037",
+        "category": "c1",
+        "quantity": "9007199254741029",
+        "amount": {
+          "coefficient": "380",
+          "scale": 2
+        },
+        "label": {
+          "state": "null"
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-038",
+        "category": "c2",
+        "quantity": "9007199254741030",
+        "amount": {
+          "coefficient": "390",
+          "scale": 2
+        },
+        "label": {
+          "state": "value",
+          "value": ""
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-039",
+        "category": "c3",
+        "quantity": "9007199254741031",
+        "amount": {
+          "coefficient": "400",
+          "scale": 2
+        },
+        "label": {
+          "state": "value",
+          "value": "label-039"
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-040",
+        "category": "c0",
+        "quantity": "9007199254741032",
+        "amount": {
+          "coefficient": "410",
+          "scale": 2
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-041",
+        "category": "c1",
+        "quantity": "9007199254741033",
+        "amount": {
+          "coefficient": "420",
+          "scale": 2
+        },
+        "label": {
+          "state": "null"
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-042",
+        "category": "c2",
+        "quantity": "9007199254741034",
+        "amount": {
+          "coefficient": "430",
+          "scale": 2
+        },
+        "label": {
+          "state": "value",
+          "value": ""
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-043",
+        "category": "c3",
+        "quantity": "9007199254741035",
+        "amount": {
+          "coefficient": "440",
+          "scale": 2
+        },
+        "label": {
+          "state": "value",
+          "value": "label-043"
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-044",
+        "category": "c0",
+        "quantity": "9007199254741036",
+        "amount": {
+          "coefficient": "450",
+          "scale": 2
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-045",
+        "category": "c1",
+        "quantity": "9007199254741037",
+        "amount": {
+          "coefficient": "460",
+          "scale": 2
+        },
+        "label": {
+          "state": "null"
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-046",
+        "category": "c2",
+        "quantity": "9007199254741038",
+        "amount": {
+          "coefficient": "470",
+          "scale": 2
+        },
+        "label": {
+          "state": "value",
+          "value": ""
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-047",
+        "category": "c3",
+        "quantity": "9007199254741039",
+        "amount": {
+          "coefficient": "480",
+          "scale": 2
+        },
+        "label": {
+          "state": "value",
+          "value": "label-047"
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-048",
+        "category": "c0",
+        "quantity": "9007199254741040",
+        "amount": {
+          "coefficient": "490",
+          "scale": 2
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-049",
+        "category": "c1",
+        "quantity": "9007199254741041",
+        "amount": {
+          "coefficient": "500",
+          "scale": 2
+        },
+        "label": {
+          "state": "null"
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-050",
+        "category": "c2",
+        "quantity": "9007199254741042",
+        "amount": {
+          "coefficient": "510",
+          "scale": 2
+        },
+        "label": {
+          "state": "value",
+          "value": ""
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-051",
+        "category": "c3",
+        "quantity": "9007199254741043",
+        "amount": {
+          "coefficient": "520",
+          "scale": 2
+        },
+        "label": {
+          "state": "value",
+          "value": "label-051"
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-052",
+        "category": "c0",
+        "quantity": "9007199254741044",
+        "amount": {
+          "coefficient": "530",
+          "scale": 2
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-053",
+        "category": "c1",
+        "quantity": "9007199254741045",
+        "amount": {
+          "coefficient": "540",
+          "scale": 2
+        },
+        "label": {
+          "state": "null"
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-054",
+        "category": "c2",
+        "quantity": "9007199254741046",
+        "amount": {
+          "coefficient": "550",
+          "scale": 2
+        },
+        "label": {
+          "state": "value",
+          "value": ""
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-055",
+        "category": "c3",
+        "quantity": "9007199254741047",
+        "amount": {
+          "coefficient": "560",
+          "scale": 2
+        },
+        "label": {
+          "state": "value",
+          "value": "label-055"
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-056",
+        "category": "c0",
+        "quantity": "9007199254741048",
+        "amount": {
+          "coefficient": "570",
+          "scale": 2
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-057",
+        "category": "c1",
+        "quantity": "9007199254741049",
+        "amount": {
+          "coefficient": "580",
+          "scale": 2
+        },
+        "label": {
+          "state": "null"
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-058",
+        "category": "c2",
+        "quantity": "9007199254741050",
+        "amount": {
+          "coefficient": "590",
+          "scale": 2
+        },
+        "label": {
+          "state": "value",
+          "value": ""
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-059",
+        "category": "c3",
+        "quantity": "9007199254741051",
+        "amount": {
+          "coefficient": "600",
+          "scale": 2
+        },
+        "label": {
+          "state": "value",
+          "value": "label-059"
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-060",
+        "category": "c0",
+        "quantity": "9007199254741052",
+        "amount": {
+          "coefficient": "610",
+          "scale": 2
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-061",
+        "category": "c1",
+        "quantity": "9007199254741053",
+        "amount": {
+          "coefficient": "620",
+          "scale": 2
+        },
+        "label": {
+          "state": "null"
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-062",
+        "category": "c2",
+        "quantity": "9007199254741054",
+        "amount": {
+          "coefficient": "630",
+          "scale": 2
+        },
+        "label": {
+          "state": "value",
+          "value": ""
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-063",
+        "category": "c3",
+        "quantity": "9007199254741055",
+        "amount": {
+          "coefficient": "640",
+          "scale": 2
+        },
+        "label": {
+          "state": "value",
+          "value": "label-063"
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-064",
+        "category": "c0",
+        "quantity": "9007199254741056",
+        "amount": {
+          "coefficient": "650",
+          "scale": 2
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-065",
+        "category": "c1",
+        "quantity": "9007199254741057",
+        "amount": {
+          "coefficient": "660",
+          "scale": 2
+        },
+        "label": {
+          "state": "null"
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-066",
+        "category": "c2",
+        "quantity": "9007199254741058",
+        "amount": {
+          "coefficient": "670",
+          "scale": 2
+        },
+        "label": {
+          "state": "value",
+          "value": ""
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-067",
+        "category": "c3",
+        "quantity": "9007199254741059",
+        "amount": {
+          "coefficient": "680",
+          "scale": 2
+        },
+        "label": {
+          "state": "value",
+          "value": "label-067"
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-068",
+        "category": "c0",
+        "quantity": "9007199254741060",
+        "amount": {
+          "coefficient": "690",
+          "scale": 2
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-069",
+        "category": "c1",
+        "quantity": "9007199254741061",
+        "amount": {
+          "coefficient": "700",
+          "scale": 2
+        },
+        "label": {
+          "state": "null"
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-070",
+        "category": "c2",
+        "quantity": "9007199254741062",
+        "amount": {
+          "coefficient": "710",
+          "scale": 2
+        },
+        "label": {
+          "state": "value",
+          "value": ""
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-071",
+        "category": "c3",
+        "quantity": "9007199254741063",
+        "amount": {
+          "coefficient": "720",
+          "scale": 2
+        },
+        "label": {
+          "state": "value",
+          "value": "label-071"
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-072",
+        "category": "c0",
+        "quantity": "9007199254741064",
+        "amount": {
+          "coefficient": "730",
+          "scale": 2
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-073",
+        "category": "c1",
+        "quantity": "9007199254741065",
+        "amount": {
+          "coefficient": "740",
+          "scale": 2
+        },
+        "label": {
+          "state": "null"
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-074",
+        "category": "c2",
+        "quantity": "9007199254741066",
+        "amount": {
+          "coefficient": "750",
+          "scale": 2
+        },
+        "label": {
+          "state": "value",
+          "value": ""
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-075",
+        "category": "c3",
+        "quantity": "9007199254741067",
+        "amount": {
+          "coefficient": "760",
+          "scale": 2
+        },
+        "label": {
+          "state": "value",
+          "value": "label-075"
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-076",
+        "category": "c0",
+        "quantity": "9007199254741068",
+        "amount": {
+          "coefficient": "770",
+          "scale": 2
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-077",
+        "category": "c1",
+        "quantity": "9007199254741069",
+        "amount": {
+          "coefficient": "780",
+          "scale": 2
+        },
+        "label": {
+          "state": "null"
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-078",
+        "category": "c2",
+        "quantity": "9007199254741070",
+        "amount": {
+          "coefficient": "790",
+          "scale": 2
+        },
+        "label": {
+          "state": "value",
+          "value": ""
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-079",
+        "category": "c3",
+        "quantity": "9007199254741071",
+        "amount": {
+          "coefficient": "800",
+          "scale": 2
+        },
+        "label": {
+          "state": "value",
+          "value": "label-079"
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-080",
+        "category": "c0",
+        "quantity": "9007199254741072",
+        "amount": {
+          "coefficient": "810",
+          "scale": 2
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-081",
+        "category": "c1",
+        "quantity": "9007199254741073",
+        "amount": {
+          "coefficient": "820",
+          "scale": 2
+        },
+        "label": {
+          "state": "null"
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-082",
+        "category": "c2",
+        "quantity": "9007199254741074",
+        "amount": {
+          "coefficient": "830",
+          "scale": 2
+        },
+        "label": {
+          "state": "value",
+          "value": ""
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-083",
+        "category": "c3",
+        "quantity": "9007199254741075",
+        "amount": {
+          "coefficient": "840",
+          "scale": 2
+        },
+        "label": {
+          "state": "value",
+          "value": "label-083"
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-084",
+        "category": "c0",
+        "quantity": "9007199254741076",
+        "amount": {
+          "coefficient": "850",
+          "scale": 2
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-085",
+        "category": "c1",
+        "quantity": "9007199254741077",
+        "amount": {
+          "coefficient": "860",
+          "scale": 2
+        },
+        "label": {
+          "state": "null"
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-086",
+        "category": "c2",
+        "quantity": "9007199254741078",
+        "amount": {
+          "coefficient": "870",
+          "scale": 2
+        },
+        "label": {
+          "state": "value",
+          "value": ""
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-087",
+        "category": "c3",
+        "quantity": "9007199254741079",
+        "amount": {
+          "coefficient": "880",
+          "scale": 2
+        },
+        "label": {
+          "state": "value",
+          "value": "label-087"
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-088",
+        "category": "c0",
+        "quantity": "9007199254741080",
+        "amount": {
+          "coefficient": "890",
+          "scale": 2
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-089",
+        "category": "c1",
+        "quantity": "9007199254741081",
+        "amount": {
+          "coefficient": "900",
+          "scale": 2
+        },
+        "label": {
+          "state": "null"
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-090",
+        "category": "c2",
+        "quantity": "9007199254741082",
+        "amount": {
+          "coefficient": "910",
+          "scale": 2
+        },
+        "label": {
+          "state": "value",
+          "value": ""
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-091",
+        "category": "c3",
+        "quantity": "9007199254741083",
+        "amount": {
+          "coefficient": "920",
+          "scale": 2
+        },
+        "label": {
+          "state": "value",
+          "value": "label-091"
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-092",
+        "category": "c0",
+        "quantity": "9007199254741084",
+        "amount": {
+          "coefficient": "930",
+          "scale": 2
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-093",
+        "category": "c1",
+        "quantity": "9007199254741085",
+        "amount": {
+          "coefficient": "940",
+          "scale": 2
+        },
+        "label": {
+          "state": "null"
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-094",
+        "category": "c2",
+        "quantity": "9007199254741086",
+        "amount": {
+          "coefficient": "950",
+          "scale": 2
+        },
+        "label": {
+          "state": "value",
+          "value": ""
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-095",
+        "category": "c3",
+        "quantity": "9007199254741087",
+        "amount": {
+          "coefficient": "960",
+          "scale": 2
+        },
+        "label": {
+          "state": "value",
+          "value": "label-095"
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-096",
+        "category": "c0",
+        "quantity": "9007199254741088",
+        "amount": {
+          "coefficient": "970",
+          "scale": 2
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-097",
+        "category": "c1",
+        "quantity": "9007199254741089",
+        "amount": {
+          "coefficient": "980",
+          "scale": 2
+        },
+        "label": {
+          "state": "null"
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-098",
+        "category": "c2",
+        "quantity": "9007199254741090",
+        "amount": {
+          "coefficient": "990",
+          "scale": 2
+        },
+        "label": {
+          "state": "value",
+          "value": ""
+        }
+      }
+    },
+    {
+      "command": "upsert",
+      "row": {
+        "id": "p-099",
+        "category": "c3",
+        "quantity": "9007199254741091",
+        "amount": {
+          "coefficient": "1000",
+          "scale": 2
+        },
+        "label": {
+          "state": "value",
+          "value": "label-099"
+        }
+      }
+    },
+    {
+      "command": "open",
+      "subscription": "all",
+      "query": {
+        "where_expr": {
+          "op": "true"
+        },
+        "direction": "ascending",
+        "offset": 0,
+        "limit": 8
+      }
+    },
+    {
+      "command": "patch",
+      "id": "p-050",
+      "patch": {
+        "category": {
+          "op": "unchanged"
+        },
+        "label": {
+          "op": "set_null"
+        },
+        "quantity": {
+          "op": "unchanged"
+        },
+        "amount": {
+          "op": "set",
+          "value": {
+            "coefficient": "900719925474099301",
+            "scale": 2
+          }
+        }
+      }
+    },
+    {
+      "command": "delete",
+      "id": "p-002"
+    },
+    {
+      "command": "open",
+      "subscription": "c0",
+      "query": {
+        "where_expr": {
+          "op": "condition",
+          "args": {
+            "field": "category_equals",
+            "condition": "c0"
+          }
+        },
+        "direction": "ascending",
+        "offset": 0,
+        "limit": 5
+      }
+    }
+  ],
+  "expect": {
+    "all": {
+      "version": 104,
+      "total_rows": 99,
+      "ids": [
+        "p-000",
+        "p-001",
+        "p-003",
+        "p-004",
+        "p-005",
+        "p-006",
+        "p-007",
+        "p-008"
+      ]
+    },
+    "c0": {
+      "version": 104,
+      "total_rows": 25,
+      "ids": [
+        "p-000",
+        "p-004",
+        "p-008",
+        "p-012",
+        "p-016"
+      ],
+      "groups": [
+        {
+          "category": "c0",
+          "count": "25"
+        }
+      ]
+    },
+    "patched_amount": "9007199254740993.01"
+  }
+}

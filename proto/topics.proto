@@ -1,0 +1,86 @@
+syntax = "proto3";
+package topics;
+import "view-options.proto";
+
+message OrdersKey {
+  optional string tenant = 1;
+  optional string desk = 2;
+  optional uint64 account = 3;
+  optional int64 partitionKey = 4;
+}
+message PositionsKey {
+  optional string tenant = 1;
+  optional string desk = 2;
+  optional uint64 account = 3;
+  optional int64 partitionKey = 4;
+}
+message SimpleKey { optional string id = 1; }
+message Orders {
+  option (view.schema_id) = "orders";
+  option (view.legacy_key) = "orderId";
+  optional string orderId = 1;
+  optional string customer = 2;
+  optional bool open = 3;
+  optional uint64 units = 4;
+  optional string price = 5 [(view.decimal) = true];
+  optional string note = 6 [(view.optional) = true, (view.nullable) = true];
+  optional bool null_note = 7 [(view.null_for) = "note"];
+}
+message Positions {
+  option (view.schema_id) = "positions";
+  option (view.legacy_key) = "positionId";
+  optional string positionId = 1;
+  optional string symbol = 2;
+  optional int64 quantity = 3;
+  optional double risk = 4;
+  optional bool hedged = 5;
+}
+message ComparisonProducts {
+  option (view.schema_id) = "comparison_products";
+  option (view.legacy_key) = "id";
+  optional string id = 1;
+  optional string category = 2;
+  optional int64 quantity = 3;
+  optional string amount = 4 [(view.decimal) = true];
+  optional string label = 5 [(view.optional) = true];
+}
+message Wide {
+  option (view.schema_id) = "wide";
+  option (view.legacy_key) = "recordId";
+  optional string recordId = 1;
+  optional string field01 = 2 [(view.decimal) = true];
+  optional bool field02 = 3;
+  optional string field03 = 4;
+  optional string field04 = 5 [(view.decimal) = true];
+  optional bool field05 = 6;
+  optional string field06 = 7;
+  optional string field07 = 8 [(view.decimal) = true];
+  optional bool field08 = 9;
+  optional string field09 = 10;
+  optional string field10 = 11 [(view.decimal) = true];
+  optional bool field11 = 12;
+  optional string field12 = 13;
+  optional string field13 = 14 [(view.decimal) = true];
+  optional bool field14 = 15;
+  optional string field15 = 16;
+  optional string field16 = 17 [(view.decimal) = true];
+  optional bool field17 = 18;
+  optional string field18 = 19;
+  optional string field19 = 20 [(view.decimal) = true];
+  optional bool field20 = 21;
+  optional string field21 = 22;
+  optional string field22 = 23 [(view.decimal) = true];
+  optional bool field23 = 24;
+  optional string field24 = 25;
+  optional string field25 = 26 [(view.decimal) = true];
+  optional bool field26 = 27;
+  optional string field27 = 28;
+  optional string field28 = 29 [(view.decimal) = true];
+  optional bool field29 = 30;
+  optional string field30 = 31;
+  optional string field31 = 32 [(view.decimal) = true];
+  optional bool field32 = 33;
+  optional string field33 = 34;
+  optional string field34 = 35 [(view.decimal) = true];
+  optional bool field35 = 36;
+}

@@ -1,0 +1,325 @@
+{
+  "format": 1,
+  "schemas": [
+    {
+      "format": 1,
+      "id": "orders_v1",
+      "version": 1,
+      "key": "orderId",
+      "fields": [
+        {
+          "name": "orderId",
+          "kind": "string",
+          "optional": false,
+          "nullable": false
+        },
+        {
+          "name": "customer",
+          "kind": "string",
+          "optional": false,
+          "nullable": false
+        },
+        {
+          "name": "open",
+          "kind": "boolean",
+          "optional": false,
+          "nullable": false
+        },
+        {
+          "name": "units",
+          "kind": "uint64",
+          "optional": false,
+          "nullable": false
+        },
+        {
+          "name": "price",
+          "kind": "decimal",
+          "optional": false,
+          "nullable": false
+        },
+        {
+          "name": "note",
+          "kind": "string",
+          "optional": true,
+          "nullable": true
+        }
+      ]
+    },
+    {
+      "format": 1,
+      "id": "positions_v1",
+      "version": 1,
+      "key": "positionId",
+      "fields": [
+        {
+          "name": "positionId",
+          "kind": "string",
+          "optional": false,
+          "nullable": false
+        },
+        {
+          "name": "symbol",
+          "kind": "string",
+          "optional": false,
+          "nullable": false
+        },
+        {
+          "name": "quantity",
+          "kind": "int64",
+          "optional": false,
+          "nullable": false
+        },
+        {
+          "name": "risk",
+          "kind": "number",
+          "optional": false,
+          "nullable": false
+        },
+        {
+          "name": "hedged",
+          "kind": "boolean",
+          "optional": false,
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "format": 1,
+      "id": "wide_v1",
+      "version": 1,
+      "key": "recordId",
+      "fields": [
+        {
+          "name": "recordId",
+          "kind": "string",
+          "optional": false,
+          "nullable": false
+        },
+        {
+          "name": "field01",
+          "kind": "decimal",
+          "optional": false,
+          "nullable": false
+        },
+        {
+          "name": "field02",
+          "kind": "boolean",
+          "optional": false,
+          "nullable": false
+        },
+        {
+          "name": "field03",
+          "kind": "string",
+          "optional": false,
+          "nullable": false
+        },
+        {
+          "name": "field04",
+          "kind": "decimal",
+          "optional": false,
+          "nullable": false
+        },
+        {
+          "name": "field05",
+          "kind": "boolean",
+          "optional": false,
+          "nullable": false
+        },
+        {
+          "name": "field06",
+          "kind": "string",
+          "optional": false,
+          "nullable": false
+        },
+        {
+          "name": "field07",
+          "kind": "decimal",
+          "optional": false,
+          "nullable": false
+        },
+        {
+          "name": "field08",
+          "kind": "boolean",
+          "optional": false,
+          "nullable": false
+        },
+        {
+          "name": "field09",
+          "kind": "string",
+          "optional": false,
+          "nullable": false
+        },
+        {
+          "name": "field10",
+          "kind": "decimal",
+          "optional": false,
+          "nullable": false
+        },
+        {
+          "name": "field11",
+          "kind": "boolean",
+          "optional": false,
+          "nullable": false
+        },
+        {
+          "name": "field12",
+          "kind": "string",
+          "optional": false,
+          "nullable": false
+        },
+        {
+          "name": "field13",
+          "kind": "decimal",
+          "optional": false,
+          "nullable": false
+        },
+        {
+          "name": "field14",
+          "kind": "boolean",
+          "optional": false,
+          "nullable": false
+        },
+        {
+          "name": "field15",
+          "kind": "string",
+          "optional": false,
+          "nullable": false
+        },
+        {
+          "name": "field16",
+          "kind": "decimal",
+          "optional": false,
+          "nullable": false
+        },
+        {
+          "name": "field17",
+          "kind": "boolean",
+          "optional": false,
+          "nullable": false
+        },
+        {
+          "name": "field18",
+          "kind": "string",
+          "optional": false,
+          "nullable": false
+        },
+        {
+          "name": "field19",
+          "kind": "decimal",
+          "optional": false,
+          "nullable": false
+        },
+        {
+          "name": "field20",
+          "kind": "boolean",
+          "optional": false,
+          "nullable": false
+        },
+        {
+          "name": "field21",
+          "kind": "string",
+          "optional": false,
+          "nullable": false
+        },
+        {
+          "name": "field22",
+          "kind": "decimal",
+          "optional": false,
+          "nullable": false
+        },
+        {
+          "name": "field23",
+          "kind": "boolean",
+          "optional": false,
+          "nullable": false
+        },
+        {
+          "name": "field24",
+          "kind": "string",
+          "optional": false,
+          "nullable": false
+        },
+        {
+          "name": "field25",
+          "kind": "decimal",
+          "optional": false,
+          "nullable": false
+        },
+        {
+          "name": "field26",
+          "kind": "boolean",
+          "optional": false,
+          "nullable": false
+        },
+        {
+          "name": "field27",
+          "kind": "string",
+          "optional": false,
+          "nullable": false
+        },
+        {
+          "name": "field28",
+          "kind": "decimal",
+          "optional": false,
+          "nullable": false
+        },
+        {
+          "name": "field29",
+          "kind": "boolean",
+          "optional": false,
+          "nullable": false
+        },
+        {
+          "name": "field30",
+          "kind": "string",
+          "optional": false,
+          "nullable": false
+        },
+        {
+          "name": "field31",
+          "kind": "decimal",
+          "optional": false,
+          "nullable": false
+        },
+        {
+          "name": "field32",
+          "kind": "boolean",
+          "optional": false,
+          "nullable": false
+        },
+        {
+          "name": "field33",
+          "kind": "string",
+          "optional": false,
+          "nullable": false
+        },
+        {
+          "name": "field34",
+          "kind": "decimal",
+          "optional": false,
+          "nullable": false
+        },
+        {
+          "name": "field35",
+          "kind": "boolean",
+          "optional": false,
+          "nullable": false
+        }
+      ]
+    }
+  ],
+  "topics": [
+    {
+      "topic": "orders",
+      "schema": "88b1b7f98204fce8ac04e316e5b06ae9bff15b589fee07263869bc32a5ba5cae"
+    },
+    {
+      "topic": "positions",
+      "schema": "3f220f95f2a77138b4c2b1fea6f25b5aa975f12a2fc8566b702c01d0edc0a9bf"
+    },
+    {
+      "topic": "wide",
+      "schema": "42a238e7b083f21eaa06b08b58f6081118e7a257f2a9e488eaa6f4ffe0e3d50c"
+    }
+  ]
+}

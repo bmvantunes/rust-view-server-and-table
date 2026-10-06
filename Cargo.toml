@@ -1,0 +1,17 @@
+[workspace]
+resolver = "3"
+members = [
+  "apps/server",
+  "packages/rust-view-server/crates/core",
+  "packages/rust-view-server/crates/admission",
+  "packages/rust-view-server/crates/runtime",
+  "packages/rust-view-server/crates/wire",
+  "packages/rust-view-server/crates/wasm",
+]
+exclude = ["packages/rust-view-server/crates/vendor/view-wire-prost"]
+
+[profile.dev]
+debug = 0
+
+[profile.test]
+debug = 0

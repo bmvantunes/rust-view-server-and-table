@@ -1,0 +1,296 @@
+[
+  {
+    "topic": "orders",
+    "schema": "88b1b7f98204fce8ac04e316e5b06ae9bff15b589fee07263869bc32a5ba5cae",
+    "brokers": "127.0.0.1:39492",
+    "source_topic": "configurable-example-orders",
+    "source_incarnation": "configurable-example-orders-lifetime",
+    "group": "configurable-example-orders-owner",
+    "state_topic": "configurable-example-orders-canonical-v2",
+    "initialize_empty": true,
+    "partitions": [
+      0,
+      1
+    ],
+    "key_descriptor": {
+      "schema_id": 1,
+      "message_index": 0,
+      "descriptor_hex": "0a310a0869642e70726f746f221d0a034b6579120f0a026964180120012809480088010142050a035f6964620670726f746f33"
+    },
+    "value_descriptor": {
+      "schema_id": 2,
+      "message_index": 0,
+      "descriptor_hex": "0a87020a0f6e756c6c5f6e6f74652e70726f746f22eb010a096f72646572735f763112140a076f726465724964180120012809480088010112150a08637573746f6d6572180220012809480188010112110a046f70656e180320012808480288010112120a05756e697473180420012804480388010112120a057072696365180520012809480488010112110a046e6f7465180620012809480588010112160a096e756c6c5f6e6f74651807200128084806880101420a0a085f6f726465724964420b0a095f637573746f6d657242070a055f6f70656e42080a065f756e69747342080a065f707269636542070a055f6e6f7465420c0a0a5f6e756c6c5f6e6f7465620670726f746f33"
+    },
+    "key_tag": 1,
+    "mapping": [
+      {
+        "field": "orderId",
+        "tag": 1
+      },
+      {
+        "field": "customer",
+        "tag": 2
+      },
+      {
+        "field": "open",
+        "tag": 3
+      },
+      {
+        "field": "units",
+        "tag": 4
+      },
+      {
+        "field": "price",
+        "tag": 5
+      },
+      {
+        "field": "note",
+        "tag": 6,
+        "null_tag": 7
+      }
+    ],
+    "readiness": {
+      "enter_offset_distance": 64,
+      "exit_offset_distance": 256,
+      "max_sample_age_ms": 5000,
+      "enter_hold_ms": 2000,
+      "exit_hold_ms": 1000
+    },
+    "max_rows": 100000
+  },
+  {
+    "topic": "positions",
+    "schema": "3f220f95f2a77138b4c2b1fea6f25b5aa975f12a2fc8566b702c01d0edc0a9bf",
+    "brokers": "127.0.0.1:39492",
+    "source_topic": "configurable-example-positions",
+    "source_incarnation": "configurable-example-positions-lifetime",
+    "group": "configurable-example-positions-owner",
+    "state_topic": "configurable-example-positions-canonical-v2",
+    "initialize_empty": true,
+    "partitions": [
+      0,
+      1
+    ],
+    "key_descriptor": {
+      "schema_id": 3,
+      "message_index": 0,
+      "descriptor_hex": "0a310a0869642e70726f746f221d0a034b6579120f0a026964180120012809480088010142050a035f6964620670726f746f33"
+    },
+    "value_descriptor": {
+      "schema_id": 4,
+      "message_index": 0,
+      "descriptor_hex": "0acf010a0c6865646765642e70726f746f22b6010a0c706f736974696f6e735f763112170a0a706f736974696f6e4964180120012809480088010112130a0673796d626f6c180220012809480188010112150a087175616e74697479180320012803480288010112110a047269736b180420012801480388010112130a066865646765641805200128084804880101420d0a0b5f706f736974696f6e496442090a075f73796d626f6c420b0a095f7175616e7469747942070a055f7269736b42090a075f686564676564620670726f746f33"
+    },
+    "key_tag": 1,
+    "mapping": [
+      {
+        "field": "positionId",
+        "tag": 1
+      },
+      {
+        "field": "symbol",
+        "tag": 2
+      },
+      {
+        "field": "quantity",
+        "tag": 3
+      },
+      {
+        "field": "risk",
+        "tag": 4
+      },
+      {
+        "field": "hedged",
+        "tag": 5
+      }
+    ],
+    "readiness": {
+      "enter_offset_distance": 64,
+      "exit_offset_distance": 256,
+      "max_sample_age_ms": 5000,
+      "enter_hold_ms": 2000,
+      "exit_hold_ms": 1000
+    },
+    "max_rows": 100000
+  },
+  {
+    "topic": "wide",
+    "schema": "42a238e7b083f21eaa06b08b58f6081118e7a257f2a9e488eaa6f4ffe0e3d50c",
+    "brokers": "127.0.0.1:39492",
+    "source_topic": "configurable-example-wide",
+    "source_incarnation": "configurable-example-wide-lifetime",
+    "group": "configurable-example-wide-owner",
+    "state_topic": "configurable-example-wide-canonical-v2",
+    "initialize_empty": true,
+    "partitions": [
+      0,
+      1
+    ],
+    "key_descriptor": {
+      "schema_id": 5,
+      "message_index": 0,
+      "descriptor_hex": "0a310a0869642e70726f746f221d0a034b6579120f0a026964180120012809480088010142050a035f6964620670726f746f33"
+    },
+    "value_descriptor": {
+      "schema_id": 6,
+      "message_index": 0,
+      "descriptor_hex": "0aed090a0d6669656c6433352e70726f746f22d3090a07776964655f763112150a087265636f72644964180120012809480088010112140a076669656c643031180220012809480188010112140a076669656c643032180320012808480288010112140a076669656c643033180420012809480388010112140a076669656c643034180520012809480488010112140a076669656c643035180620012808480588010112140a076669656c643036180720012809480688010112140a076669656c643037180820012809480788010112140a076669656c643038180920012808480888010112140a076669656c643039180a20012809480988010112140a076669656c643130180b20012809480a88010112140a076669656c643131180c20012808480b88010112140a076669656c643132180d20012809480c88010112140a076669656c643133180e20012809480d88010112140a076669656c643134180f20012808480e88010112140a076669656c643135181020012809480f88010112140a076669656c643136181120012809481088010112140a076669656c643137181220012808481188010112140a076669656c643138181320012809481288010112140a076669656c643139181420012809481388010112140a076669656c643230181520012808481488010112140a076669656c643231181620012809481588010112140a076669656c643232181720012809481688010112140a076669656c643233181820012808481788010112140a076669656c643234181920012809481888010112140a076669656c643235181a20012809481988010112140a076669656c643236181b20012808481a88010112140a076669656c643237181c20012809481b88010112140a076669656c643238181d20012809481c88010112140a076669656c643239181e20012808481d88010112140a076669656c643330181f20012809481e88010112140a076669656c643331182020012809481f88010112140a076669656c643332182120012808482088010112140a076669656c643333182220012809482188010112140a076669656c643334182320012809482288010112140a076669656c6433351824200128084823880101420b0a095f7265636f72644964420a0a085f6669656c643031420a0a085f6669656c643032420a0a085f6669656c643033420a0a085f6669656c643034420a0a085f6669656c643035420a0a085f6669656c643036420a0a085f6669656c643037420a0a085f6669656c643038420a0a085f6669656c643039420a0a085f6669656c643130420a0a085f6669656c643131420a0a085f6669656c643132420a0a085f6669656c643133420a0a085f6669656c643134420a0a085f6669656c643135420a0a085f6669656c643136420a0a085f6669656c643137420a0a085f6669656c643138420a0a085f6669656c643139420a0a085f6669656c643230420a0a085f6669656c643231420a0a085f6669656c643232420a0a085f6669656c643233420a0a085f6669656c643234420a0a085f6669656c643235420a0a085f6669656c643236420a0a085f6669656c643237420a0a085f6669656c643238420a0a085f6669656c643239420a0a085f6669656c643330420a0a085f6669656c643331420a0a085f6669656c643332420a0a085f6669656c643333420a0a085f6669656c643334420a0a085f6669656c643335620670726f746f33"
+    },
+    "key_tag": 1,
+    "mapping": [
+      {
+        "field": "recordId",
+        "tag": 1
+      },
+      {
+        "field": "field01",
+        "tag": 2
+      },
+      {
+        "field": "field02",
+        "tag": 3
+      },
+      {
+        "field": "field03",
+        "tag": 4
+      },
+      {
+        "field": "field04",
+        "tag": 5
+      },
+      {
+        "field": "field05",
+        "tag": 6
+      },
+      {
+        "field": "field06",
+        "tag": 7
+      },
+      {
+        "field": "field07",
+        "tag": 8
+      },
+      {
+        "field": "field08",
+        "tag": 9
+      },
+      {
+        "field": "field09",
+        "tag": 10
+      },
+      {
+        "field": "field10",
+        "tag": 11
+      },
+      {
+        "field": "field11",
+        "tag": 12
+      },
+      {
+        "field": "field12",
+        "tag": 13
+      },
+      {
+        "field": "field13",
+        "tag": 14
+      },
+      {
+        "field": "field14",
+        "tag": 15
+      },
+      {
+        "field": "field15",
+        "tag": 16
+      },
+      {
+        "field": "field16",
+        "tag": 17
+      },
+      {
+        "field": "field17",
+        "tag": 18
+      },
+      {
+        "field": "field18",
+        "tag": 19
+      },
+      {
+        "field": "field19",
+        "tag": 20
+      },
+      {
+        "field": "field20",
+        "tag": 21
+      },
+      {
+        "field": "field21",
+        "tag": 22
+      },
+      {
+        "field": "field22",
+        "tag": 23
+      },
+      {
+        "field": "field23",
+        "tag": 24
+      },
+      {
+        "field": "field24",
+        "tag": 25
+      },
+      {
+        "field": "field25",
+        "tag": 26
+      },
+      {
+        "field": "field26",
+        "tag": 27
+      },
+      {
+        "field": "field27",
+        "tag": 28
+      },
+      {
+        "field": "field28",
+        "tag": 29
+      },
+      {
+        "field": "field29",
+        "tag": 30
+      },
+      {
+        "field": "field30",
+        "tag": 31
+      },
+      {
+        "field": "field31",
+        "tag": 32
+      },
+      {
+        "field": "field32",
+        "tag": 33
+      },
+      {
+        "field": "field33",
+        "tag": 34
+      },
+      {
+        "field": "field34",
+        "tag": 35
+      },
+      {
+        "field": "field35",
+        "tag": 36
+      }
+    ],
+    "readiness": {
+      "enter_offset_distance": 64,
+      "exit_offset_distance": 256,
+      "max_sample_age_ms": 5000,
+      "enter_hold_ms": 2000,
+      "exit_hold_ms": 1000
+    },
+    "max_rows": 100000
+  }
+]

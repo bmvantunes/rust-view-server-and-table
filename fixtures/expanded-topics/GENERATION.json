@@ -1,0 +1,19 @@
+{
+  "generator": "protobufjs",
+  "version": "8.8.0",
+  "generator_sha256": "bb42a9472ac3d7e5e0b8202ad5b4504daa81932eec557d56eb5b4fabd327ee9b",
+  "extension_sha256": "51ffbfa46d05938824ef288f301fdf86b03106e751150e26a297ac3ee808228e",
+  "schema_id_validator_sha256": "179b69fdc0d5c48a9b9ecf03a5ca5aa0bd31428bb59a3168533d014dd3f1a351",
+  "inputs": {
+    "topics.proto": "1cc5f337d1689f960e8d0ad3752fcde78f1fa975e5b97d26deb52ea4fc992206",
+    "view-options.proto": "fc49b43ba3f5d04b207c672a3b00d735d53f3baca7b0c3b023344da1d5bdb546",
+    "common.proto": "1b82bd9948598ea7b566f0d88a5184b48d6a65b09305c7b9947ad42dda39ae41",
+    "other.proto": "7b77a71c3319e9697fe972056fb388388f34c5736dcd92f26eae876828f5d643"
+  },
+  "outputs": {
+    "browser/src/generated/expanded-topics.ts": "a21a44014b7fe0a4648222cc6eee17d916ce32d627def6a430965919ac5f4694",
+    "fixtures/expanded-topics/catalog.json": "d350c211b784f89b6719d6c510c30c90d898d465113237e43c3e554826baa166",
+    "fixtures/expanded-topics/browser-catalog.json": "50fc5bb44f218cc77e4acb4e9605675cd040c0a5e3d3fd47afe0c3900b8e6708",
+    "fixtures/expanded-topics/source-bindings.json": "ebece93fae0f2adf73d7831e97e34b71a60cac771c18d785f46c6699bc504aa8"
+  }
+}

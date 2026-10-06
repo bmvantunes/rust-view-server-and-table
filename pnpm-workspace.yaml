@@ -1,0 +1,41 @@
+packages:
+  - apps/*
+  - packages/*
+  - tools/*
+  - apps/apps/*
+
+catalogMode: prefer
+
+catalog:
+  "@types/node": 26.6.4
+  typescript: 7.0.2
+  vite: npm:@voidzero-dev/vite-plus-core@1.0.0
+  vite-plus: 1.0.0
+overrides:
+  vite@*: "catalog:"
+peerDependencyRules:
+  allowAny:
+    - vite
+  allowedVersions:
+    vite: "*"
+
+allowBuilds:
+  esbuild: true
+  lightningcss: true
+  protobufjs: true
+  "@bufbuild/buf": true
+  msgpackr-extract: true
+
+patchedDependencies:
+  babel-plugin-react-compiler@1.0.0: patches/babel-plugin-react-compiler@1.0.0.patch
+minimumReleaseAgeExclude:
+  - "@opentelemetry/api-logs@0.223.0"
+  - "@opentelemetry/core@2.12.0"
+  - "@opentelemetry/exporter-trace-otlp-proto@0.223.0"
+  - "@opentelemetry/otlp-exporter-base@0.223.0"
+  - "@opentelemetry/otlp-transformer@0.223.0"
+  - "@opentelemetry/resources@2.12.0"
+  - "@opentelemetry/sdk-logs@0.223.0"
+  - "@opentelemetry/sdk-metrics@2.12.0"
+  - "@opentelemetry/sdk-trace-base@2.12.0"
+  - "@opentelemetry/sdk-trace@2.12.0"

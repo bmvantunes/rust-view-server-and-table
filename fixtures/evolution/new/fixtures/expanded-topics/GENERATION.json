@@ -1,0 +1,16 @@
+{
+  "generator": "protobufjs",
+  "version": "8.8.0",
+  "generator_sha256": "0d782333db2c8f12783bfe10a501110310a9ee4091842b832ff2035b3a1946cc",
+  "extension_sha256": "f39d72c8956dfab7c8732f50734f1eedff88d907f48d46c8a72526cf15696260",
+  "inputs": {
+    "topics.proto": "e61145a4ca3e0cb2281ae25ac293b0c72a37318ce996ca8bdfb66a21e39da1df",
+    "view-options.proto": "fc49b43ba3f5d04b207c672a3b00d735d53f3baca7b0c3b023344da1d5bdb546"
+  },
+  "outputs": {
+    "browser/src/generated/expanded-topics.ts": "c2f586f87ab549b182cc79541d15e25af90b5f2a29a356aeef82da6eddfb2b95",
+    "fixtures/expanded-topics/catalog.json": "411a9faeb8ee79529bd189e5bf63002c5b4b4baecc7ae71db7db1c4346dbca0d",
+    "fixtures/expanded-topics/browser-catalog.json": "277f4ed0258685d5f407dc407a6488d5641221cd5831befa5a5c3b5295233362",
+    "fixtures/expanded-topics/source-bindings.json": "9d98964345ec3360b3d4c6f9c957137ec91a3de5cc850457471f9228fec7ce55"
+  }
+}
