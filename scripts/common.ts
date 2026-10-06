@@ -97,18 +97,29 @@ export function waitExit(child: ChildProcess, timeoutMs = 30000): Promise<number
 export async function stopOwned(child: ChildProcess, graceMs = 30000) {
   if (exited(child)) return;
   if (!child.pid) return;
-  const kill = (signal: NodeJS.Signals) => {
+  const kill = async (signal: NodeJS.Signals) => {
     try {
       process.kill(-child.pid!, signal);
     } catch (error) {
-      if (object(error).code !== "ESRCH") throw error;
+      const code = object(error).code;
+      // stdout EOF can precede Node's exit event. Only observed exit makes a
+      // failed signal harmless; permission errors for a live child still fail.
+      if (code === "ESRCH" || code === "EPERM") {
+        try {
+          await waitExit(child, 250);
+          return;
+        } catch {
+          // Preserve the original signal error when termination is unverified.
+        }
+      }
+      throw error;
     }
   };
-  kill("SIGTERM");
+  await kill("SIGTERM");
   try {
     await waitExit(child, graceMs);
   } catch {
-    kill("SIGKILL");
+    await kill("SIGKILL");
     await waitExit(child, 10000);
   }
 }
@@ -170,6 +181,12 @@ export async function command(
   }
 }
 
+export class JsonLineEOF extends Error {
+  constructor(source: string) {
+    super(`${source} stdout ended before the next JSON message`);
+    this.name = "JsonLineEOF";
+  }
+}
 export class JsonLines {
   private queue: unknown[] = [];
   private pending?: {
@@ -179,7 +196,9 @@ export class JsonLines {
   };
   private failure?: Error;
   private lines: ReturnType<typeof createInterface>;
-  constructor(child: ChildProcess) {
+  private source: string;
+  constructor(child: ChildProcess, source = "Producer") {
+    this.source = source;
     if (!child.stdout) throw Error("Child stdout is required");
     this.lines = createInterface({ input: child.stdout });
     this.lines.on("line", (line) => {
@@ -195,7 +214,7 @@ export class JsonLines {
         this.fail(Error(message(error)));
       }
     });
-    this.lines.on("close", () => this.fail(Error("Producer exited before receipt")));
+    this.lines.on("close", () => this.fail(new JsonLineEOF(this.source)));
     child.on("error", (error) => this.fail(error));
   }
   private fail(error: Error) {
@@ -213,7 +232,7 @@ export class JsonLines {
     return new Promise((resolve, reject) => {
       const timer = setTimeout(() => {
         this.pending = undefined;
-        reject(Error("Producer receipt deadline exceeded"));
+        reject(Error(`${this.source} receipt deadline exceeded`));
       }, timeoutMs);
       this.pending = { resolve, reject, timer };
     });

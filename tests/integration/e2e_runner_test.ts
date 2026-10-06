@@ -14,7 +14,16 @@ import {
   type CampaignResult,
 } from "../../scripts/e2e.ts";
 import type { Expected } from "../../scripts/control.ts";
-import { command, settledStage } from "../../scripts/common.ts";
+import {
+  command,
+  settledStage,
+  spawnOwned,
+  JsonLines,
+  JsonLineEOF,
+  waitExit,
+  stopOwned,
+  exited,
+} from "../../scripts/common.ts";
 const expected: Expected = {
   client_orders: {
     count: 200000,
@@ -210,4 +219,67 @@ test("development startup abort settles blocked broker before any later stage", 
   await rejected;
   assert.equal(calls.length, 1);
   assert(calls[0].includes("info"));
+});
+
+test("browser RPC EOF waits for its own exit and does not impersonate a producer failure", async () => {
+  const child = spawnOwned(
+    [process.execPath, "-e", "process.stdout.end(); setTimeout(() => process.exit(7), 80)"],
+    { stdio: ["ignore", "pipe", "ignore"] },
+  );
+  const reader = new JsonLines(child, "Browser RPC");
+  try {
+    await assert.rejects(
+      reader.read(),
+      (error) => error instanceof JsonLineEOF && error.message.includes("Browser RPC"),
+    );
+    assert.equal(
+      exited(child),
+      false,
+      "EOF must be observed before the intentionally delayed exit",
+    );
+    assert.equal(await waitExit(child, 2000), 7);
+    await stopOwned(child);
+  } finally {
+    reader.close();
+    if (!exited(child)) {
+      child.kill("SIGKILL");
+      await waitExit(child);
+    }
+  }
+});
+
+test("EPERM during owned cleanup is harmless only after actual child exit", async (t) => {
+  const child = spawnOwned([process.execPath, "-e", "setTimeout(() => process.exit(0), 30)"], {
+    stdio: "ignore",
+  });
+  t.mock.method(process, "kill", () => {
+    throw Object.assign(Error("signal denied"), { code: "EPERM" });
+  });
+  try {
+    await stopOwned(child);
+    assert.equal(child.exitCode, 0);
+  } finally {
+    t.mock.restoreAll();
+    if (!exited(child)) {
+      child.kill("SIGKILL");
+      await waitExit(child);
+    }
+  }
+});
+
+test("EPERM for a still-live owned child propagates as a cleanup failure", async (t) => {
+  const child = spawnOwned([process.execPath, "-e", "setInterval(() => {}, 1000)"], {
+    stdio: "ignore",
+  });
+  t.mock.method(process, "kill", () => {
+    throw Object.assign(Error("signal denied"), { code: "EPERM" });
+  });
+  try {
+    await assert.rejects(stopOwned(child), /signal denied/);
+    assert.equal(exited(child), false);
+  } finally {
+    t.mock.restoreAll();
+    child.kill("SIGKILL");
+    await waitExit(child);
+  }
 });

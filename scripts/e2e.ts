@@ -11,6 +11,8 @@ import {
   stopOwned,
   exited,
   JsonLines,
+  JsonLineEOF,
+  waitExit,
   object,
   list,
   text,
@@ -26,6 +28,7 @@ import { Kafka, type KafkaState } from "./kafka.ts";
 import { prepare, TOPICS } from "./demo_config.ts";
 import { record, tombstone } from "./seed.ts";
 import { Producer, serve, type Control, type Expected } from "./control.ts";
+import { createTransportProxy } from "./transport-proxy.ts";
 export async function fingerprint() {
   const paths = (
     await command(["git", "ls-files", "-z", "--cached", "--others", "--exclude-standard"])
@@ -237,7 +240,10 @@ export async function main(args = process.argv.slice(2)) {
   let producer: Producer | undefined,
     control: Control | undefined,
     state: KafkaState | undefined,
-    browserReader: JsonLines | undefined;
+    browserReader: JsonLines | undefined,
+    transportProxy: Awaited<ReturnType<typeof createTransportProxy>> | undefined;
+  const transportInterruptions: Array<{ closedConnections: number; atMonotonic: number }> = [];
+  result.transportInterruptions = transportInterruptions;
   const candidate = await fingerprint();
   result.candidateSourceSha256 = candidate;
   result.candidateFrozen = true;
@@ -433,9 +439,12 @@ export async function main(args = process.argv.slice(2)) {
       );
       result.nativeInitialCatchupSeconds = catchup.seconds;
       result.nativeInitialCatchupHealth = catchup.health;
+      transportProxy = await createTransportProxy(ports[1]);
+      controller.signal.throwIfAborted();
+      result.transportProxy = { listenPort: transportProxy.port, nativePort: ports[1] };
       const webEnv = {
         ...process.env,
-        VITE_RVS_URL: `ws://127.0.0.1:${ports[1]}/v15`,
+        VITE_RVS_URL: `ws://127.0.0.1:${transportProxy.port}/v15`,
         VITE_RVS_TOKEN: prepared.token,
         VITE_RVS_CONTROL_URL: `http://127.0.0.1:${ports[4]}`,
         VITE_RVS_CONTROL_TOKEN: prepared.token,
@@ -483,7 +492,7 @@ export async function main(args = process.argv.slice(2)) {
       );
       children.push(browser);
       browser.stdin?.on("error", () => {});
-      browserReader = new JsonLines(browser);
+      browserReader = new JsonLines(browser, "Browser RPC");
       let serial = 0;
       while (!exited(browser)) {
         controller.signal.throwIfAborted();
@@ -491,6 +500,10 @@ export async function main(args = process.argv.slice(2)) {
         try {
           request = object(await browserReader.read(1000));
         } catch (error) {
+          if (error instanceof JsonLineEOF) {
+            await waitExit(browser, 15000);
+            break;
+          }
           if (exited(browser)) break;
           if (message(error).includes("receipt deadline")) {
             if (exited(service)) throw Error("Owned native service exited unexpectedly");
@@ -513,6 +526,13 @@ export async function main(args = process.argv.slice(2)) {
             ),
             expected: producer.expected(),
           };
+        } else if (action === "interrupt-transport") {
+          if (!transportProxy) throw Error("Owned transport proxy is unavailable");
+          const closedConnections = transportProxy.interrupt();
+          if (closedConnections < 1)
+            throw Error("Transport interruption did not close a live connection");
+          transportInterruptions.push({ closedConnections, atMonotonic: performance.now() / 1000 });
+          response = { closedConnections };
         } else if (action === "restart") {
           await stopOwned(service);
           service = spawn(
@@ -581,6 +601,7 @@ export async function main(args = process.argv.slice(2)) {
           if (!exited(child)) throw Error("Owned child still alive after shutdown");
         },
       ]);
+    if (transportProxy) actions.push(["transport-proxy", () => transportProxy!.close()]);
     if (control) actions.push(["control-server", () => control!.close()]);
     if (producer)
       actions.push([
