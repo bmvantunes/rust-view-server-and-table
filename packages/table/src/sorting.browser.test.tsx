@@ -67,7 +67,7 @@ describe("BrunoTableClient sorting", () => {
     try {
       const screen = await render(<BrunoTableClient {...props} clientSource={source()} />);
       const grid = screen.getByRole("grid", { name: "Data for TABLE_ID_SORTING" });
-      const nameHeader = screen.getByRole("columnheader", { name: "Name" });
+      const nameHeader = screen.getByRole("columnheader", { name: /^Name(?:,|$)/u });
       grid.element().focus();
       grid.element().dispatchEvent(new KeyboardEvent("keydown", { bubbles: true, key: "ArrowUp" }));
       await vi.waitFor(() =>
@@ -349,13 +349,13 @@ describe("BrunoTableClient sorting", () => {
 
     await expect
       .element(screen.getByRole("row").nth(1).getByRole("gridcell").nth(0))
-      .toHaveTextContent("Second source row");
+      .toMatchTextContent("Second source row");
     await expect
       .element(screen.getByRole("row").nth(2).getByRole("gridcell").nth(0))
-      .toHaveTextContent("First source row");
+      .toMatchTextContent("First source row");
     await expect
       .element(screen.getByRole("row").nth(3).getByRole("gridcell").nth(0))
-      .toHaveTextContent("Third source row");
+      .toMatchTextContent("Third source row");
   });
 
   test("follows a live-moved Active Cell by Row Identity without revealing it", async () => {

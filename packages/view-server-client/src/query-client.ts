@@ -4,7 +4,7 @@ import {defineCatalog,validateQuery,type BrowserCatalog,type TopicQuery,type Que
 export function createQueryClient<const C extends BrowserCatalog>(provider:BrowserProductProvider,input:C){
  const catalog=defineCatalog(input);
  return {async query<const T extends keyof C&string,const Q extends TopicQuery<C[T]['schema']>>(topic:T,query:Q&QueryCheck<Q,C[T]['schema']>){
-  const entry=catalog[topic];validateQuery(entry.schema,query);
+  const entry=catalog[topic];validateQuery(entry.schema,query,{topic,fingerprint:entry.fingerprint});
   const subscription='once-'+crypto.randomUUID();
   const wire={topic,schema:entry.fingerprint,...(query.semanticProfile?{semantic_profile:query.semanticProfile}:{}),...(query.global?{global:true,aggregates:query.aggregates}:'groupBy'in query&&query.groupBy?{group_by:query.groupBy,aggregates:query.aggregates}:{select:query.select}),...(query.where===undefined?{}:{where:query.where}),...(query.having===undefined?{}:{having:query.having}),order_by:query.orderBy,offset:0,limit:4096};
   try{const responses=await provider.apply({command:'open',subscription,query:wire});const result=responses[subscription];

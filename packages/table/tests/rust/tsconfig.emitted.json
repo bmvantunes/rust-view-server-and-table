@@ -19,6 +19,7 @@
     }
   },
   "include": [
-    "./types.test-d.tsx"
+    "./types.test-d.tsx",
+    "./public-exports.test-d.tsx"
   ]
 }

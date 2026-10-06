@@ -4,8 +4,18 @@ import type {BrowserCatalog,Schema} from '@bruno/view-server-client/schema';
 import {admitCatalog,completeSelect,compile,decodeCompleteRows} from './translate.ts';
 import {createController,type ProviderPort} from './controller.ts';
 import type {Chrome,CompatRow,CompatResult,Query,WholeResult} from './types.ts';
-export {encodeCompatRow} from './translate.ts';
-export type {CompatRow,CompatResult,Query,RawQuery,GroupedQuery,Filter,Where,Viewport,CompleteSelect} from './types.ts';
+export {encodeCompatRow as BrunoTableRustEncodeCompatRow} from './translate.ts';
+export type {
+ CompatRow as BrunoTableRustCompatRow,
+ CompatResult as BrunoTableRustCompatResult,
+ Query as BrunoTableRustQuery,
+ RawQuery as BrunoTableRustRawQuery,
+ GroupedQuery as BrunoTableRustGroupedQuery,
+ Filter as BrunoTableRustFilter,
+ Where as BrunoTableRustWhere,
+ Viewport as BrunoTableRustViewport,
+ CompleteSelect as BrunoTableRustCompleteSelect,
+} from './types.ts';
 const initial:Chrome=Object.freeze({totalRows:0,version:0,status:'loading'});
 // One microtask of deferred disposal distinguishes React StrictMode effect replay
 // from an actual unmount. Replay setup advances the epoch synchronously; true
@@ -35,7 +45,7 @@ function subscribeComplete<S extends Schema>(provider:Pick<BrowserProductProvide
   catch(error){changed({status:'error',loaded:snapshot.loaded,totalRows:0,version:0,rows:[],error:error instanceof Error?error.message:String(error)});}
  });return()=>{live=false;stop();};
 }
-export function createBrunoTableHooks<const C extends BrowserCatalog>(input:C){
+function createBrunoTableHooks<const C extends BrowserCatalog>(input:C){
  const catalog=admitCatalog(input);
  function useViewportSource<const T extends keyof C&string>(provider:ProviderPort,topic:T){
   const entry=catalog[topic],id=useId();
@@ -56,3 +66,4 @@ export function createBrunoTableHooks<const C extends BrowserCatalog>(input:C){
  }
  return {catalog,useViewportSource,useCompleteSource};
 }
+export {createBrunoTableHooks as BrunoTableCreateRustHooks};

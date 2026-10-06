@@ -222,7 +222,7 @@ describe("BrunoTable production accessibility acceptance", () => {
     await expect.element(screen.getByRole("gridcell", { name: /Alpha/u })).toBeInTheDocument();
     expect(screen.getByRole("checkbox", { name: "Select all rows" }).all()).toHaveLength(0);
     expect(screen.getByRole("checkbox", { name: /Select row/u }).all()).toHaveLength(0);
-    await expect.element(screen.getByRole("status")).toHaveTextContent("Desk added at position 1");
+    await expect.element(screen.getByRole("status")).toMatchTextContent("Desk added at position 1");
   }, 30_000);
 
   test("keeps save state perceivable without motion and exposes keyboard notification actions", async () => {
@@ -274,7 +274,7 @@ describe("BrunoTable production accessibility acceptance", () => {
       await expect.element(pendingCell).toHaveAttribute("aria-busy", "true");
       await expect
         .element(screen.getByRole("region", { name: "Edit safety" }))
-        .toHaveTextContent("1 Immediate save pending");
+        .toMatchTextContent("1 Immediate save pending");
       const spinner = pendingCell.element().querySelector<SVGElement>("svg");
       if (spinner === null)
         throw new Error("A pending save must retain its non-color spinner cue.");
@@ -285,7 +285,7 @@ describe("BrunoTable production accessibility acceptance", () => {
       await expect.element(notificationRegion).toHaveAttribute("aria-live", "polite");
       await expect
         .element(notificationRegion)
-        .toHaveTextContent("Open Operation details for the complete explanation.");
+        .toMatchTextContent("Open Operation details for the complete explanation.");
       const failedCell = grid.getByRole("gridcell", {
         name: "Accessibility row 0000",
         exact: true,
@@ -300,7 +300,7 @@ describe("BrunoTable production accessibility acceptance", () => {
       await userEvent.keyboard("{Enter}");
       await expect
         .element(screen.getByRole("alertdialog", { name: "Save operation details" }))
-        .toHaveTextContent("Version changed on the server.");
+        .toMatchTextContent("Version changed on the server.");
       await userEvent.keyboard("{Escape}");
       await expect
         .element(screen.getByRole("alertdialog", { name: "Save operation details" }))
@@ -311,7 +311,7 @@ describe("BrunoTable production accessibility acceptance", () => {
       await userEvent.keyboard("{Enter}");
       await expect
         .element(notificationRegion)
-        .not.toHaveTextContent("Open Operation details for the complete explanation.");
+        .not.toMatchTextContent("Open Operation details for the complete explanation.");
 
       grid.element().focus();
       await userEvent.keyboard("{Enter}");
@@ -321,7 +321,7 @@ describe("BrunoTable production accessibility acceptance", () => {
       await expect.element(acceptedCell).toHaveAttribute("data-bruno-save-success", "");
       await expect
         .element(screen.getByRole("region", { name: "Edit safety" }))
-        .toHaveTextContent("1 Immediate save accepted · waiting for live confirmation");
+        .toMatchTextContent("1 Immediate save accepted · waiting for live confirmation");
       const successStyle = getComputedStyle(acceptedCell.element(), "::after");
       expect(successStyle.animationName).toBe("none");
       expect(successStyle.opacity).toBe("1");

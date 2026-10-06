@@ -225,10 +225,10 @@ describe("BrunoTableClient grouping and aggregation", () => {
     await expect.element(page.getByRole("gridcell", { name: "1 credits" })).toBeInTheDocument();
     await expect
       .element(page.getByRole("alert"))
-      .toHaveTextContent("Retaining the prior grouped result");
+      .toMatchTextContent("Retaining the prior grouped result");
     await expect
       .element(page.getByRole("alert"))
-      .toHaveTextContent("Grouped result, column COL_ID_CREDIT");
+      .toMatchTextContent("Grouped result, column COL_ID_CREDIT");
 
     rejectAggregate = false;
     const recoveredRows: readonly CreditRow[] = [
@@ -247,7 +247,7 @@ describe("BrunoTableClient grouping and aggregation", () => {
     expect(page.getByRole("checkbox", { name: /Select row/u }).all()).toHaveLength(0);
     await expect
       .element(page.getByRole("alert"))
-      .toHaveTextContent("Grouped result, column COL_ID_CREDIT");
+      .toMatchTextContent("Grouped result, column COL_ID_CREDIT");
 
     rejectAggregate = false;
     await screen.rerender(renderTable(recoveredRows, 5, "ready"));
@@ -308,7 +308,7 @@ describe("BrunoTableClient grouping and aggregation", () => {
     await expect.element(reorderInstructions).toBeVisible();
     await expect
       .element(reorderInstructions)
-      .toHaveTextContent(
+      .toMatchTextContent(
         "Reorder a group with Alt+Left Arrow or Alt+Right Arrow while its chip is focused.",
       );
     await expect
@@ -349,7 +349,7 @@ describe("BrunoTableClient grouping and aggregation", () => {
     );
     await expect
       .element(page.getByRole("status"))
-      .toHaveTextContent("Region moved to position 1 of 2");
+      .toMatchTextContent("Region moved to position 1 of 2");
     await expect
       .element(page.getByRole("gridcell", { name: "Alpha (1)", exact: true }))
       .not.toHaveAttribute("aria-selected");
@@ -361,7 +361,7 @@ describe("BrunoTableClient grouping and aggregation", () => {
     await expectCommittedProjection(["Desk", "Region", "Orders", "Quantity", "Maximum price"]);
     await expect
       .element(page.getByRole("status"))
-      .toHaveTextContent("Region moved to position 2 of 2");
+      .toMatchTextContent("Region moved to position 2 of 2");
     await expect
       .element(page.getByRole("gridcell", { name: "West", exact: true }))
       .not.toHaveAttribute("aria-selected");
@@ -379,7 +379,7 @@ describe("BrunoTableClient grouping and aggregation", () => {
     await expectCommittedProjection(["Desk", "Orders", "Quantity", "Maximum price"]);
     await expect
       .element(page.getByRole("log", { name: "Table interaction status" }))
-      .toHaveTextContent("Region removed from Group By, 1 group remaining");
+      .toMatchTextContent("Region removed from Group By, 1 group remaining");
     await expect
       .element(groupRegion.getByRole("button", { name: /Desk, position 1 of 1/u }))
       .toHaveFocus();
@@ -401,7 +401,7 @@ describe("BrunoTableClient grouping and aggregation", () => {
       .toBeInTheDocument();
     await expect
       .element(page.getByRole("status"))
-      .toHaveTextContent("Region removed from Group By, 1 group remaining");
+      .toMatchTextContent("Region removed from Group By, 1 group remaining");
 
     grid.element().focus();
     await userEvent.keyboard("{Shift>}{ArrowRight}{/Shift}");
@@ -411,7 +411,7 @@ describe("BrunoTableClient grouping and aggregation", () => {
     await vi.waitFor(() => expect(document.activeElement).toBe(addGroup.element()));
     await expect
       .element(page.getByRole("log", { name: "Table interaction status" }))
-      .toHaveTextContent("Desk removed from Group By, 0 groups remaining");
+      .toMatchTextContent("Desk removed from Group By, 0 groups remaining");
     expect(activeGridCellText()).toBe("Alpha");
     await expect.element(page.getByRole("columnheader", { name: /Region/u })).toBeInTheDocument();
     await expect
@@ -823,7 +823,9 @@ describe("BrunoTableClient grouping and aggregation", () => {
     await expect
       .element(page.getByRole("menuitemcheckbox", { name: "Region" }))
       .toBeInTheDocument();
-    await userEvent.hover(page.getByRole("menuitem", { name: "Reset", exact: true }));
+    const resetSubmenu = page.getByRole("menuitem", { name: "Reset", exact: true });
+    resetSubmenu.element().focus();
+    await userEvent.keyboard("{ArrowRight}");
     await expect.element(page.getByRole("menuitem", { name: "Reset widths" })).toBeInTheDocument();
     await expect
       .element(page.getByRole("menuitem", { name: "Reset visibility" }))
@@ -986,15 +988,15 @@ describe("BrunoTableClient grouping and aggregation", () => {
     await chooseGroup("Desk");
     await expect
       .element(page.getByRole("row").nth(1).getByRole("gridcell").first())
-      .toHaveTextContent("Alpha");
+      .toMatchTextContent("Alpha");
     await userEvent.click(page.getByRole("button", { name: /Sort by Rows/u }));
     await expect
       .element(page.getByRole("row").nth(1).getByRole("gridcell").first())
-      .toHaveTextContent("Beta");
+      .toMatchTextContent("Beta");
     await userEvent.click(page.getByRole("button", { name: /Sort by Rows/u }));
     await expect
       .element(page.getByRole("row").nth(1).getByRole("gridcell").first())
-      .toHaveTextContent("Alpha");
+      .toMatchTextContent("Alpha");
 
     page
       .getByRole("button", { name: /Sort by Maximum quantity/u })
@@ -1003,25 +1005,22 @@ describe("BrunoTableClient grouping and aggregation", () => {
     await userEvent.keyboard("{Enter}");
     await expect
       .element(page.getByRole("row").nth(1).getByRole("gridcell").first())
-      .toHaveTextContent("Alpha");
+      .toMatchTextContent("Alpha");
     await userEvent.keyboard("{Enter}");
     await expect
       .element(page.getByRole("row").nth(1).getByRole("gridcell").first())
-      .toHaveTextContent("Beta");
+      .toMatchTextContent("Beta");
   });
 
   test("resets grouped Active and vertical scroll after user sort and Quick Filter commits", async () => {
     const manyRows = Object.freeze(
-      Array.from(
-        { length: 100 },
-        (_unused, index): GroupRow => ({
-          id: `query-row-${String(index)}`,
-          desk: `Group ${String(index).padStart(3, "0")}`,
-          region: index % 2 === 0 ? "East" : "West",
-          quantity: BigInt(index + 1),
-          price: index,
-        }),
-      ),
+      Array.from({ length: 100 }, (_unused, index): GroupRow => ({
+        id: `query-row-${String(index)}`,
+        desk: `Group ${String(index).padStart(3, "0")}`,
+        region: index % 2 === 0 ? "East" : "West",
+        quantity: BigInt(index + 1),
+        price: index,
+      })),
     );
     await render(
       <BrunoTableClient
@@ -1193,12 +1192,14 @@ describe("BrunoTableClient grouping and aggregation", () => {
       page.getByRole("button", { name: "Sort by Maximum price", exact: true }).all(),
     ).toHaveLength(0);
     await userEvent.click(page.getByRole("button", { name: "Column menu for Desk" }));
-    expect(page.getByRole("menuitem", { name: "Sort by Desk" }).all()).toHaveLength(0);
+    expect(page.getByRole("menuitem", { name: /^Sort by Desk(?:,|$)/u }).all()).toHaveLength(0);
     await userEvent.keyboard("{Escape}");
 
     await chooseGroup("Desk");
     await userEvent.click(page.getByRole("button", { name: "Column menu for Desk" }));
-    await expect.element(page.getByRole("menuitem", { name: "Sort by Desk" })).toBeInTheDocument();
+    await expect
+      .element(page.getByRole("menuitem", { name: /^Sort by Desk(?:,|$)/u }))
+      .toBeInTheDocument();
     await userEvent.keyboard("{Escape}");
     await userEvent.click(page.getByRole("button", { name: "Sort rows, 1 active" }));
     const sortPanel = page.getByRole("dialog", { name: "Sort rows" });
@@ -1226,7 +1227,9 @@ describe("BrunoTableClient grouping and aggregation", () => {
       />,
     );
     await chooseGroup("Desk");
-    await expect.element(page.getByRole("columnheader", { name: "Orders" })).toBeInTheDocument();
+    await expect
+      .element(page.getByRole("columnheader", { name: /^Orders(?:,|$)/u }))
+      .toBeInTheDocument();
     await expect
       .element(page.getByRole("gridcell", { name: "5 units" }).first())
       .toBeInTheDocument();
@@ -1273,16 +1276,13 @@ describe("BrunoTableClient grouping and aggregation", () => {
 
   test("reconciles grouped Active by private identity, then clamped index, and clears only when empty", async () => {
     const liveRows = Object.freeze(
-      Array.from(
-        { length: 100 },
-        (_unused, index): GroupRow => ({
-          id: `row-${String(index)}`,
-          desk: `Group ${String(index).padStart(3, "0")}`,
-          region: "East",
-          quantity: BigInt(index + 1),
-          price: index,
-        }),
-      ),
+      Array.from({ length: 100 }, (_unused, index): GroupRow => ({
+        id: `row-${String(index)}`,
+        desk: `Group ${String(index).padStart(3, "0")}`,
+        region: "East",
+        quantity: BigInt(index + 1),
+        price: index,
+      })),
     );
     const renderTable = (sourceRows: readonly GroupRow[], version: number) => (
       <BrunoTableClient

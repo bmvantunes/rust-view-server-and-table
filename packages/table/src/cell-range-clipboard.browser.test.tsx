@@ -400,7 +400,7 @@ describe("BrunoTableClient one-axis Cell Range and atomic Copy", () => {
       await userEvent.click(page.getByRole("button", { name: "Sort by Score" }));
       await settleBrunoTableBrowserFrames();
       expect(grid.element().getAttribute("aria-activedescendant")).toBe(
-        page.getByRole("columnheader", { name: "Score" }).element().id,
+        page.getByRole("columnheader", { name: /^Score, sorted ascending,/u }).element().id,
       );
 
       grid.element().focus();
@@ -1892,10 +1892,10 @@ describe("BrunoTableClient one-axis Cell Range and atomic Copy", () => {
         );
         expect(currentHeaders).not.toEqual(initialHeaders);
         await expect
-          .element(page.getByRole("columnheader", { name: "Wide 1" }))
+          .element(page.getByRole("columnheader", { name: /^Wide 1(?:,|$)/u }))
           .toBeInTheDocument();
         await expect
-          .element(page.getByRole("columnheader", { name: "Wide 8" }))
+          .element(page.getByRole("columnheader", { name: /^Wide 8(?:,|$)/u }))
           .toBeInTheDocument();
 
         const framesAfterRelease = events.filter((event) => event.kind === "pointer-frame").length;
@@ -1953,7 +1953,7 @@ describe("BrunoTableClient one-axis Cell Range and atomic Copy", () => {
       await vi.waitFor(() => expect(writes).toHaveLength(1));
       await expect
         .element(page.getByRole("log", { name: "Table interaction status" }))
-        .toHaveTextContent("Copy failed: the selected cells are no longer available");
+        .toMatchTextContent("Copy failed: the selected cells are no longer available");
 
       await userEvent.keyboard("{Shift>}{ArrowUp}{/Shift}");
       await settleBrunoTableBrowserFrames();
@@ -2187,7 +2187,7 @@ describe("BrunoTableClient one-axis Cell Range and atomic Copy", () => {
       resolveWrite?.();
       await expect
         .element(page.getByRole("log", { name: "Table interaction status" }))
-        .toHaveTextContent("3 cells copied");
+        .toMatchTextContent("3 cells copied");
     } finally {
       restoreClipboard();
     }
@@ -2244,13 +2244,13 @@ describe("BrunoTableClient one-axis Cell Range and atomic Copy", () => {
         }
         if (latestOutcome === "resolves") operations[1]?.resolve();
         else operations[1]?.reject();
-        await expect.element(status).toHaveTextContent(expectedAnnouncement);
+        await expect.element(status).toMatchTextContent(expectedAnnouncement);
         if (settlementOrder === "latest-first") {
           if (latestOutcome === "resolves") operations[0]?.reject();
           else operations[0]?.resolve();
         }
         await settleBrunoTableBrowserFrames();
-        await expect.element(status).toHaveTextContent(expectedAnnouncement);
+        await expect.element(status).toMatchTextContent(expectedAnnouncement);
       } finally {
         restoreClipboard();
       }
@@ -2277,7 +2277,7 @@ describe("BrunoTableClient one-axis Cell Range and atomic Copy", () => {
       expect(grid.element().dispatchEvent(copyEvent)).toBe(false);
       await expect
         .element(page.getByRole("log", { name: "Table interaction status" }))
-        .toHaveTextContent("Copy failed: the browser rejected the clipboard write");
+        .toMatchTextContent("Copy failed: the browser rejected the clipboard write");
       await expect
         .element(page.getByRole("gridcell", { name: "Ada" }))
         .toHaveAttribute("aria-selected", "true");
@@ -2311,7 +2311,7 @@ describe("BrunoTableClient one-axis Cell Range and atomic Copy", () => {
       expect(copyEvent.defaultPrevented).toBe(true);
       await expect
         .element(page.getByRole("log", { name: "Table interaction status" }))
-        .toHaveTextContent("Copy failed: clipboard access is unavailable");
+        .toMatchTextContent("Copy failed: clipboard access is unavailable");
     } finally {
       if (descriptor === undefined) delete (navigator as { clipboard?: Clipboard }).clipboard;
       else Object.defineProperty(navigator, "clipboard", descriptor);

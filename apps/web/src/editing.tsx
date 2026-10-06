@@ -2,9 +2,9 @@ import {useCallback,useEffect,useState} from "react";
 import {catalog} from "@bruno/view-server-client/generated/demo-catalog";
 import {BrunoTableBigIntColumn,BrunoTableBooleanColumn,BrunoTableTextColumn,type BrunoTableColumns,type BrunoTableSaveEditsHandler} from "@bruno/table";
 import {BrunoTableBigDecimalColumn,type BrunoTableBigDecimalValueType} from "@bruno/table/effect";
-import {encodeCompatRow,type CompatRow} from "@bruno/table/rust";
+import {BrunoTableRustEncodeCompatRow,type BrunoTableRustCompatRow} from "@bruno/table/rust";
 
-export type OrderRow=CompatRow<typeof catalog.client_orders.schema>;
+export type OrderRow=BrunoTableRustCompatRow<typeof catalog.client_orders.schema>;
 // Checked helper outputs retain exact field/edit capabilities without carrying
 // the helpers' broad conditional metadata into save-change inference.
 const orderOptions={columnId:"COL_ID_ORDER",field:"orderId",headerName:"Order",width:180,isEditable:false} as const;
@@ -24,7 +24,7 @@ export const editableColumns=[orderColumn,customerColumn,openColumn,unitsColumn,
 export const identifyOrder=(row:OrderRow)=>row.rowId;
 // Source schema has no revision field: the exact canonical source content is the
 // opaque row version. The service separately compares the full expected wire row.
-export const orderVersion=(row:OrderRow)=>JSON.stringify(encodeCompatRow(catalog.client_orders.schema,row));
+export const orderVersion=(row:OrderRow)=>JSON.stringify(BrunoTableRustEncodeCompatRow(catalog.client_orders.schema,row));
 
 async function postControl(path:string,body:unknown):Promise<void>{
  const url=import.meta.env.VITE_RVS_CONTROL_URL,token=import.meta.env.VITE_RVS_CONTROL_TOKEN;
@@ -50,7 +50,7 @@ export function useOrderEditing(){
      case "note":updated={...updated,note:cell.after};break;
     }
    }
-   return {rowId:change.rowId,orderId:change.baseRow.orderId,expected:encodeCompatRow(catalog.client_orders.schema,change.baseRow),row:encodeCompatRow(catalog.client_orders.schema,updated)};
+   return {rowId:change.rowId,orderId:change.baseRow.orderId,expected:BrunoTableRustEncodeCompatRow(catalog.client_orders.schema,change.baseRow),row:BrunoTableRustEncodeCompatRow(catalog.client_orders.schema,updated)};
   });
   setSaveStatus("Saving to the live source…");
   try{await postControl("/save",{topic:"client_orders",changes:payload});setSaveStatus("Accepted. Waiting for the authoritative live update.");}

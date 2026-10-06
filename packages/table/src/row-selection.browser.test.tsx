@@ -601,7 +601,7 @@ describe("ordinary Client Row Selection", () => {
         rowSelection
       />,
     );
-    await expect.element(page.getByRole("alert")).toHaveTextContent("Expected 4 rows");
+    await expect.element(page.getByRole("alert")).toMatchTextContent("Expected 4 rows");
 
     await screen.rerender(
       <BrunoTableClient
@@ -730,7 +730,9 @@ describe("ordinary Client Row Selection", () => {
       .getByRole("checkbox", { name: "Select all rows" })
       .element()
       .closest<HTMLElement>('[role="columnheader"]');
-    const nameHeader = page.getByRole("columnheader", { name: "Name" }).element();
+    const nameHeader = page
+      .getByRole("columnheader", { name: /^Name, sorted ascending,/u })
+      .element();
     expect(selectionHeader?.getAttribute("aria-colindex")).toBe("1");
     expect(nameHeader.getAttribute("aria-colindex")).toBe("2");
     expect(nameHeader.getBoundingClientRect().left).toBeGreaterThanOrEqual(
@@ -827,8 +829,8 @@ describe("ordinary Client Row Selection", () => {
     await expect
       .element(page.getByRole("checkbox", { name: "Select all rows" }))
       .toHaveAttribute("data-indeterminate", "");
-    expect(page.getByRole("columnheader", { name: "Wide 0" }).query()).not.toBeNull();
-    expect(page.getByRole("columnheader", { name: "Wide 119" }).query()).not.toBeNull();
+    expect(page.getByRole("columnheader", { name: /^Wide 0(?:,|$)/u }).query()).not.toBeNull();
+    expect(page.getByRole("columnheader", { name: /^Wide 119(?:,|$)/u }).query()).not.toBeNull();
     grid.element().scrollLeft = 0;
     grid.element().scrollTop = 0;
     grid.element().dispatchEvent(new Event("scroll"));
