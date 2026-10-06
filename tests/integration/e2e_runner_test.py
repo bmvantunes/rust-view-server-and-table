@@ -12,6 +12,11 @@ class CampaignEvidence(unittest.TestCase):
         expected = {topic: {'count': 200000, 'sourceNext': {0: 100199, 1: 100199}} for topic in ('client_orders', 'server_orders')}
         health = {'ready': True, 'authority_safe': True, 'sources': [{'topic': topic, 'retention': {'active_payload_rows': 200000, 'safe': True, 'pending_due': False}, 'partitions': [{'partition': partition, 'assigned': True, 'bootstrap_complete': True, 'durable_next': '100199', 'derived_next': '100199', 'serving_next': '100200', 'fetched_next': '100999'} for partition in (0, 1)]} for topic in expected]}
         self.assertTrue(native_caught_up(health, expected))
+        self.assertFalse(native_caught_up(health, expected, 'old-instance'))
+        health['instance'] = 'old-instance'
+        self.assertFalse(native_caught_up(health, expected, 'old-instance'))
+        health['instance'] = 'new-instance'
+        self.assertTrue(native_caught_up(health, expected, 'old-instance'))
         serialized_expected = {topic: {**value, 'sourceNext': {str(partition): cut for partition, cut in value['sourceNext'].items()}} for topic, value in expected.items()}
         self.assertTrue(native_caught_up(health, serialized_expected))
         for field in ('durable_next', 'derived_next', 'serving_next'):

@@ -29,7 +29,7 @@ function Tables({provider}:{provider:BrowserProductProvider}){
  const health=useSyncExternalStore(provider.subscribeHealth,provider.getHealthSnapshot,provider.getHealthSnapshot);
  useEffect(()=>{
   if(import.meta.env.VITE_RVS_E2E!=="1")return;
-  const status=()=>({client:{status:client.status,loaded:client.loaded,error:client.error},server:{status:server.status,totalRows:server.totalRows,message:server.message},health:provider.getHealthSnapshot(),connection:provider.getConnectionStatus(),diagnostics:provider.connectionDiagnostics});
+  const status=()=>({client:{status:client.status,loaded:client.loaded,error:client.error},server:{status:server.status,totalRows:server.totalRows,message:server.message},health:provider.getHealthSnapshot(),connection:provider.getConnectionStatus(),diagnostics:provider.connectionDiagnostics,recoveryEvents:provider.recoveryEvents.slice(-32)});
   const diagnostic={queryCase:queryCases(provider),status,row:(orderId:string)=>{const row=client.rows.find(row=>row.orderId===orderId);return row?diagnosticRow(row):undefined;},snapshot:()=>({...status(),client:{...status().client,rowIds:client.rows.map(row=>row.rowId),rows:client.rows.map(diagnosticRow)}}),dispose:()=>provider.dispose()};
   Object.assign(window,{__RVS_E2E__:diagnostic});return()=>{if(Reflect.get(window,"__RVS_E2E__")===diagnostic)Reflect.deleteProperty(window,"__RVS_E2E__");};
  },[client,server.status,server.totalRows,server.message,provider]);

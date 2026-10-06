@@ -6,12 +6,12 @@ import {createInterface} from 'node:readline';
 import {fileURLToPath} from 'node:url';
 import type {catalog} from '../../packages/rust-view-server/src/generated/demo-catalog.ts';
 import type {CompatRow} from '../../packages/table/src/rust/types.ts';
-import type {HealthObservation} from '../../packages/rust-view-server/src/product-provider.tsx';
+import type {BrowserProductProvider,HealthObservation} from '../../packages/rust-view-server/src/product-provider.tsx';
 import type {queryCases} from '../../apps/web/src/e2e-queries.ts';
 
 type SourceRow=CompatRow<typeof catalog.client_orders.schema>;
 type SerializedRow=Omit<SourceRow,'units'|'price'> & {units:string;price:string};
-type StatusDiagnostic={client:{status:string;loaded:number;error?:string};server:{status:string;totalRows:number;message?:string};health:HealthObservation;connection:string;diagnostics:unknown};
+type StatusDiagnostic={client:{status:string;loaded:number;error?:string};server:{status:string;totalRows:number;message?:string};health:HealthObservation;connection:string;diagnostics:BrowserProductProvider['connectionDiagnostics'];recoveryEvents:BrowserProductProvider['recoveryEvents']};
 type Diagnostic={status():StatusDiagnostic;row(orderId:string):SerializedRow|undefined;snapshot():Omit<StatusDiagnostic,'client'> & {client:StatusDiagnostic['client'] & {rows:readonly SerializedRow[]}};dispose():void;queryCase:ReturnType<typeof queryCases>};
 declare global {interface Window {__RVS_E2E__?:Diagnostic;__RVS_WORKERS__?:{active:number;resultRows:number;maximumResultRows:number;distinctResultRows:number;invalidIdentityResults:number;receivedBinaryBytes:number;completeBinaryBytes:number;viewportBinaryBytes:number};__RVS_FRAME_INTERVALS__?:number[]}}
 type Expected=Record<string,{count:number;sha256:string;sourceNext:Record<string,number>;producerReceipts:number}>;
@@ -27,7 +27,7 @@ const sample=(kind:string,value:unknown)=>appendFileSync(`${directory}/browser-s
 let serial=0;
 const waiting=new Map<number,{resolve:(value:unknown)=>void;reject:(error:Error)=>void}>();
 createInterface({input:process.stdin}).on('line',line=>{const message=JSON.parse(line);waiting.get(message.id)?.resolve(message.result);waiting.delete(message.id);});
-async function rpc(action:string,args:Record<string,unknown>={}):Promise<unknown>{const id=++serial;return new Promise((resolve,reject)=>{const timer=setTimeout(()=>{waiting.delete(id);reject(Error(`RPC deadline: ${action}`));},60000);waiting.set(id,{resolve:value=>{clearTimeout(timer);resolve(value);},reject});process.stdout.write(JSON.stringify({id,action,...args})+'\n');});}
+async function rpc(action:string,args:Record<string,unknown>={},deadlineMs=60000):Promise<unknown>{const id=++serial;return new Promise((resolve,reject)=>{const timer=setTimeout(()=>{waiting.delete(id);reject(Error(`RPC deadline: ${action}`));},deadlineMs);waiting.set(id,{resolve:value=>{clearTimeout(timer);resolve(value);},reject});process.stdout.write(JSON.stringify({id,action,...args})+'\n');});}
 const browser=await chromium.launch({headless:true});
 const context=await browser.newContext({viewport:{width:1600,height:1000}});
 await context.addInitScript(()=>{
@@ -271,11 +271,26 @@ try{
  await context.setOffline(false);
  await coherent(expected);checks.push('same-page-transport-interruption-recovery');
  const instance=await page.evaluate(()=>window.__RVS_E2E__!.status().health.snapshot?.instance);
+ assert(instance,'Restart comparison requires the previous native instance');
+ const restartStarted=performance.now();
  await rpc('restart');
- await page.waitForFunction(instance=>{const value=window.__RVS_E2E__!.status();return value.health.snapshot?.instance!==instance&&value.health.snapshot?.ready;},instance,{timeout:240000,polling:500});
+ const nativeRecovery=await rpc('native-ready',{previousInstance:instance},245000) as {seconds:number;health:NonNullable<HealthObservation['snapshot']>};
+ assert.notEqual(nativeRecovery.health.instance,instance);
+ assert.equal(nativeRecovery.health.ready,true);
+ await page.waitForFunction(instance=>{const value=window.__RVS_E2E__!.status();return value.diagnostics.phase==='failed'||(value.connection==='connected'&&value.health.snapshot?.instance===instance&&value.health.snapshot?.ready);},nativeRecovery.health.instance,{timeout:Math.max(1,240000-(performance.now()-restartStarted)),polling:500});
+ const afterRestart=await page.evaluate(()=>window.__RVS_E2E__!.status());
+ const explicitBrowserRetry=afterRestart.diagnostics.phase==='failed';
+ sample('native-restart-recovery',{nativeCatchupSeconds:nativeRecovery.seconds,explicitBrowserRetry,browserBeforeRetry:afterRestart});
+ if(explicitBrowserRetry){
+  assert(['recovery-attempts','recovery-budget'].includes(afterRestart.diagnostics.terminalCode??''),'Only a truthfully exhausted reconnect policy qualifies for explicit retry');
+  assert(afterRestart.diagnostics.retryCount>0);
+  assert.equal(afterRestart.client.status,'error');assert.equal(afterRestart.server.status,'error');
+  assert.notEqual(afterRestart.connection,'connected');
+  await page.getByRole('button',{name:'Reconnect and reacquire'}).click();
+ }
  await coherent(expected);
  const later=await rpc('update',{index:2,revision:4000000}) as {expected:Expected};expected=later.expected;await coherent(expected);
- checks.push('owned-native-restart-recovery-later-update');
+ checks.push(explicitBrowserRetry?'native-restart-recovery-with-explicit-browser-retry-and-later-update':'native-restart-automatic-recovery-and-later-update');
  const intervals=await page.evaluate(()=>window.__RVS_FRAME_INTERVALS__??[]);
  sample('animation-frame-intervals-ms',intervals);
  sample('frame-cadence-summary',{samples:intervals.length,over32ms:intervals.filter(value=>value>32).length,estimatedMissed60HzOpportunities:intervals.reduce((sum,value)=>sum+Math.max(0,Math.round(value/(1000/60))-1),0),assumption:'60Hz requestAnimationFrame opportunities, not physical dropped paints'});
