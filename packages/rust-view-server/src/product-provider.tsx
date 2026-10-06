@@ -114,7 +114,7 @@ class CommandRejection extends Error {
 }
 
 export type ProviderOptions = { mode: "local" } | {
-  mode: "memory"; catalog: BrowserCatalog; sources: unknown; module: WebAssembly.Module; maxRows?: number; subscriptions?: number; retention?: Record<string, {maxRetentionMinutes?:number;maxRetentionMessages?:number;maxRetentionMessagesPerKey?:number}>; nowMs?:number;
+  mode: "memory"; catalog: BrowserCatalog; sources: unknown; module: WebAssembly.Module; maxRows?: number; subscriptions?: number; retention?: Partial<Record<string, {maxRetentionMinutes?:number;maxRetentionMessages?:number;maxRetentionMessagesPerKey?:number}>>; nowMs?:number;
 } | {
   mode: "remote"; url: string; token: string;
   /** Must fit the server's advertised capability. Default preserves the remote demo cap. */

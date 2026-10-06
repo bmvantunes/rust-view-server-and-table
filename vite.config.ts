@@ -14,7 +14,7 @@ export default defineConfig({
       "test:infra": task("python3 -m unittest discover -s scripts -p 'test_*.py' && python3 -m unittest discover -s tests/integration -p '*_test.py'"),
       "build:wasm": task("python3 scripts/build-wasm.py"),
       "build:native": task("python3 scripts/rust.py build --locked --release -p view-server-app -p product-source-ingestion --features product-source-ingestion/kafka-canonical --bin view_server --example seed_producer"),
-      check: task("vp exec tsc --noEmit -p packages/rust-view-server/tsconfig.contracts.json && vp exec tsc --noEmit -p packages/rust-view-server/tsconfig.emitted.json && vp run @bruno/table#test:types:source && vp run @bruno/table#test:types:emitted && vp run @bruno/table#test:types:rust && vp exec tsc -p apps/web/tsconfig.json --noEmit", ["generate", "build:packages", "check:rust"]),
+      check: task("vp exec tsc --noEmit -p packages/rust-view-server/tsconfig.json && vp exec tsc --noEmit -p packages/rust-view-server/tsconfig.contracts.json && vp exec tsc --noEmit -p packages/rust-view-server/tsconfig.emitted.json && vp run @bruno/table#test:types:source && vp run @bruno/table#test:types:emitted && vp run @bruno/table#test:types:rust && vp exec tsc -p apps/web/tsconfig.json --noEmit", ["generate", "build:packages", "check:rust"]),
       "build:sdk": task("vp -C packages/rust-view-server run build:package", ["generate", "build:wasm"]),
       "build:packages": task("vp run @bruno/shadcn#build && vp run @bruno/table#build", ["build:sdk"]),
       "test:e2e": task("python3 scripts/e2e.py", ["build:packages"]),

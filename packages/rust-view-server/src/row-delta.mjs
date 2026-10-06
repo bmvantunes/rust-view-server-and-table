@@ -38,12 +38,14 @@ function patchRow(original,changes,projection){
 }
 export function reconstruct(prior,batch,contract){
  const allowed=contract?.fields??fields;
+ const maxRows=contract?.maxRows??1024;
+ if(!Number.isSafeInteger(maxRows)||maxRows<1||maxRows>4096)throw Error("result row bound");
  const payload=(r,projection)=>{if(contract){contract.validate(r,projection);return r;}return row(r,projection);};
  if(contract&&(batch?.topic!==contract.topic||batch?.schema!==contract.schema||prior&&(prior.topic!==batch.topic||prior.schema!==batch.schema||prior.result_kind!==batch.result_kind||prior.result_shape!==batch.result_shape)))throw Error('dataset mismatch');
  if(!object(batch)||typeof batch.subscription!=='string'||!['query_generation','sequence','start_rank','version','total_rows','revision','contentVersion','windowId','effectiveEnd'].every(k=>integer(batch[k]))||batch.revision===0||!Array.isArray(batch.projection)||!batch.projection.length||batch.projection.length>allowed.length||new Set(batch.projection).size!==batch.projection.length||!batch.projection.every(f=>allowed.includes(f)))throw Error('batch metadata');
  let keys,rows;
  if(batch.kind==='snapshot'){
-  if(batch.operations!==undefined||!Array.isArray(batch.keys)||!Array.isArray(batch.rows)||batch.keys.length!==batch.rows.length||batch.keys.length>1024)throw Error('snapshot shape');
+  if(batch.operations!==undefined||!Array.isArray(batch.keys)||!Array.isArray(batch.rows)||batch.keys.length!==batch.rows.length||batch.keys.length>maxRows)throw Error('snapshot shape');
   keys=batch.keys.slice();rows=batch.rows.map(r=>payload(r,batch.projection));
   if(prior&&batch.revision<=prior.revision)throw Error('stale snapshot');
  }else if(batch.kind==='delta'){
@@ -55,7 +57,7 @@ export function reconstruct(prior,batch,contract){
    const index=keys.indexOf(op.key);
    switch(op.type){
     case 'remove':if(Object.keys(op).length!==2||index<0)throw Error('remove key');keys.splice(index,1);rows.splice(index,1);break;
-    case 'insert':if(Object.keys(op).length!==4||index!==-1||!integer(op.index)||op.index>keys.length||keys.length>=1024)throw Error('insert index/key');keys.splice(op.index,0,op.key);rows.splice(op.index,0,payload(op.row,batch.projection));break;
+    case 'insert':if(Object.keys(op).length!==4||index!==-1||!integer(op.index)||op.index>keys.length||keys.length>=maxRows)throw Error('insert index/key');keys.splice(op.index,0,op.key);rows.splice(op.index,0,payload(op.row,batch.projection));break;
     case 'update':if(Object.keys(op).length!==4||!integer(op.index)||op.index>=keys.length||index!==op.index)throw Error('update index/key');rows[op.index]=payload(op.row,batch.projection);break;
     case 'patch':if(!contract?.fieldPatches||Object.keys(op).length!==4||!integer(op.index)||op.index>=keys.length||index!==op.index)throw Error('patch capability/index/key');rows[op.index]=payload(patchRow(rows[op.index],op.changes,batch.projection),batch.projection);break;
     case 'move':if(Object.keys(op).length!==4||!integer(op.fromIndex)||!integer(op.toIndex)||op.fromIndex>=keys.length||op.toIndex>=keys.length||index!==op.fromIndex)throw Error('move index/key');keys.splice(op.fromIndex,1);const moved=rows.splice(op.fromIndex,1)[0];keys.splice(op.toIndex,0,op.key);rows.splice(op.toIndex,0,moved);break;
@@ -65,6 +67,6 @@ export function reconstruct(prior,batch,contract){
  }else throw Error('unknown batch kind');
  if(contract?.validateKeys)contract.validateKeys(keys,rows);
  if(!contract?.validateKeys&&contract?.key==='rowId'&&keys.some(k=>!validRowId(k)))throw Error('malformed canonical rowId');
- if(batch.effectiveEnd!==batch.start_rank+rows.length||keys.length!==rows.length||keys.length>1024||new Set(keys).size!==keys.length||keys.some(k=>typeof k!=='string'||!k.length||new TextEncoder().encode(k).length>512||/[\u0000-\u001f\u007f-\u009f]/.test(k)||new TextDecoder('utf-8',{ignoreBOM:true}).decode(new TextEncoder().encode(k))!==k)||!Number.isSafeInteger(batch.start_rank+rows.length)||(rows.length>0&&batch.start_rank+rows.length>batch.total_rows)||batch.projection.includes(contract?.key??'id')&&rows.some((r,i)=>r[contract?.key??'id']!==keys[i]))throw Error('window/key bounds');
+ if(batch.effectiveEnd!==batch.start_rank+rows.length||keys.length!==rows.length||keys.length>maxRows||new Set(keys).size!==keys.length||keys.some(k=>typeof k!=='string'||!k.length||new TextEncoder().encode(k).length>512||/[\u0000-\u001f\u007f-\u009f]/.test(k)||new TextDecoder('utf-8',{ignoreBOM:true}).decode(new TextEncoder().encode(k))!==k)||!Number.isSafeInteger(batch.start_rank+rows.length)||(rows.length>0&&batch.start_rank+rows.length>batch.total_rows)||batch.projection.includes(contract?.key??'id')&&rows.some((r,i)=>r[contract?.key??'id']!==keys[i]))throw Error('window/key bounds');
  return {...batch,keys,rows,operations:undefined};
 }

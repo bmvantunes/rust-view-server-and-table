@@ -21,3 +21,16 @@ it('production Worker applies negotiated nested patches over MessagePack and rej
  const invalid=delta(5,[{type:'set',path:'oo.name',value:'staged'}]);invalid.operations.push({type:'patch',index:0,key:id,changes:[{type:'set',path:'oo.status',value:{domain:'example.common.Status',code:1}}]});h.frame({type:'result',subscription:'q',acquisition:1,source_sequence:'5',result:invalid});await expect.poll(()=>h.messages.some(m=>m.type==='fatal')).toBe(true);expect(h.messages.filter(m=>m.type==='live')).toHaveLength(3);expect(JSON.stringify(old)).toBe(before);
  }finally{h.w.terminate()}});
 it('production Worker refuses patches without negotiation',async()=>{const h=await harness(false);try{expect(h.hello.capabilities).not.toContain('selected_field_patches_v1');await open(h);h.frame({type:'result',subscription:'q',acquisition:1,source_sequence:'2',result:delta(2,[{type:'set',path:'oo.name',value:'new'}])});await expect.poll(()=>h.messages.some(m=>m.type==='fatal')).toBe(true);expect(h.messages.some(m=>m.type==='live')).toBe(false);}finally{h.w.terminate()}});
+it('production generic Worker admits 2048 complete rows and rejects the 4096-row ceiling overflow',async()=>{
+ const h=await harness();try{
+  const request={type:'apply',id:1,acquisition:1,traceparent:'trace-1',command:{command:'open',subscription:'q',query:{topic:'shit',schema:catalog.shit.fingerprint,offset:0,limit:4096,select:raw().projection,order_by:[]}}};
+  h.w.postMessage(request);await expect.poll(()=>h.messages.filter(m=>m.reviewWire).length).toBe(2);
+  const keys=Array.from({length:2048},(_,i)=>'rid2:01010100000004'+Array.from(new TextEncoder().encode(String(i).padStart(4,'0')),byte=>byte.toString(16).padStart(2,'0')).join(''));
+  const batch={...raw(),total_rows:2048,effectiveEnd:2048,keys,rows:keys.map((_,i)=>({oo:{name:`facet-${i}`,price:'0'}}))};
+  h.frame({type:'result',id:1,traceparent:'trace-1',subscription:'q',acquisition:1,source_sequence:'1',result:batch});h.frame({type:'ack',id:1,traceparent:'trace-1',result_count:1});
+  await expect.poll(()=>h.messages.some(m=>m.type==='ack'||m.type==='fatal')).toBe(true);expect(h.messages.find(m=>m.type==='fatal')).toBeUndefined();expect(h.messages.find(m=>m.type==='ack').results.q.rows).toHaveLength(2048);
+  const overflowKeys=Array.from({length:4097},(_,i)=>'rid2:01010100000004'+Array.from(new TextEncoder().encode(String(i).padStart(4,'0')),byte=>byte.toString(16).padStart(2,'0')).join(''));
+  h.frame({type:'result',subscription:'q',acquisition:1,source_sequence:'2',result:{...batch,version:2,revision:2,sequence:2,contentVersion:2,total_rows:4097,effectiveEnd:4097,keys:overflowKeys,rows:overflowKeys.map(()=>({oo:{name:'overflow',price:'0'}}))}});
+  await expect.poll(()=>h.messages.some(m=>m.type==='fatal')).toBe(true);expect(h.messages.some(m=>m.type==='live')).toBe(false);
+ }finally{h.w.terminate();}
+});

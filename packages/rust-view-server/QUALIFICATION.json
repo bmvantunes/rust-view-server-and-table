@@ -22,7 +22,7 @@
     "cwd": "packages/rust-view-server",
     "command": "vp test run --config browser.config.ts",
     "filesPassed": 12,
-    "testsPassed": 100,
+    "testsPassed": 101,
     "failed": 0,
     "durationSeconds": 4.19,
     "actualWorkerAndWasm": true,
@@ -30,11 +30,13 @@
     "requiresOrbStack": false,
     "staticWasm404AndExplicitRetry": true,
     "realClockSilentExpiryAndDisposeCleanup": true,
-    "boundedSourceReadinessRetry": true
+    "boundedSourceReadinessRetry": true,
+    "genericRemote2048RowsAnd4096Ceiling": true
   },
   "types": {
     "cwd": "packages/rust-view-server",
     "commands": [
+      "vp exec tsc --noEmit -p tsconfig.json",
       "vp exec tsc --noEmit -p tsconfig.contracts.json",
       "vp exec tsc --noEmit -p tsconfig.emitted.json --extendedDiagnostics",
       "vp exec tsc --noEmit -p tsconfig.browser.json"
