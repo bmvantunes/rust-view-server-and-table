@@ -20,6 +20,7 @@ const columns=[
  {columnId:"COL_ID_NOTE",field:"note",headerName:"Note",valueType:"text",width:280} satisfies DisplayFieldColumn<"note">,
 ] as const satisfies BrunoTableColumns<Row>;
 const identify=(row:Row)=>row.rowId;
+const diagnosticRow=(row:Row)=>({rowId:row.rowId,orderId:row.orderId,customer:row.customer,units:row.units.toString(),price:BigDecimal.format(row.price),open:row.open,...(Object.hasOwn(row,"note")?{note:row.note}:{})});
 function Tables({provider}:{provider:BrowserProductProvider}){
  const editing=useOrderEditing();
  const client=hooks.useCompleteSource(provider,"client_orders");
@@ -28,9 +29,10 @@ function Tables({provider}:{provider:BrowserProductProvider}){
  const health=useSyncExternalStore(provider.subscribeHealth,provider.getHealthSnapshot,provider.getHealthSnapshot);
  useEffect(()=>{
   if(import.meta.env.VITE_RVS_E2E!=="1")return;
-  const diagnostic={queryCase:queryCases(provider),snapshot:()=>({client:{status:client.status,loaded:client.loaded,rowIds:client.rows.map(row=>row.rowId),rows:client.rows.map(row=>({rowId:row.rowId,orderId:row.orderId,customer:row.customer,units:row.units.toString(),price:BigDecimal.format(row.price),open:row.open,...(Object.hasOwn(row,"note")?{note:row.note}:{})}))},server:{status:server.status,totalRows:server.totalRows},health:provider.getHealthSnapshot(),connection:provider.getConnectionStatus(),diagnostics:provider.connectionDiagnostics}),dispose:()=>provider.dispose()};
+  const status=()=>({client:{status:client.status,loaded:client.loaded,error:client.error},server:{status:server.status,totalRows:server.totalRows,message:server.message},health:provider.getHealthSnapshot(),connection:provider.getConnectionStatus(),diagnostics:provider.connectionDiagnostics});
+  const diagnostic={queryCase:queryCases(provider),status,row:(orderId:string)=>{const row=client.rows.find(row=>row.orderId===orderId);return row?diagnosticRow(row):undefined;},snapshot:()=>({...status(),client:{...status().client,rowIds:client.rows.map(row=>row.rowId),rows:client.rows.map(diagnosticRow)}}),dispose:()=>provider.dispose()};
   Object.assign(window,{__RVS_E2E__:diagnostic});return()=>{if(Reflect.get(window,"__RVS_E2E__")===diagnostic)Reflect.deleteProperty(window,"__RVS_E2E__");};
- },[client,server.status,server.totalRows,provider]);
+ },[client,server.status,server.totalRows,server.message,provider]);
  return <><div className="status" data-testid="status">Connection: {connection} · Dependencies: {health.status} · Native ready: {String(health.snapshot?.ready??false)}</div>
  <div className="grids"><section data-testid="client-grid"><div className="panel-title"><h2>Client</h2><span>Complete dataset · local operations</span></div>
  <p data-testid="client-count">{client.status} · acquired {client.loaded.toLocaleString()} rows{client.status==="ready"?" · complete dataset":" · completion pending"}{client.error?` · ${client.error}`:""}</p>

@@ -115,7 +115,7 @@ scope.onmessage=async e=>{
    const sub=p.request.command.subscription;
    if(v.type==='request_error'){
     if(typeof v.error!=='string'||(v.currentAcquisition!==null&&v.currentAcquisition!==undefined&&!integer(v.currentAcquisition)))return;
-    pending.delete(v.id);clearTimeout(p.timer);post({type:'request_error',id:v.id,error:v.error,currentAcquisition:v.currentAcquisition??undefined,traceparent:v.traceparent});return;
+    pending.delete(v.id);clearTimeout(p.timer);post({type:'request_error',id:v.id,error:v.error,...(v.code==='source_not_ready'?{code:'source_not_ready'}:{}),currentAcquisition:v.currentAcquisition??undefined,traceparent:v.traceparent});return;
    }
    if(v.type!=='ack'||v.result_count!==(p.request.command.command==='close'?0:1)||((v.result_count===1)!==!!p.result))return;
    pending.delete(v.id);clearTimeout(p.timer);

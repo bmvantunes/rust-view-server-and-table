@@ -80,3 +80,89 @@ it('H1 disposal from a mounted health-hook notification keeps both query hooks c
  await new Promise(r=>setTimeout(r,150));old.receive({type:'ready'});old.receive({type:'health',snapshot:{...sample,sequence:100}});expect(ControlledWorker.all.length).toBe(1);expect(old.dead).toBe(true);expect(p.connectionDiagnostics.terminalCode).toBe('disposed');expect(p.connectionStatus).toBe('disconnected');expect(p.getHealthSnapshot().status).toBe('closed');
  }finally{await screen.unmount();p.dispose();vi.unstubAllGlobals();}expect(p.getHealthSnapshot().status).toBe('closed');
 });
+
+it('retries explicit source readiness without disturbing a healthy peer acquisition',async()=>{
+ vi.stubGlobal('Worker',ControlledWorker);ControlledWorker.all=[];
+ const p=new BrowserProductProvider({mode:'remote',url:'ws://127.0.0.1:8080/v14',token:'controlled'});
+ try{
+  const w=ControlledWorker.all[0];w.receive({type:'ready'});await p.ready;
+  const query={projection:['id'] as const,where_expr:{op:'and',args:[]},direction:'ascending' as const,offset:0,limit:2};
+  const a:ProductResult[]=[],b:ProductResult[]=[];
+  const offA=p.watch('busy',query,value=>a.push(value)),offB=p.watch('peer',query,value=>b.push(value));
+  await expect.poll(()=>w.sent.filter(x=>x.type==='apply').length).toBe(2);
+  const first=w.sent.find(x=>x.command?.subscription==='busy'),peer=w.sent.find(x=>x.command?.subscription==='peer');w.ack(peer);
+  w.receive({type:'request_error',id:first.id,traceparent:first.traceparent,error:'retention maintenance pending',code:'source_not_ready'});
+  await expect.poll(()=>w.sent.filter(x=>x.command?.subscription==='busy').length).toBe(2);
+  const retry=w.sent.at(-1);expect(retry.id).toBeGreaterThan(peer.id);expect(retry.acquisition).toBe(first.acquisition);expect(retry.command).toEqual(first.command);w.ack(retry);
+  await expect.poll(()=>a.length).toBe(1);expect(b.length).toBe(1);expect(ControlledWorker.all.length).toBe(1);expect(p.connectionStatus).toBe('connected');expect(p.consumerErrors).toEqual([]);
+  offA();offB();
+ }finally{p.dispose();vi.unstubAllGlobals();}
+});
+it('does not retry permanent rejection or replay a released readiness request',async()=>{
+ vi.stubGlobal('Worker',ControlledWorker);ControlledWorker.all=[];
+ const p=new BrowserProductProvider({mode:'remote',url:'ws://127.0.0.1:8080/v14',token:'controlled'});
+ try{
+  const w=ControlledWorker.all[0];w.receive({type:'ready'});await p.ready;
+  const query={projection:['id'] as const,where_expr:{op:'and',args:[]},direction:'ascending' as const,offset:0,limit:2};
+  const off=p.watch('cancel',query,()=>{});await expect.poll(()=>w.sent.some(x=>x.command?.subscription==='cancel')).toBe(true);
+  const first=w.sent.at(-1);w.receive({type:'request_error',id:first.id,traceparent:first.traceparent,error:'retention maintenance pending',code:'source_not_ready'});off();
+  const invalid=p.open('bad',query).catch(error=>error.message);await expect.poll(()=>w.sent.some(x=>x.command?.subscription==='bad')).toBe(true);
+  const bad=w.sent.find(x=>x.command?.subscription==='bad');w.receive({type:'request_error',id:bad.id,traceparent:bad.traceparent,error:'invalid query'});expect(await invalid).toBe('invalid query');
+  await new Promise(resolve=>setTimeout(resolve,160));expect(w.sent.filter(x=>x.command?.command==='open'&&x.command?.subscription==='cancel').length).toBe(1);expect(w.sent.filter(x=>x.command?.subscription==='bad').length).toBe(1);
+ }finally{p.dispose();vi.unstubAllGlobals();}
+});
+it('bounds readiness retries and settles disposal while a retry timer is pending',async()=>{
+ vi.stubGlobal('Worker',ControlledWorker);ControlledWorker.all=[];
+ const p=new BrowserProductProvider({mode:'remote',url:'ws://127.0.0.1:8080/v14',token:'controlled'});
+ try{
+  const w=ControlledWorker.all[0];w.receive({type:'ready'});await p.ready;
+  const query={projection:['id'] as const,where_expr:{op:'and',args:[]},direction:'ascending' as const,offset:0,limit:2};
+  const expired=p.open('expired',query).catch(error=>error.message);await expect.poll(()=>w.sent.some(x=>x.command?.subscription==='expired')).toBe(true);
+  const first=w.sent.at(-1),now=performance.now();const clock=vi.spyOn(performance,'now').mockReturnValue(now+10001);
+  w.receive({type:'request_error',id:first.id,traceparent:first.traceparent,error:'retention maintenance pending',code:'source_not_ready'});expect(await expired).toContain('readiness retry deadline');clock.mockRestore();
+  const cancelled=p.open('pending',query).catch(error=>error.message);await expect.poll(()=>w.sent.some(x=>x.command?.subscription==='pending')).toBe(true);
+  const next=w.sent.at(-1);w.receive({type:'request_error',id:next.id,traceparent:next.traceparent,error:'retention maintenance pending',code:'source_not_ready'});p.dispose();expect(await cancelled).toContain('disposed');
+  await new Promise(resolve=>setTimeout(resolve,160));expect(w.sent.filter(x=>x.command?.subscription==='pending').length).toBe(1);expect(p.admission.outstanding).toBe(0);expect(p.admission.inFlight).toBe(0);
+ }finally{p.dispose();vi.restoreAllMocks();vi.unstubAllGlobals();}
+});
+it('keeps wire request IDs increasing when a readiness retry overtakes queued commands',async()=>{
+ vi.stubGlobal('Worker',ControlledWorker);ControlledWorker.all=[];
+ const p=new BrowserProductProvider({mode:'remote',url:'ws://127.0.0.1:8080/v14',token:'controlled'});
+ try{
+  const w=ControlledWorker.all[0];w.receive({type:'ready'});await p.ready;
+  const query={projection:['id'] as const,where_expr:{op:'and',args:[]},direction:'ascending' as const,offset:0,limit:2};
+  const promises=Array.from({length:5},(_,i)=>p.open(`queued-${i}`,query).catch(error=>error));
+  await expect.poll(()=>w.sent.filter(x=>x.type==='apply').length).toBe(4);
+  const first=w.sent.find(x=>x.type==='apply');w.receive({type:'request_error',id:first.id,traceparent:first.traceparent,error:'retention maintenance pending',code:'source_not_ready'});
+  await expect.poll(()=>w.sent.filter(x=>x.type==='apply').length).toBe(5);
+  const requests=w.sent.filter(x=>x.type==='apply');w.ack(requests[1]);
+  await expect.poll(()=>w.sent.filter(x=>x.type==='apply').length).toBe(6);
+  const sent=w.sent.filter(x=>x.type==='apply');expect(sent.map(x=>x.id)).toEqual([1,2,3,4,5,6]);
+  for(const index of [2,3,4,5])w.ack(sent[index]);await Promise.all(promises);expect(p.admission.outstanding).toBe(0);
+ }finally{p.dispose();vi.unstubAllGlobals();}
+});
+it('never replays an older same-acquisition window after a newer window succeeds',async()=>{
+ vi.stubGlobal('Worker',ControlledWorker);ControlledWorker.all=[];
+ const p=new BrowserProductProvider({mode:'remote',url:'ws://127.0.0.1:8080/v14',token:'controlled'});
+ try{
+  const w=ControlledWorker.all[0];w.receive({type:'ready'});await p.ready;
+  const query={projection:['id'] as const,where_expr:{op:'and',args:[]},direction:'ascending' as const,offset:0,limit:2};
+  p.watch('window',query,()=>{});await expect.poll(()=>w.sent.some(x=>x.type==='apply')).toBe(true);w.ack(w.sent.at(-1));await expect.poll(()=>p.admission.outstanding).toBe(0);
+  const older=p.apply({command:'change_window',subscription:'window',offset:10,limit:2}).catch(error=>error.code);
+  await expect.poll(()=>w.sent.filter(x=>x.type==='apply').length).toBe(2);const old=w.sent.at(-1);w.receive({type:'request_error',id:old.id,traceparent:old.traceparent,error:'retention maintenance pending',code:'source_not_ready'});
+  const newer=p.apply({command:'change_window',subscription:'window',offset:20,limit:2});await expect.poll(()=>w.sent.filter(x=>x.type==='apply').length).toBe(3);const current=w.sent.at(-1);expect(current.acquisition).toBe(old.acquisition);w.ack(current);await newer;
+  expect(await older).toBe('read_superseded');expect(w.sent.filter(x=>x.type==='apply').length).toBe(3);expect(p.admission.outstanding).toBe(0);
+ }finally{p.dispose();vi.unstubAllGlobals();}
+});
+it('supersedes readiness retries for direct commands without a watch registration',async()=>{
+ vi.stubGlobal('Worker',ControlledWorker);ControlledWorker.all=[];
+ const p=new BrowserProductProvider({mode:'remote',url:'ws://127.0.0.1:8080/v14',token:'controlled'});
+ try{
+  const w=ControlledWorker.all[0];w.receive({type:'ready'});await p.ready;
+  const query={projection:['id'] as const,where_expr:{op:'and',args:[]},direction:'ascending' as const,offset:0,limit:2};
+  const opened=p.open('direct',query);await expect.poll(()=>w.sent.some(x=>x.type==='apply')).toBe(true);w.ack(w.sent.at(-1));await opened;
+  const older=p.apply({command:'change_window',subscription:'direct',offset:10,limit:2}).catch(error=>error.code);await expect.poll(()=>w.sent.filter(x=>x.type==='apply').length).toBe(2);const old=w.sent.at(-1);w.receive({type:'request_error',id:old.id,traceparent:old.traceparent,error:'retention maintenance pending',code:'source_not_ready'});
+  const newer=p.apply({command:'change_window',subscription:'direct',offset:20,limit:2});await expect.poll(()=>w.sent.filter(x=>x.type==='apply').length).toBe(3);w.ack(w.sent.at(-1));await newer;
+  expect(await older).toBe('read_superseded');expect(w.sent.filter(x=>x.type==='apply').length).toBe(3);expect(p.admission.outstanding).toBe(0);
+ }finally{p.dispose();vi.unstubAllGlobals();}
+});

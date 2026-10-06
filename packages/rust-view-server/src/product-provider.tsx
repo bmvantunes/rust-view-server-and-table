@@ -107,7 +107,7 @@ type WorkerMessage =
   | { type: "health"; snapshot: OperationalHealthSnapshot }
   | { type: "health_unavailable" }
   | ApplyResponse
-  | { type: "request_error"; id: number; error: string; currentAcquisition?: number; traceparent: string };
+  | { type: "request_error"; id: number; error: string; code?: "source_not_ready"; currentAcquisition?: number; traceparent: string };
 
 class CommandRejection extends Error {
   constructor(message: string, readonly currentAcquisition: number | undefined) { super(message); }
@@ -276,7 +276,7 @@ export class BrowserProductProvider {
   }
   private readonly listeners = new Map<string, { acquisition: ProductAcquisitionIdentity; listener: Listener; release: () => void; isActive: () => boolean; desired: RuntimeQuery; readRevision: number; desiredOwner: number; undispatchedRead?: { desired: RuntimeQuery; display?: ProductResult; owner: number }; confirmedDesired?: RuntimeQuery; confirmedAttempt?: number; confirmedAcquisition?: number; confirmedRequestId?: number; display?: ProductResult; status: LiveQueryStatus }>();
   private readonly acquisitions = new Map<string, ProductAcquisitionIdentity>();
-  private readonly pending = new Map<number, { resolve: (results: Record<string, ProductResult>) => void; reject: (error: Error) => void; traceparent: string }>();
+  private readonly pending = new Map<number, { resolve: (results: Record<string, ProductResult>) => void; reject: (error: Error) => void; traceparent: string; retryNotReady?: () => void }>();
   private readonly freshness = new Map<string, ProductResult>();
   // One latest completed candidate per registered subscription, never a result history.
   // A pending desired acquisition can suppress delivery without destroying rollback data.
@@ -298,6 +298,7 @@ export class BrowserProductProvider {
     try { while (!this.terminalCause && this.pending.size < this.commandWindow && this.dispatchQueue.length) this.dispatchQueue.shift()!.send(); }
     finally { this.draining = false; }
   }
+  private readonly requestOrder = new Map<string, {latest: number; active: number}>();
   private nextRequestId = 1;
   private nextAcquisition = 1;
   private terminalCause?: Error;
@@ -376,6 +377,7 @@ export class BrowserProductProvider {
       const error = new Error("W3C traceparent changed across Worker boundary");
       pending.reject(error); this.fail(error); return;
     }
+    if (message.type === "request_error" && message.code === "source_not_ready" && pending.retryNotReady) { pending.retryNotReady(); this.drain(); return; }
     if (message.type === "request_error") { pending.reject(new CommandRejection(message.error, message.currentAcquisition)); this.drain(); return; }
     this.lastWorkerStats = message.stats;
     // Settlement is independent of user callbacks; the same objects are reused locally.
@@ -577,6 +579,7 @@ export class BrowserProductProvider {
     const cmd = snapshot as { command?: string; subscription?: string };
     const subscription = cmd?.subscription;
     const registration = typeof subscription === "string" ? this.listeners.get(subscription) : undefined;
+    const readRevision = registration?.readRevision;
     const replacing = cmd?.command === "open" || cmd?.command === "change_query";
     const previous = typeof subscription === "string" ? this.acquisitions.get(subscription) : undefined;
     const acquisition = ownedAcquisition ?? (replacing ? this.nextAcquisition++ : previous);
@@ -613,10 +616,20 @@ export class BrowserProductProvider {
       if (!entry || entry.acquisition !== acquisition || !entry.isActive()) return {};
       (snapshot as { query: RuntimeQuery }).query = structuredClone(entry.desired);
     }
-    const id = this.nextRequestId++;
+    const order = typeof subscription === "string" ? this.requestOrder.get(subscription) ?? {latest: 0, active: 0} : undefined;
+    if (order && subscription) { order.active++; this.requestOrder.set(subscription, order); }
+    let id = 0; // Allocated at dispatch, so queued commands cannot overtake retry IDs.
+    const retryDeadline = performance.now() + 10000;
+    let retryTimer: ReturnType<typeof setTimeout> | undefined;
+    let settled = false;
+    const settleOrder = () => {
+      if (settled) return; settled = true;
+      if (order && subscription && --order.active === 0) this.requestOrder.delete(subscription);
+    };
     return new Promise<Record<string, ProductResult>>((resolve, reject) => {
-      const rejectOwned = (error: Error) => { rollback(error); reject(error); };
+      const rejectOwned = (error: Error) => { clearTimeout(retryTimer); settleOrder(); rollback(error); reject(error); };
       const resolveOwned = (results: Record<string, ProductResult>) => {
+        clearTimeout(retryTimer);
         // Direct close is transactional. Until its ACK, the still-live acquisition
         // remains deliverable. Release cancels immediately through its own path.
         if (cmd?.command === "close" && typeof subscription === "string" && this.acquisitions.get(subscription) === acquisition) {
@@ -628,13 +641,34 @@ export class BrowserProductProvider {
           entry.confirmedDesired = replacing ? structuredClone(read.query!) : { ...entry.confirmedDesired ?? entry.desired, offset: read.offset!, limit: read.limit! };
           entry.confirmedAttempt = attempt; entry.confirmedAcquisition = acquisition; entry.confirmedRequestId = id;
         }
-        resolve(results);
+        settleOrder(); resolve(results);
       };
-      this.dispatchQueue.push({ reject: rejectOwned, send: () => {
-        this.pending.set(id, { resolve: resolveOwned, reject: rejectOwned, traceparent });
+      // Only explicit native pre-admission unavailability is retryable. Keep one
+      // command slot and its acquisition; unrelated subscriptions stay connected.
+      const request = { resolve: resolveOwned, reject: rejectOwned, traceparent, retryNotReady: () => {
+        if (this.options.mode !== "remote" || performance.now() >= retryDeadline) {
+          rejectOwned(new Error("Source readiness retry deadline exceeded")); return;
+        }
+        this.pending.set(id, request);
+        retryTimer = setTimeout(() => {
+          this.pending.delete(id);
+          if (performance.now() >= retryDeadline) { rejectOwned(new Error("Source readiness retry deadline exceeded")); this.drain(); return; }
+          if (order && order.latest !== id) { rejectOwned(new SupersededReadError("readiness retry superseded by a later command")); this.drain(); return; }
+          if (this.terminalCause || this.attempt !== attempt) { rejectOwned(this.terminalCause ?? new TransientConnectionError("attempt ended during readiness retry")); this.drain(); return; }
+          if (registration && (this.listeners.get(subscription!) !== registration || !registration.isActive() || registration.acquisition !== acquisition || registration.readRevision !== readRevision)) {
+            rejectOwned(new SupersededReadError("readiness retry superseded or released")); this.drain(); return;
+          }
+          send();
+        }, 100);
+      }};
+      const send = () => {
+        id = this.nextRequestId++;
+        if (order) order.latest = id;
+        this.pending.set(id, request);
         try { this.worker.postMessage({ type: "apply", id, command: snapshot, acquisition, previousAcquisition: previous, traceparent, traceContext }); }
         catch (error) { this.pending.delete(id); rejectOwned(normalizeError(error)); }
-      }});
+      };
+      this.dispatchQueue.push({ reject: rejectOwned, send });
       this.drain();
     });
   }

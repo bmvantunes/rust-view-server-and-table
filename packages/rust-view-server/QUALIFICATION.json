@@ -22,14 +22,15 @@
     "cwd": "packages/rust-view-server",
     "command": "vp test run --config browser.config.ts",
     "filesPassed": 12,
-    "testsPassed": 94,
+    "testsPassed": 100,
     "failed": 0,
-    "durationSeconds": 4.18,
+    "durationSeconds": 4.19,
     "actualWorkerAndWasm": true,
     "requiresKafka": false,
     "requiresOrbStack": false,
     "staticWasm404AndExplicitRetry": true,
-    "realClockSilentExpiryAndDisposeCleanup": true
+    "realClockSilentExpiryAndDisposeCleanup": true,
+    "boundedSourceReadinessRetry": true
   },
   "types": {
     "cwd": "packages/rust-view-server",

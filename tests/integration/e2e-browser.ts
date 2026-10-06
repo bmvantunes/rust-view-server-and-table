@@ -11,7 +11,8 @@ import type {queryCases} from '../../apps/web/src/e2e-queries.ts';
 
 type SourceRow=CompatRow<typeof catalog.client_orders.schema>;
 type SerializedRow=Omit<SourceRow,'units'|'price'> & {units:string;price:string};
-type Diagnostic={snapshot():{client:{status:string;loaded:number;rows:readonly SerializedRow[]};server:{status:string;totalRows:number};health:HealthObservation;connection:string};dispose():void;queryCase:ReturnType<typeof queryCases>};
+type StatusDiagnostic={client:{status:string;loaded:number;error?:string};server:{status:string;totalRows:number;message?:string};health:HealthObservation;connection:string;diagnostics:unknown};
+type Diagnostic={status():StatusDiagnostic;row(orderId:string):SerializedRow|undefined;snapshot():Omit<StatusDiagnostic,'client'> & {client:StatusDiagnostic['client'] & {rows:readonly SerializedRow[]}};dispose():void;queryCase:ReturnType<typeof queryCases>};
 declare global {interface Window {__RVS_E2E__?:Diagnostic;__RVS_WORKERS__?:{active:number;resultRows:number;maximumResultRows:number};__RVS_FRAME_INTERVALS__?:number[]}}
 type Expected=Record<string,{count:number;sha256:string;sourceNext:Record<string,number>;producerReceipts:number}>;
 const require=createRequire(new URL('../../packages/rust-view-server/package.json',import.meta.url));
@@ -57,7 +58,7 @@ let outcome='failed';
 const begun=performance.now();
 async function coherent(expected:Expected){
  await page.waitForFunction(expected=>{
-  const value=window.__RVS_E2E__?.snapshot();if(!value)return false;
+  const value=window.__RVS_E2E__?.status();if(!value)return false;
   if(value.client.status!=='ready'||value.client.loaded!==expected.client_orders.count||value.server.status!=='ready'||value.server.totalRows!==expected.server_orders.count||!value.health.snapshot?.ready)return false;
   for(const [topic,wanted]of Object.entries(expected)){
    const source=value.health.snapshot.sources.find(source=>source.topic===topic);
@@ -67,7 +68,7 @@ async function coherent(expected:Expected){
     if(!actual||!actual.assigned||!actual.bootstrap_complete||['durable_next','derived_next','serving_next'].some(key=>BigInt(Reflect.get(actual,key)??'-1')<BigInt(cut)))return false;
    }
   }return true;
- },expected,{timeout:240000});
+ },expected,{timeout:240000,polling:500});
  async function readMaterialized(){return page.evaluate(async()=>{
   const value=window.__RVS_E2E__!.snapshot();
   const rows=[...value.client.rows].sort((a,b)=>a.orderId<b.orderId?-1:a.orderId>b.orderId?1:0);
@@ -98,11 +99,11 @@ try{
  }
  await page.waitForFunction(()=>Boolean(window.__RVS_E2E__),undefined,{timeout:120000});
  if(!smoke){
-  await page.waitForFunction(()=>{const c=window.__RVS_E2E__!.snapshot().client;return c.status==='loading'&&c.loaded>0&&c.loaded<200000;},undefined,{timeout:30000});
-  const before=await page.evaluate(()=>{const c=window.__RVS_E2E__!.snapshot().client;return {status:c.status,loaded:c.loaded};});
+  await page.waitForFunction(()=>{const c=window.__RVS_E2E__!.status().client;return c.status==='loading'&&c.loaded>0&&c.loaded<200000;},undefined,{timeout:30000});
+  const before=await page.evaluate(()=>{const c=window.__RVS_E2E__!.status().client;return {status:c.status,loaded:c.loaded};});
   sample('bootstrap-mutation-start',before);
   await rpc('bootstrap-update',{index:0,revision:2000000});
-  const atCommit=await page.evaluate(()=>{const c=window.__RVS_E2E__!.snapshot().client;return {status:c.status,loaded:c.loaded};});
+  const atCommit=await page.evaluate(()=>{const c=window.__RVS_E2E__!.status().client;return {status:c.status,loaded:c.loaded};});
   sample('bootstrap-mutation-committed',atCommit);assert.equal(atCommit.status,'loading','Mutation commit must occur before bootstrap completes');
   checks.push('mutation-during-partial-bootstrap');
  }
@@ -133,16 +134,16 @@ try{
  }
 
  await serverFilter.fill('cafe');
- await page.waitForFunction(count=>window.__RVS_E2E__!.snapshot().server.totalRows===count,Math.ceil(rows/4)+Math.floor(rows/4),{timeout:60000});
+ await page.waitForFunction(count=>window.__RVS_E2E__!.status().server.totalRows===count,Math.ceil(rows/4)+Math.floor(rows/4),{timeout:60000});
  assert.equal(await clientFilter.inputValue(),'');
- assert.equal((await page.evaluate(()=>window.__RVS_E2E__!.snapshot().client.loaded)),rows);
+ assert.equal((await page.evaluate(()=>window.__RVS_E2E__!.status().client.loaded)),rows);
  await serverFilter.fill('e2e-no-such-customer-unique');
- await page.waitForFunction(()=>window.__RVS_E2E__!.snapshot().server.totalRows===0);
+ await page.waitForFunction(()=>window.__RVS_E2E__!.status().server.totalRows===0);
  await serverFilter.fill('');
  await coherent(expected);
  await clientFilter.fill('e2e-no-such-customer-unique');
  await page.waitForFunction(()=>document.querySelector('[data-testid="client-grid"] [data-bruno-row-id]')===null);
- assert.equal((await page.evaluate(()=>window.__RVS_E2E__!.snapshot().server.totalRows)),rows);
+ assert.equal((await page.evaluate(()=>window.__RVS_E2E__!.status().server.totalRows)),rows);
  await filterClient('',expected.client_orders.count);
  checks.push('ui-quick-filter-unicode-match-none-peer-independence');
  for(const name of ['match-none','numeric-range','multi-sort','groups','facets']){
@@ -176,7 +177,7 @@ try{
  // Exercise the Client's actual editing session and committed HTTP producer adapter.
  const clientGrid=client.getByRole('grid');
  await client.getByRole('switch',{name:'Batch editing',exact:true}).click();
- const findRow=async(orderId:string)=>page.evaluate(orderId=>{const row=window.__RVS_E2E__!.snapshot().client.rows.find(row=>row.orderId===orderId);if(!row)throw Error('Missing source identity');return row;},orderId);
+ const findRow=async(orderId:string)=>page.evaluate(orderId=>{const row=window.__RVS_E2E__!.row(orderId);if(!row)throw Error('Missing source identity');return row;},orderId);
  const identity3=(await findRow('order-000003')).rowId;
  const cell=(identity:string,column:string)=>clientGrid.locator(`[role="gridcell"][data-bruno-row-id=${JSON.stringify(identity)}][data-bruno-column-id=${JSON.stringify(column)}]`);
  async function stage(identity:string,column:string,label:string,value:string){
@@ -196,7 +197,7 @@ try{
  await stage(identity3,'COL_ID_CUSTOMER','Customer','e2e-saved-customer');
  assert.equal((await findRow('order-000003')).customer,oldCustomer,'A draft must not pretend to be a committed source write');
  await save();
- await page.waitForFunction(()=>window.__RVS_E2E__!.snapshot().client.rows.find(row=>row.orderId==='order-000003')?.customer==='e2e-saved-customer');
+ await page.waitForFunction(()=>window.__RVS_E2E__!.row('order-000003')?.customer==='e2e-saved-customer',undefined,{polling:500});
  await context.grantPermissions(['clipboard-read','clipboard-write']);
  await cell(identity3,'COL_ID_CUSTOMER').click();
  await page.evaluate(()=>navigator.clipboard.writeText('e2e-pasted-customer'));
@@ -221,7 +222,7 @@ try{
  await filterClient('order-000003',1);
  await stage(identity3,'COL_ID_UNITS','Exact units','9007199254999999');
  const conflict=await rpc('update',{index:3,revision:5000000}) as {expected:Expected};expected=conflict.expected;
- await page.waitForFunction(()=>window.__RVS_E2E__!.snapshot().client.rows.find(row=>row.orderId==='order-000003')?.units==='9007199259740996');
+ await page.waitForFunction(()=>window.__RVS_E2E__!.row('order-000003')?.units==='9007199259740996',undefined,{polling:500});
  await client.getByText(/conflict/i).first().waitFor();
  sample('draft-conflict-ui',await client.innerText());
  const resetEdits=client.getByRole('button',{name:'Reset edits',exact:true});
@@ -257,12 +258,12 @@ try{
  const deleted=await rpc('delete',{index:1}) as {expected:Expected};expected=deleted.expected;await coherent(expected);
  checks.push('live-upsert-exact-dom-stable-identity-delete');
  await context.setOffline(true);
- await page.waitForFunction(()=>window.__RVS_E2E__!.snapshot().connection!=='connected',undefined,{timeout:30000});
+ await page.waitForFunction(()=>window.__RVS_E2E__!.status().connection!=='connected',undefined,{timeout:30000});
  await context.setOffline(false);
  await coherent(expected);checks.push('same-page-transport-interruption-recovery');
- const instance=await page.evaluate(()=>window.__RVS_E2E__!.snapshot().health.snapshot?.instance);
+ const instance=await page.evaluate(()=>window.__RVS_E2E__!.status().health.snapshot?.instance);
  await rpc('restart');
- await page.waitForFunction(instance=>{const value=window.__RVS_E2E__!.snapshot();return value.health.snapshot?.instance!==instance&&value.health.snapshot?.ready;},instance,{timeout:240000});
+ await page.waitForFunction(instance=>{const value=window.__RVS_E2E__!.status();return value.health.snapshot?.instance!==instance&&value.health.snapshot?.ready;},instance,{timeout:240000,polling:500});
  await coherent(expected);
  const later=await rpc('update',{index:2,revision:4000000}) as {expected:Expected};expected=later.expected;await coherent(expected);
  checks.push('owned-native-restart-recovery-later-update');
@@ -275,17 +276,21 @@ try{
  // Block worker/WASM assets separately from the above transport-only interruption.
  await context.route(/(?:worker[^/]*\.(?:js|ts)|\.wasm)(?:\?.*)?$/i,route=>route.abort('failed'));
  await page.reload({waitUntil:'domcontentloaded'});
- await page.waitForFunction(()=>{const s=window.__RVS_E2E__?.snapshot();return s&&(s.client.status==='error'||s.server.status==='error'||s.connection==='error');},undefined,{timeout:45000});
+ await page.waitForFunction(()=>{const s=window.__RVS_E2E__?.status();return s&&(s.client.status==='error'||s.server.status==='error'||s.connection==='error');},undefined,{timeout:45000});
  await context.unrouteAll({behavior:'wait'});
  await page.getByRole('button',{name:'Reconnect and reacquire'}).click();
  await coherent(expected);checks.push('worker-asset-failure-bounded-error-explicit-retry');
  await page.evaluate(()=>window.__RVS_E2E__!.dispose());
- await page.waitForFunction(()=>window.__RVS_E2E__!.snapshot().connection==='disconnected'&&window.__RVS_WORKERS__?.active===0);
+ await page.waitForFunction(()=>window.__RVS_E2E__!.status().connection==='disconnected'&&window.__RVS_WORKERS__?.active===0);
  await page.goto('about:blank');
  assert.deepEqual(errors,[],'Unexpected uncaught browser exceptions');
  checks.push('provider-disposal-page-unmount');
  outcome='passed';
-}catch(error){writeFileSync(`${directory}/failure-dom.html`,await page.content().catch(()=>''));sample('failure',{message:String(error),stack:error instanceof Error?error.stack:undefined});throw error;}
+}catch(error){
+ sample('failure-diagnostics',await page.evaluate(()=>({status:window.__RVS_E2E__?.status(),workers:window.__RVS_WORKERS__,clientLabel:document.querySelector('[data-testid="client-count"]')?.textContent,serverLabel:document.querySelector('[data-testid="server-count"]')?.textContent})).catch(reason=>({captureError:String(reason)})));
+ sample('failure-application-bytes',{websocketReceived:receivedBytes,httpEncoded:responseBytes});
+ writeFileSync(`${directory}/failure-dom.html`,await page.content().catch(()=>''));sample('failure',{message:String(error),stack:error instanceof Error?error.stack:undefined});throw error;
+}
 finally{
  await context.close();await browser.close();
  writeFileSync(`${directory}/browser-result.json`,JSON.stringify({status:outcome,smoke,rowsPerTopic:rows,checks,seconds:(performance.now()-begun)/1000,root,limits:['provider query probes do not certify every equivalent menu interaction','no physical paint or production SLA claim']},null,2)+'\n');
