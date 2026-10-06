@@ -143,7 +143,9 @@ test("renders and releases a live whole-result facet from the emitted package", 
     );
     await userEvent.click(screen.getByRole("button", { name: "Filter Symbol" }));
     const dialog = screen.getByRole("dialog", { name: "Filter Symbol" });
-    await expect.element(dialog.getByRole("checkbox", { name: "Select AAA, 1" })).toBeVisible();
+    await expect
+      .element(dialog.getByRole("checkbox", { name: /^Select AAA, 1(?:\s|$)/u }))
+      .toBeVisible();
 
     await Effect.runPromise(
       inMemory.client.publish("orders", {
@@ -153,7 +155,9 @@ test("renders and releases a live whole-result facet from the emitted package", 
         price: 30,
       }),
     );
-    await expect.element(dialog.getByRole("checkbox", { name: "Select AAA, 2" })).toBeVisible();
+    await expect
+      .element(dialog.getByRole("checkbox", { name: /^Select AAA, 2(?:\s|$)/u }))
+      .toBeVisible();
 
     await userEvent.click(screen.getByRole("button", { name: "Filter Symbol" }));
     await expect.element(dialog).not.toBeInTheDocument();

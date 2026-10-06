@@ -61,7 +61,7 @@ describe("BrunoTable Drag Fill notification chrome", () => {
         );
       });
       const notifications = chrome.getByRole("region", { name: "Notifications", exact: true });
-      await expect.element(notifications).toHaveTextContent("Expected a valid destination value.");
+      await expect.element(notifications).toMatchTextContent("Expected a valid destination value.");
       const retainedMessage = runtime.getNotificationSnapshot().message;
 
       await chrome.unmount();
@@ -71,7 +71,7 @@ describe("BrunoTable Drag Fill notification chrome", () => {
       const remountedChrome = await render(<BrunoTableDragFillChrome runtime={runtime} />);
       await expect
         .element(remountedChrome.getByRole("region", { name: "Notifications", exact: true }))
-        .toHaveTextContent(retainedMessage);
+        .toMatchTextContent(retainedMessage);
     } finally {
       runtime.dispose();
     }
@@ -136,8 +136,8 @@ describe("BrunoTable Drag Fill notification chrome", () => {
         expect(runtime.getNotificationSnapshot().message).toContain("Second rejection.");
       });
       const notifications = chrome.getByRole("region", { name: "Notifications", exact: true });
-      await expect.element(notifications).toHaveTextContent("Second rejection.");
-      await expect.element(notifications).not.toHaveTextContent("First rejection.");
+      await expect.element(notifications).toMatchTextContent("Second rejection.");
+      await expect.element(notifications).not.toMatchTextContent("First rejection.");
       expect(
         notifications.getByRole("button", { name: "Close toast", exact: true }).all(),
       ).toHaveLength(1);

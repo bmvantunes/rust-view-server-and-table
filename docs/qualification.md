@@ -1,5 +1,7 @@
 # Local qualification
 
+This record applies to the frozen candidate commit named below. It is historical evidence and does not qualify later migration changes: the updated root `vp run test` task now includes the table Chromium browser suite, and that suite plus the full Kafka campaign must pass on the current candidate before claiming fresh acceptance.
+
 The full campaign passed on `468e40cb9eefc4198499d98fed27141d7b057e5d` on 2026-10-06. The fresh clone also passed frozen installation, generation, build, check and the full fast suite with a clean tracked working tree. The machine-readable record is [qualification.json](qualification.json); the exact raw evidence remains in `.local/e2e/e2e-fcab61f0c80341d7/` and is excluded from Git.
 
 ## Acceptance matrix

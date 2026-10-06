@@ -34,7 +34,7 @@ pub fn path_get<'a>(value:&'a Value,path:&str)->Option<&'a Value>{let mut v=valu
 pub fn path_insert(object:&mut Map<String,Value>,path:&str,value:Value){if let Some((first,rest))=path.split_once('.') {let child=object.entry(first.to_owned()).or_insert_with(||Value::Object(Map::new()));path_insert(child.as_object_mut().expect("admitted disjoint scalar paths"),rest,value);}else{object.insert(path.into(),value);}}
 #[derive(Clone, Debug)]
 pub struct Schema { definition:Definition, fingerprint:String, fields:BTreeMap<String,usize> }
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd)]
 pub enum Scalar { Missing, Null, String(String), Boolean(bool), Number(String), Int64(i64), Uint64(u64), Decimal(ExactDecimal), Enum(String,i32) }
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct Row { pub key:String, pub cells:Vec<Scalar>, pub parents:BTreeSet<String> }

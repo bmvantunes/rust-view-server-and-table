@@ -18,7 +18,8 @@ type Compare<F extends Field> = (F['kind'] extends 'string' ? {readonly op:'cont
 type Comparison<S extends Schema> = SchemaField<S> extends infer F ? F extends Field ? Compare<F> : never : never;
 export type SemanticProfile = 'effect-4.2.8';
 type TextComparison<F extends Field> = F['kind'] extends 'string' ? {readonly op:'text';readonly field:F['name'];readonly value:string;readonly match_kind:'eq'|'ne'|'contains'|'notContains'|'startsWith'|'endsWith';readonly case_sensitive?:boolean;readonly accent_sensitive?:boolean} : never;
-export type Predicate<S extends Schema> = Comparison<S> | (SchemaField<S> extends infer F ? F extends Field ? TextComparison<F> : never : never) | {readonly op:'and'|'or';readonly clauses:readonly Predicate<S>[]} | {readonly op:'not';readonly clause:Predicate<S>};
+type TextSet<F extends Field> = F['kind'] extends 'string' ? {readonly op:'text_in';readonly field:F['name'];readonly values:readonly string[];readonly case_sensitive?:boolean;readonly accent_sensitive?:boolean} : never;
+export type Predicate<S extends Schema> = Comparison<S> | (SchemaField<S> extends infer F ? F extends Field ? TextComparison<F> | TextSet<F> : never : never) | {readonly op:'and'|'or';readonly clauses:readonly Predicate<S>[]} | {readonly op:'not';readonly clause:Predicate<S>};
 export type RawQuery<S extends Schema> = {readonly semanticProfile?:SemanticProfile; readonly global?:never;readonly having?:never; readonly groupBy?:never; readonly aggregates?:never; readonly select:readonly [FieldName<S>,...FieldName<S>[]]; readonly where?:Predicate<S>; readonly orderBy:readonly {readonly field:FieldName<S>;readonly direction:'asc'|'desc'}[] };
 export type RowsWithRowId<T extends object> = Extract<keyof T,'rowId'> extends never ? T & {readonly rowId:string} : never;
 // A union-valued element names possible fields, not fields all returned together.
@@ -180,7 +181,7 @@ export function validateRow(schema:Schema,row:unknown,select:readonly string[]=s
  for(const key of select){const f=fields.get(key);if(!f)throw Error('unknown projection');const v=pathGet(row,key);const leaf=schema.expansion?.leaves.find(l=>l.path===key);const parent=key.split('.').slice(0,-1).join('.');const required=leaf?leaf.required&&(!parent||pathGet(row,parent)!==undefined):!f.optional;if(v===undefined){if(required)throw Error('missing required field');continue;}validateScalar(boundField(schema,f),v);}
  if(Object.hasOwn(row,schema.key)&&(typeof row[schema.key]!=='string'||!(row[schema.key] as string).length||encoder.encode(row[schema.key] as string).length>512||/[\u0000-\u001f\u007f-\u009f]/.test(row[schema.key] as string)))throw Error('invalid row key');
 }
-export function validateQuery(schema:Schema,query:unknown):asserts query is TopicQuery<Schema>{
+export function validateQuery(schema:Schema,query:unknown,identity?:{readonly topic:string;readonly fingerprint:string}):asserts query is TopicQuery<Schema>{
  if(!object(query)||!Array.isArray(query.orderBy)||query.orderBy.length>8)throw Error('invalid query shape');
  if(query.semanticProfile!==undefined&&query.semanticProfile!=='effect-4.2.8')throw Error('unknown semantic profile');const profile:SemanticProfile|undefined=query.semanticProfile;
  const global=Object.hasOwn(query,'global');if(global&&query.global!==true)throw Error('global must be true');const grouped=global||Object.hasOwn(query,'groupBy');const fields=new Map(schema.fields.map(f=>[f.name,boundField(schema,f)]));
@@ -204,13 +205,15 @@ export function validateQuery(schema:Schema,query:unknown):asserts query is Topi
   const f=typeof v.field==='string'?domains.get(v.field):undefined;if(!f)throw Error('unknown predicate field');
   if(['is_missing','is_null','is_value'].includes(v.op)){if(!exactKeys(v,['op','field'])||v.op==='is_missing'&&!f.optional||v.op==='is_null'&&!f.nullable)throw Error('state predicate');return;}
   const scalar=(value:unknown)=>{const a=aggregateDomains?.[f.name];if(a)validateAggregateOperand(schema,a,value,profile);else validateScalar({...f,nullable:false},value);};
-  if(v.op==='in'){if(!exactKeys(v,['op','field','values'])||!Array.isArray(v.values)||v.values.length<1||v.values.length>64)throw Error('in bound');for(const x of v.values)scalar(x);return;}
+  if(v.op==='in'){if(!exactKeys(v,['op','field','values'])||!Array.isArray(v.values)||v.values.length<1||v.values.length>4096)throw Error('in bound');for(const x of v.values)scalar(x);return;}
   if(v.op==='text'){if(!profile||f.kind!=='string'||!['eq','ne','contains','notContains','startsWith','endsWith'].includes(String(v.match_kind))||!exactKeys(v,['op','field','value','match_kind',...(Object.hasOwn(v,'case_sensitive')?['case_sensitive']:[]),...(Object.hasOwn(v,'accent_sensitive')?['accent_sensitive']:[])])||Object.hasOwn(v,'case_sensitive')&&typeof v.case_sensitive!=='boolean'||Object.hasOwn(v,'accent_sensitive')&&typeof v.accent_sensitive!=='boolean')throw Error('profile text predicate');validateScalar({...f,nullable:false},v.value);return;}
+  if(v.op==='text_in'){if(!profile||f.kind!=='string'||!exactKeys(v,['op','field','values',...(Object.hasOwn(v,'case_sensitive')?['case_sensitive']:[]),...(Object.hasOwn(v,'accent_sensitive')?['accent_sensitive']:[])])||!Array.isArray(v.values)||v.values.length<1||v.values.length>4096||Object.hasOwn(v,'case_sensitive')&&typeof v.case_sensitive!=='boolean'||Object.hasOwn(v,'accent_sensitive')&&typeof v.accent_sensitive!=='boolean')throw Error('profile text IN');for(const value of v.values)validateScalar({...f,nullable:false},value);return;}
   if(['contains','startsWith','endsWith'].includes(v.op)){if(f.kind!=='string'||!exactKeys(v,['op','field','value']))throw Error('text predicate shape/string field');validateScalar({...f,nullable:false},v.value);return;}
   if(!['eq','ne','lt','le','gt','ge'].includes(v.op)||!exactKeys(v,['op','field','value'])||f.kind==='boolean'&&!['eq','ne'].includes(v.op))throw Error('unsupported scalar operator');scalar(v.value);
  }
  if(Object.hasOwn(query,'where'))expr(query.where,0);
  if(Object.hasOwn(query,'having')){if(!aggregates)throw Error('HAVING requires aggregation');nodes=0;const domains=new Map(selected.map((name:string)=>[name,fields.get(name)!]));for(const [alias,a]of Object.entries(aggregates))domains.set(alias,aggregateField(schema,alias,a as Aggregate<Schema>,global,profile));expr(query.having,0,domains,aggregates as Readonly<Record<string,Aggregate<Schema>>>);}
+ if(identity)validateQueryIdentityBytes(identity.topic,identity.fingerprint,query);
 }
 /** Same ordered descriptor bytes as Rust. No authored result schema. */
 export function resultShape(topic:string,fingerprint:string,query:AggregateQuery<Schema>):string{return JSON.stringify([query.global?2:1,topic,fingerprint,query.global?null:query.groupBy,Object.keys(query.aggregates).sort().map(alias=>{const a=query.aggregates[alias];return [alias,a.aggFunc,a.field??null];}),...(query.semanticProfile?[query.semanticProfile]:[])]);}
@@ -234,8 +237,36 @@ export function validateGroupedRow(schema:Schema,query:AggregateQuery<Schema>,ro
  }
 }
 
+const MAX_QUERY_IDENTITY_BYTES=65_536;
+function canonicalJsonValue(value:unknown):unknown{if(Array.isArray(value))return value.map(canonicalJsonValue);if(object(value))return Object.fromEntries(Object.keys(value).sort().map(key=>[key,canonicalJsonValue(value[key])]));return value;}
+function identityPredicate(value:unknown):unknown{
+ const p=value as Record<string,unknown>,op=p.op as string;
+ if(op==='and'||op==='or')return {op,clauses:(p.clauses as unknown[]).map(identityPredicate)};
+ if(op==='not')return {op,clause:identityPredicate(p.clause)};
+ if(op==='text')return {op,field:p.field,value:p.value,match_kind:p.match_kind,case_sensitive:p.case_sensitive??false,accent_sensitive:p.accent_sensitive??false};
+ if(op==='text_in')return {op,field:p.field,values:p.values,case_sensitive:p.case_sensitive??false,accent_sensitive:p.accent_sensitive??false};
+ if(op==='in')return {op,field:p.field,values:(p.values as unknown[]).map(canonicalJsonValue)};
+ if(op==='is_missing'||op==='is_null'||op==='is_value')return {op,field:p.field};
+ return {op,field:p.field,value:canonicalJsonValue(p.value)};
+}
+/** Mirror serde's Query field order, omitted options, defaults, and UTF-8 JSON identity framing. */
+function queryIdentityText(topic:string,fingerprint:string,query:Record<string,unknown>):string{
+ const grouped=Object.hasOwn(query,'global')||Object.hasOwn(query,'groupBy');
+ const aggregateInput=query.aggregates;
+ const aggregates=object(aggregateInput)?Object.fromEntries(Object.keys(aggregateInput).sort().map(alias=>{const a=aggregateInput[alias] as Record<string,unknown>;return [alias,a.aggFunc==='count'?{aggFunc:a.aggFunc}:{aggFunc:a.aggFunc,field:a.field}]})):undefined;
+ const identity={...(query.semanticProfile===undefined?{}:{semantic_profile:query.semanticProfile}),...(query.global===undefined?{}:{global:query.global}),...(query.having===undefined?{}:{having:identityPredicate(query.having)}),...(query.select===undefined?{}:{select:query.select}),...(query.groupBy===undefined?{}:{group_by:query.groupBy}),...(aggregates===undefined?{}:{aggregates}),where:query.where===undefined?null:identityPredicate(query.where),order_by:(query.orderBy as Record<string,unknown>[]).map(order=>({...(order.field===undefined?{}:{field:order.field}),...(grouped&&order.aggregate!==undefined?{aggregate:order.aggregate}:{}),direction:order.direction}))};
+ return JSON.stringify([topic,fingerprint,identity]);
+}
+function numericSerializationSlack(value:unknown):number{if(typeof value==='number'){if(Number.isSafeInteger(value))return 0;const sourceBytes=encoder.encode(JSON.stringify(value)!).length;return Math.max(0,32-sourceBytes);}if(Array.isArray(value))return value.reduce<number>((count,item)=>count+numericSerializationSlack(item),0);if(object(value))return Object.values(value).reduce<number>((count,item)=>count+numericSerializationSlack(item),0);return 0;}
+function validateQueryIdentityBytes(topic:string,fingerprint:string,query:unknown):void{
+ if(!object(query)||!Array.isArray(query.orderBy))throw Error('invalid query shape');
+ // serde_json/Ryu can spell non-safe-integer f64 values differently from
+ // JSON.stringify. Reserve the remaining space up to Ryu's 32-byte finite-float
+ // buffer for each such operand; safe integers retain the same JSON integer form.
+ if(encoder.encode(queryIdentityText(topic,fingerprint,query)).length+numericSerializationSlack(query)>MAX_QUERY_IDENTITY_BYTES)throw Error('query byte bound');
+}
 /** Capability detection after bounded typed query validation. */
-export function requiresTextPredicate(value:unknown):boolean {if(!object(value))return false;if(['text','contains','startsWith','endsWith'].includes(String(value.op)))return true;if(value.op==='not')return requiresTextPredicate(value.clause);return (value.op==='and'||value.op==='or')&&Array.isArray(value.clauses)&&value.clauses.some(requiresTextPredicate);}
+export function requiresTextPredicate(value:unknown):boolean {if(!object(value))return false;if(['text','text_in','contains','startsWith','endsWith'].includes(String(value.op)))return true;if(value.op==='not')return requiresTextPredicate(value.clause);return (value.op==='and'||value.op==='or')&&Array.isArray(value.clauses)&&value.clauses.some(requiresTextPredicate);}
 
 function aggregateField(schema:Schema,alias:string,a:Aggregate<Schema>,global:boolean,profile?:SemanticProfile):Field{
  const f=a.field?schema.fields.find(f=>f.name===a.field)!:undefined;

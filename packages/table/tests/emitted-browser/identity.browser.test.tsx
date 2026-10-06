@@ -102,7 +102,7 @@ test("restores and emits versioned Grid Preferences from the emitted package", a
     .element(screen.getByRole("gridcell", { name: "Ada", exact: true }))
     .not.toBeInTheDocument();
   expect(onPersistChange).not.toHaveBeenCalled();
-  await userEvent.click(screen.getByRole("button", { name: "Sort by Name" }));
+  await userEvent.click(screen.getByRole("button", { name: /^Sort by Name(?:,|$)/u }));
   await vi.waitFor(() => expect(onPersistChange).toHaveBeenCalledOnce());
   expect(JSON.stringify(onPersistChange.mock.lastCall?.[0])).toContain(
     '"codecId":"@bruno/table/text"',
@@ -145,12 +145,14 @@ test("applies emitted Quick Filter and column filter interactions", async () => 
   );
 
   await userEvent.fill(screen.getByRole("searchbox", { name: "Quick Filter" }), "msft");
-  await expect.element(screen.getByRole("status", { name: "Result rows" })).toHaveTextContent("1");
-  await expect.element(screen.getByRole("status", { name: "Loaded rows" })).toHaveTextContent("2");
+  await expect.element(screen.getByRole("status", { name: "Result rows" })).toMatchTextContent("1");
+  await expect.element(screen.getByRole("status", { name: "Loaded rows" })).toMatchTextContent("2");
   await expect
     .element(screen.getByRole("status", { name: "Active filters" }))
-    .toHaveTextContent("1");
-  await expect.element(screen.getByRole("status", { name: "Active sorts" })).toHaveTextContent("1");
+    .toMatchTextContent("1");
+  await expect
+    .element(screen.getByRole("status", { name: "Active sorts" }))
+    .toMatchTextContent("1");
   await expect
     .element(screen.getByRole("gridcell", { name: "Grace", exact: true }))
     .toBeInTheDocument();
@@ -179,7 +181,7 @@ test("applies emitted Quick Filter and column filter interactions", async () => 
     .toBeInTheDocument();
   await expect
     .element(screen.getByRole("status", { name: "Active filters" }))
-    .toHaveTextContent("1 active filter");
+    .toMatchTextContent("1 active filter");
   await userEvent.keyboard("{Escape}");
   await expect
     .element(screen.getByRole("grid", { name: "Data for TABLE_ID_EMITTED_FILTERS" }))
@@ -187,11 +189,11 @@ test("applies emitted Quick Filter and column filter interactions", async () => 
   await userEvent.fill(screen.getByRole("searchbox", { name: "Quick Filter" }), "msft");
   await expect
     .element(screen.getByRole("status", { name: "Active filters" }))
-    .toHaveTextContent("2 active filters");
+    .toMatchTextContent("2 active filters");
   await userEvent.click(screen.getByRole("button", { name: "Clear Grid Filters" }));
   await expect
     .element(screen.getByRole("status", { name: "Active filters" }))
-    .toHaveTextContent("1 active filter");
+    .toMatchTextContent("1 active filter");
   await expect
     .element(screen.getByRole("gridcell", { name: "Grace", exact: true }))
     .toBeInTheDocument();
@@ -236,12 +238,18 @@ test("applies emitted live Set Filter inclusion and normalization", async () => 
   await userEvent.click(screen.getByRole("button", { name: "Filter Active" }));
   const dialog = screen.getByRole("dialog", { name: "Filter Active" });
   await userEvent.click(dialog.getByRole("button", { name: "Clear All" }));
-  dialog.getByRole("checkbox", { name: "Select true, 1" }).element().focus();
+  dialog
+    .getByRole("checkbox", { name: /^Select true, 1(?:\s|$)/u })
+    .element()
+    .focus();
   await userEvent.keyboard(" ");
   await expect
     .element(screen.getByRole("gridcell", { name: "inactive", exact: true }))
     .not.toBeInTheDocument();
-  dialog.getByRole("checkbox", { name: "Select false, 1" }).element().focus();
+  dialog
+    .getByRole("checkbox", { name: /^Select false, 1(?:\s|$)/u })
+    .element()
+    .focus();
   await userEvent.keyboard(" ");
   await expect
     .element(screen.getByRole("gridcell", { name: "inactive", exact: true }))
@@ -283,14 +291,14 @@ test("windows emitted Select filter options while retaining a selected value", a
   const dialog = screen.getByRole("dialog", { name: "Filter Choice" });
   await expect
     .element(dialog.getByRole("status").nth(1))
-    .toHaveTextContent("Showing options 1–64 of 65");
+    .toMatchTextContent("Showing options 1–64 of 65");
   const selectedOption = dialog.getByRole("option", { name: "option-64" });
   await expect.element(selectedOption).toBeInTheDocument();
   expect((selectedOption.element() as HTMLOptionElement).selected).toBe(true);
   await userEvent.click(dialog.getByRole("button", { name: "Next filter options for Choice" }));
   await expect
     .element(dialog.getByRole("status").nth(1))
-    .toHaveTextContent("Showing options 2–65 of 65");
+    .toMatchTextContent("Showing options 2–65 of 65");
   await expect.element(dialog.getByRole("option", { name: "option-0" })).not.toBeInTheDocument();
   expect(
     (dialog.getByRole("option", { name: "option-64" }).element() as HTMLOptionElement).selected,

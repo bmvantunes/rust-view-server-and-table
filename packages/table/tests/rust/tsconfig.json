@@ -5,6 +5,7 @@
   },
   "include": [
     "./types.test-d.tsx",
+    "./public-exports.test-d.tsx",
     "../../src/**/*.d.ts"
   ]
 }

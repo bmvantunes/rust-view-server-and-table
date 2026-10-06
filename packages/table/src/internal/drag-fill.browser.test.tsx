@@ -753,7 +753,7 @@ describe("BrunoTable Drag Fill browser runtime", () => {
     const notifications = chrome.getByRole("region", { name: "Notifications", exact: true });
     await expect
       .element(notifications)
-      .toHaveTextContent(
+      .toMatchTextContent(
         "Row 1, Amount: Expected a positive value. (+2 more) Nothing was applied.",
       );
     await userEvent.click(notifications.getByRole("button", { name: "Close toast", exact: true }));

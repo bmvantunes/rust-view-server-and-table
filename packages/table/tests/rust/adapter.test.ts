@@ -95,6 +95,24 @@ it('supports normalized text set filters including strict flags, null and Match 
  expect(c({...raw,where:[{field:'customer',type:'in',filter:[]}]}).wire.where).toMatchObject({op:'and'});
 });
 
+it('compiles bounded 4096-value exact and profile text Set Filters without Boolean expansion',()=>{
+ const integers=Array.from({length:4096},(_,index)=>BigInt(index));const integerQuery=c({...raw,where:[{field:'units',type:'in',filter:integers}]});
+ const integerSet=(integerQuery.wire.where as {values:readonly string[]}).values;expect(integerSet).toHaveLength(4096);expect(new Set(integerSet)).toEqual(new Set(Array.from({length:4096},(_,index)=>String(index))));
+ const textValues=Array.from({length:4095},(_,index)=>`facet-${index}`);textValues[0]='école';
+ const textQuery=c({...raw,where:[{field:'note',type:'in',filter:[...textValues,null],caseSensitive:true,accentSensitive:true}]});
+ expect(textQuery.wire.where).toMatchObject({op:'or'});
+ const clauses=(textQuery.wire.where as {clauses:readonly {op:string;values?:readonly string[]}[]}).clauses;
+ expect(clauses).toHaveLength(2);expect(clauses).toEqual(expect.arrayContaining([expect.objectContaining({op:'is_null',field:'note'}),expect.objectContaining({op:'text_in',field:'note',case_sensitive:true,accent_sensitive:true})]));
+ expect(clauses.find(clause=>clause.op==='text_in')?.values).toHaveLength(4095);
+ expect(()=>c({...raw,where:[{field:'units',type:'in',filter:[...integers,4096n]}]})).toThrow();
+ expect(()=>c({...raw,where:[{field:'open',type:'in',filter:[null]}]})).toThrow();
+});
+
+it('rejects a Set Filter whose UTF-8 query identity exceeds the native source bound',()=>{
+ const values=Array.from({length:4096},(_,index)=>`facet-${index}-界界界界界`);
+ expect(()=>c({...raw,where:[{field:'customer',type:'in',filter:values}]})).toThrow('query byte bound');
+});
+
 it('round trips complete rows through library exact write codecs without leaking rowId',()=>{
  const input={rowId:'rid2:write',orderId:'order-000000',customer:'École',units:'9007199254740993',price:'0.123456789012345678',open:true};const row=decodeCompleteRows(entry.schema,[input],new WeakMap())[0]!;
  const encoded=encodeCompatRow(entry.schema,row);expect(encoded).toEqual({orderId:input.orderId,customer:input.customer,units:input.units,price:input.price,open:true});expect(Object.hasOwn(encoded,'rowId')).toBe(false);

@@ -62,7 +62,7 @@ test.each([
       />
     </ConfigurationBoundary>,
   );
-  await expect.element(screen.getByRole("alert")).toHaveTextContent(message);
+  await expect.element(screen.getByRole("alert")).toMatchTextContent(message);
 });
 
 test("public Table copies canonical helper values independently of custom presentation", async () => {

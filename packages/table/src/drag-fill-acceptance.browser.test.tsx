@@ -756,7 +756,7 @@ describe("BrunoTable Drag Fill acceptance", () => {
     resolveFirstSave();
     await expect
       .element(screen.getByRole("region", { name: "Edit safety" }))
-      .toHaveTextContent("1 Immediate save accepted · waiting for live confirmation");
+      .toMatchTextContent("1 Immediate save accepted · waiting for live confirmation");
     await expect.element(cell(grid, "overlay")).toBeVisible();
 
     const invalidOverlayRows = [
@@ -798,7 +798,7 @@ describe("BrunoTable Drag Fill acceptance", () => {
     expect(onSaveEdits).not.toHaveBeenCalled();
     await expect
       .element(screen.getByRole("region", { name: "Notifications", exact: true }))
-      .toHaveTextContent(/^$/);
+      .toMatchTextContent(/^$/);
   });
 
   test("completes a production Drag Fill onto a pinned destination cell", async () => {

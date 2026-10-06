@@ -154,7 +154,7 @@ test("keeps legacy edit safety chrome without exposing unavailable review comman
       />,
     );
     const footer = footerScreen.getByRole("region", { name: "Edit safety" });
-    await expect.element(footer).toHaveTextContent("1 conflict");
+    await expect.element(footer).toMatchTextContent("1 conflict");
     await expect
       .element(footerScreen.getByRole("button", { name: "1 conflict" }))
       .not.toBeInTheDocument();
@@ -429,7 +429,7 @@ test("keeps a resolved Batch globally locked behind an Accepted Overlay until li
   resolveSave();
   await expect
     .element(screen.getByRole("region", { name: "Edit safety" }))
-    .toHaveTextContent("Batch save accepted · waiting for live confirmation · 1 row remaining");
+    .toMatchTextContent("Batch save accepted · waiting for live confirmation · 1 row remaining");
   await expect.element(batchEditing).toBeDisabled();
   const acceptedCell = grid.getByRole("gridcell", { name: "Augusta", exact: true });
   await expect.element(acceptedCell).toBeVisible();
@@ -519,10 +519,10 @@ test("unlocks a rejected Batch operation without discarding its drafts or histor
 
   await expect
     .element(screen.getByRole("alert"))
-    .toHaveTextContent("Open Operation details for the complete explanation.");
+    .toMatchTextContent("Open Operation details for the complete explanation.");
   await expect
     .element(screen.getByRole("region", { name: "Edit safety" }))
-    .toHaveTextContent("1 unsaved change");
+    .toMatchTextContent("1 unsaved change");
   await expect.element(screen.getByRole("button", { name: "Reset edits" })).toBeEnabled();
   await expect.element(screen.getByRole("button", { name: "Save", exact: true })).toBeEnabled();
   const failedCell = grid.getByRole("gridcell", { name: "Augusta", exact: true });
@@ -629,11 +629,11 @@ test("retains an Immediate Accepted Overlay and operation gate through live conf
     .toHaveAttribute("aria-busy", "true");
   await expect
     .element(screen.getByRole("region", { name: "Edit safety" }))
-    .toHaveTextContent("1 Immediate save pending");
+    .toMatchTextContent("1 Immediate save pending");
   resolveSave();
   await expect
     .element(screen.getByRole("region", { name: "Edit safety" }))
-    .toHaveTextContent("1 Immediate save accepted · waiting for live confirmation");
+    .toMatchTextContent("1 Immediate save accepted · waiting for live confirmation");
   await expect.element(batchEditing).toBeDisabled();
   await expect.element(grid.getByRole("gridcell", { name: "Augusta", exact: true })).toBeVisible();
 
@@ -695,7 +695,7 @@ test("keeps edit warnings visible while an Immediate save is pending", async () 
 
   await expect
     .element(screen.getByRole("region", { name: "Edit safety" }))
-    .toHaveTextContent("1 Immediate save pending · 1 invalid · 2 unsaved");
+    .toMatchTextContent("1 Immediate save pending · 1 invalid · 2 unsaved");
   expect(onSaveEdits).toHaveBeenCalledOnce();
 });
 
@@ -867,7 +867,7 @@ test("restores pending Batch drafts after incompatible decoder and field replace
   await screen.rerender(renderTable(reboundColumns, advancedRows, 2));
   await expect
     .element(screen.getByRole("region", { name: "Edit safety" }))
-    .toHaveTextContent("1 blocked change");
+    .toMatchTextContent("1 blocked change");
   await expect.element(screen.getByRole("button", { name: "Save" })).toBeDisabled();
   grid.element().focus();
   await userEvent.keyboard(
@@ -880,7 +880,7 @@ test("restores pending Batch drafts after incompatible decoder and field replace
   );
   await expect
     .element(screen.getByRole("region", { name: "Edit safety" }))
-    .toHaveTextContent("1 blocked change");
+    .toMatchTextContent("1 blocked change");
   await screen.rerender(renderTable(restoredColumns, advancedRows, 3));
 
   await expect
@@ -888,7 +888,7 @@ test("restores pending Batch drafts after incompatible decoder and field replace
     .toBeVisible();
   await expect
     .element(screen.getByRole("region", { name: "Edit safety" }))
-    .toHaveTextContent("1 conflict · 1 unsaved");
+    .toMatchTextContent("1 conflict · 1 unsaved");
   await expect.element(screen.getByRole("button", { name: "Reset edits" })).toBeEnabled();
 });
 
@@ -922,7 +922,7 @@ test("keeps Batch drafts blocked while invalid stale source rows are retained", 
   await expect.element(grid.getByRole("gridcell", { name: "Augusta", exact: true })).toBeVisible();
   await expect
     .element(screen.getByRole("region", { name: "Edit safety" }))
-    .toHaveTextContent("1 unsaved change");
+    .toMatchTextContent("1 unsaved change");
   await expect.element(screen.getByRole("button", { name: "Save" })).toBeDisabled();
   expect(onSaveEdits).not.toHaveBeenCalled();
 
@@ -967,12 +967,12 @@ test("retains a resolved save operation across a non-authoritative loading gap",
   await screen.rerender(renderTable([], 2, "loading"));
   await expect
     .element(screen.getByRole("region", { name: "Edit safety" }))
-    .toHaveTextContent("1 Immediate save pending");
+    .toMatchTextContent("1 Immediate save pending");
   resolveSave();
   await expect.element(batchEditing).toBeDisabled();
   await expect
     .element(screen.getByRole("region", { name: "Edit safety" }))
-    .toHaveTextContent("1 Immediate save accepted · waiting for live confirmation");
+    .toMatchTextContent("1 Immediate save accepted · waiting for live confirmation");
 
   await screen.rerender(renderTable(rows, 3, "ready"));
   await expect
@@ -1021,7 +1021,7 @@ test("retains a resolved save operation across a terminal source publication", a
   resolveSave();
   await expect
     .element(screen.getByRole("region", { name: "Edit safety" }))
-    .toHaveTextContent("1 Immediate save accepted · waiting for live confirmation");
+    .toMatchTextContent("1 Immediate save accepted · waiting for live confirmation");
   await expect.element(batchEditing).toBeDisabled();
 
   await screen.rerender(renderTable(terminalRows, 2, "closed"));
@@ -1091,7 +1091,7 @@ test("retains an Immediate candidate until save preflight becomes authoritative"
   expect(onSaveEdits).not.toHaveBeenCalled();
   await expect
     .element(screen.getByRole("region", { name: "Edit safety" }))
-    .toHaveTextContent("1 unsaved change");
+    .toMatchTextContent("1 unsaved change");
   await expect.element(screen.getByRole("button", { name: "Save" })).toBeDisabled();
 
   await screen.rerender(renderTable(rows, 3, "ready"));
@@ -1161,7 +1161,9 @@ test("resolves an Immediate conflict with Mine and starts one safely rebased sav
   let reviewGrid = review.getByRole("grid", { name: "Conflict Review changes" });
   expect(reviewGrid.element().getAttribute("aria-keyshortcuts")).not.toMatch(/Control\+C|Meta\+C/);
   scrollReviewGridToEnd(reviewGrid);
-  await userEvent.click(review.getByRole("button", { name: "Keep Mine for row ada, column Name" }));
+  await userEvent.click(
+    review.getByRole("button", { name: /^Keep Mine for row ada, column Name(?:\.|$)/u }),
+  );
 
   expect(onSaveEdits).toHaveBeenCalledOnce();
   expect(onSaveEdits).toHaveBeenCalledWith([
@@ -1255,24 +1257,24 @@ test.each([
     const reviewGrid = review.getByRole("grid", { name: "Conflict Review changes" });
     scrollReviewGridToEnd(reviewGrid);
     await userEvent.click(
-      review.getByRole("button", { name: "Keep Mine for row ada, column Name" }),
+      review.getByRole("button", { name: /^Keep Mine for row ada, column Name(?:\.|$)/u }),
     );
 
     expect(onSaveEdits).toHaveBeenCalledOnce();
     await expect.element(review).toBeVisible();
     await expect
       .element(review.getByRole("status"))
-      .toHaveTextContent("All conflicts are current.");
+      .toMatchTextContent("All conflicts are current.");
     await expect.element(reviewGrid).not.toBeInTheDocument();
     await expect
-      .element(review.getByRole("button", { name: "Keep Mine for row ada, column Name" }))
+      .element(review.getByRole("button", { name: /^Keep Mine for row ada, column Name(?:\.|$)/u }))
       .not.toBeInTheDocument();
     await expect.element(review.getByRole("button", { name: "Cancel" })).toBeEnabled();
     await expect.element(review.getByRole("button", { name: "Save" })).toBeDisabled();
     await expect.element(review.getByRole("button", { name: "Saving…" })).not.toBeInTheDocument();
 
     const alert = screen.getByRole("alert");
-    await expect.element(alert).toHaveTextContent("A save operation failed.");
+    await expect.element(alert).toMatchTextContent("A save operation failed.");
     await userEvent.click(review.getByRole("button", { name: "Cancel" }));
     await expect.element(review).not.toBeInTheDocument();
     await userEvent.click(
@@ -1281,7 +1283,7 @@ test.each([
         .getByRole("button", { name: "Operation details" }),
     );
     const details = screen.getByRole("alertdialog", { name: "Save operation details" });
-    await expect.element(details).toHaveTextContent(`Operation 1: ${message}`);
+    await expect.element(details).toMatchTextContent(`Operation 1: ${message}`);
     await userEvent.click(details.getByRole("button", { name: "Close details" }));
 
     const restoredServer = grid.getByRole("gridcell", { name: "Server", exact: true });
@@ -1435,7 +1437,9 @@ test("keeps an Immediate review open while one disjoint conflict save is pending
   const review = screen.getByRole("alertdialog", { name: "Conflict Review" });
   const reviewGrid = review.getByRole("grid", { name: "Conflict Review changes" });
   scrollReviewGridToEnd(reviewGrid);
-  await userEvent.click(review.getByRole("button", { name: "Keep Mine for row ada, column Name" }));
+  await userEvent.click(
+    review.getByRole("button", { name: /^Keep Mine for row ada, column Name(?:\.|$)/u }),
+  );
 
   const cancel = review.getByRole("button", { name: "Cancel" });
   await expect.element(cancel).toBeDisabled();
@@ -1498,7 +1502,7 @@ test("resolves an Immediate conflict with Server without starting a save", async
   );
   scrollReviewGridToEnd(reviewGrid);
   await userEvent.click(
-    review.getByRole("button", { name: "Keep Server for row ada, column Name" }),
+    review.getByRole("button", { name: /^Keep Server for row ada, column Name(?:\.|$)/u }),
   );
   await userEvent.click(review.getByRole("button", { name: "Cancel" }));
   await expect.element(review).not.toBeInTheDocument();
@@ -1508,7 +1512,7 @@ test("resolves an Immediate conflict with Server without starting a save", async
   reviewGrid = review.getByRole("grid", { name: "Conflict Review changes" });
   scrollReviewGridToEnd(reviewGrid);
   await userEvent.click(
-    review.getByRole("button", { name: "Keep Server for row ada, column Name" }),
+    review.getByRole("button", { name: /^Keep Server for row ada, column Name(?:\.|$)/u }),
   );
   await userEvent.click(review.getByRole("button", { name: "Save" }));
 
@@ -1516,7 +1520,7 @@ test("resolves an Immediate conflict with Server without starting a save", async
   await expect.element(review).not.toBeInTheDocument();
   await expect
     .element(screen.getByRole("region", { name: "Edit safety" }))
-    .toHaveTextContent("No unsaved changes");
+    .toMatchTextContent("No unsaved changes");
 
   await screen.rerender(renderTable([{ id: "ada", name: "Server", revision: 3n }], 4, "ready"));
   await expect.element(screen.getByRole("button", { name: "1 conflict" })).not.toBeInTheDocument();
@@ -1525,7 +1529,7 @@ test("resolves an Immediate conflict with Server without starting a save", async
     .not.toBeInTheDocument();
   await expect
     .element(screen.getByRole("region", { name: "Edit safety" }))
-    .toHaveTextContent("No unsaved changes");
+    .toMatchTextContent("No unsaved changes");
 });
 
 test("keeps in-flight save evidence in its captured Row Version domain", async () => {
@@ -1811,8 +1815,8 @@ test("does not fabricate a conflict when a source row and same-ID column schema 
   rejectSave(new Error("The save was not confirmed."));
 
   const editSafety = screen.getByRole("region", { name: "Edit safety" });
-  await expect.element(editSafety).toHaveTextContent("1 unsaved");
-  await expect.element(editSafety).not.toHaveTextContent("conflict");
+  await expect.element(editSafety).toMatchTextContent("1 unsaved");
+  await expect.element(editSafety).not.toMatchTextContent("conflict");
   await expect.element(screen.getByRole("button", { name: "Save" })).toBeEnabled();
 });
 
@@ -1839,8 +1843,8 @@ test("reports an Immediate save failure persistently and exposes an accessible C
   const alert = screen.getByRole("alert");
   await expect
     .element(alert)
-    .toHaveTextContent("Open Operation details for the complete explanation.");
-  await expect.element(alert).not.toHaveTextContent("Version changed on the server.");
+    .toMatchTextContent("Open Operation details for the complete explanation.");
+  await expect.element(alert).not.toMatchTextContent("Version changed on the server.");
   await expect
     .element(grid.getByRole("gridcell", { name: "Ada", exact: true }))
     .toHaveAttribute("data-bruno-save-failed");
@@ -1851,10 +1855,10 @@ test("reports an Immediate save failure persistently and exposes an accessible C
   await userEvent.click(operationDetails);
   await expect
     .element(screen.getByRole("alertdialog", { name: "Save operation details" }))
-    .toHaveTextContent("Operation 1: Version changed on the server.");
+    .toMatchTextContent("Operation 1: Version changed on the server.");
   await expect
     .element(screen.getByRole("alertdialog", { name: "Save operation details" }))
-    .toHaveTextContent("Row ada, column COL_ID_NAME (field name).");
+    .toMatchTextContent("Row ada, column COL_ID_NAME (field name).");
   await userEvent.click(screen.getByRole("button", { name: "Close details" }));
   await expect.element(alert.getByRole("button", { name: "Retry" })).not.toBeInTheDocument();
   await expect
@@ -1899,12 +1903,12 @@ test("does not let a stale Immediate failure presentation suppress a same-cell r
   const retryCell = grid.getByRole("gridcell", { name: "Ada Lovelace", exact: true });
   await expect.element(retryCell).toHaveAttribute("data-bruno-save-success");
   await expect.element(retryCell).not.toHaveAttribute("data-bruno-save-failed");
-  await expect.element(screen.getByRole("alert")).toHaveTextContent("A save operation failed.");
+  await expect.element(screen.getByRole("alert")).toMatchTextContent("A save operation failed.");
 
   const confirmedRows = [{ id: "ada", name: "Ada Lovelace", revision: 2n }] as const;
   await screen.rerender(renderTable(confirmedRows, 2));
   await expect.element(retryCell).not.toHaveAttribute("data-bruno-save-failed");
-  await expect.element(screen.getByRole("alert")).toHaveTextContent("A save operation failed.");
+  await expect.element(screen.getByRole("alert")).toMatchTextContent("A save operation failed.");
 });
 
 test("clears a rejected Immediate save after its authoritative row disappears", async () => {
@@ -1974,24 +1978,24 @@ test("retains one concurrent failure when another operation converges", async ()
 
   rejectSave[0]!(new Error("Ada save failed."));
   const alert = screen.getByRole("alert");
-  await expect.element(alert).toHaveTextContent("A save operation failed.");
+  await expect.element(alert).toMatchTextContent("A save operation failed.");
   await userEvent.click(screen.getByRole("button", { name: "Operation details" }));
   const details = screen.getByRole("alertdialog", { name: "Save operation details" });
-  await expect.element(details).toHaveTextContent("Ada save failed.");
+  await expect.element(details).toMatchTextContent("Ada save failed.");
 
   rejectSave[1]!(new Error("Grace save failed."));
   await expect.element(details).toBeVisible();
-  await expect.element(details).toHaveTextContent("Ada save failed.");
-  await expect.element(details).toHaveTextContent("Grace save failed.");
+  await expect.element(details).toMatchTextContent("Ada save failed.");
+  await expect.element(details).toMatchTextContent("Grace save failed.");
 
   const partiallyConverged = [{ id: "ada", name: "Augusta", revision: 2n }, sourceRows[1]] as const;
   await screen.rerender(renderTable(partiallyConverged, 2));
   await expect.element(details).toBeVisible();
-  await expect.element(details).toHaveTextContent("Grace save failed.");
-  await expect.element(details).not.toHaveTextContent("Ada save failed.");
+  await expect.element(details).toMatchTextContent("Grace save failed.");
+  await expect.element(details).not.toMatchTextContent("Ada save failed.");
   await userEvent.click(details.getByRole("button", { name: "Close details" }));
   const remainingAlert = screen.getByRole("alert");
-  await expect.element(remainingAlert).toHaveTextContent("A save operation failed.");
+  await expect.element(remainingAlert).toMatchTextContent("A save operation failed.");
   await userEvent.click(screen.getByRole("button", { name: "Close toast" }));
   await expect.element(remainingAlert).not.toBeInTheDocument();
 });
@@ -2038,13 +2042,13 @@ test("prunes converged cells from one rejected Batch operation's details", async
   rejectSave(new Error("Batch compare-and-set failed."));
   await userEvent.click(screen.getByRole("button", { name: "Operation details" }));
   const details = screen.getByRole("alertdialog", { name: "Save operation details" });
-  await expect.element(details).toHaveTextContent("Row ada, column COL_ID_NAME");
-  await expect.element(details).toHaveTextContent("Row grace, column COL_ID_NAME");
+  await expect.element(details).toMatchTextContent("Row ada, column COL_ID_NAME");
+  await expect.element(details).toMatchTextContent("Row grace, column COL_ID_NAME");
 
   const partiallyConverged = [{ id: "ada", name: "Augusta", revision: 2n }, sourceRows[1]] as const;
   await screen.rerender(renderTable(partiallyConverged, 2));
-  await expect.element(details).not.toHaveTextContent("Row ada, column COL_ID_NAME");
-  await expect.element(details).toHaveTextContent("Row grace, column COL_ID_NAME");
+  await expect.element(details).not.toMatchTextContent("Row ada, column COL_ID_NAME");
+  await expect.element(details).toMatchTextContent("Row grace, column COL_ID_NAME");
 });
 
 test("shares one notification viewport across multiple editable tables", async () => {
@@ -2079,7 +2083,7 @@ test("shares one notification viewport across multiple editable tables", async (
   expect(screen.getByRole("region", { name: "Notifications" }).all()).toHaveLength(1);
   await expect
     .element(screen.getByRole("alert").all()[0]!)
-    .toHaveTextContent("A save operation failed.");
+    .toMatchTextContent("A save operation failed.");
 });
 
 test("keeps shared failure toasts distinct across separate React roots", async () => {
@@ -2262,7 +2266,7 @@ test("does not reopen stale failure details when a later save fails", async () =
   await userEvent.keyboard("{Enter}");
   await expect
     .element(screen.getByRole("alert"))
-    .toHaveTextContent("Open Operation details for the complete explanation.");
+    .toMatchTextContent("Open Operation details for the complete explanation.");
   await userEvent.click(screen.getByRole("button", { name: "Operation details" }));
   const details = screen.getByRole("alertdialog", { name: "Save operation details" });
   await expect.element(details).toBeVisible();
@@ -2278,7 +2282,7 @@ test("does not reopen stale failure details when a later save fails", async () =
   await userEvent.keyboard("{Enter}");
   await expect
     .element(screen.getByRole("alert"))
-    .toHaveTextContent("Open Operation details for the complete explanation.");
+    .toMatchTextContent("Open Operation details for the complete explanation.");
   await expect.element(details).not.toBeInTheDocument();
 });
 
@@ -2306,7 +2310,7 @@ test("normalizes a synchronous save throw and releases Immediate locks", async (
 
   await expect
     .element(screen.getByRole("alert"))
-    .toHaveTextContent("Open Operation details for the complete explanation.");
+    .toMatchTextContent("Open Operation details for the complete explanation.");
   await expect
     .element(grid.getByRole("gridcell", { name: "Ada", exact: true }))
     .not.toHaveAttribute("aria-busy");
@@ -2340,7 +2344,7 @@ test("contains a hostile rejection message and still releases Immediate locks", 
 
   await expect
     .element(screen.getByRole("alert"))
-    .toHaveTextContent("Open Operation details for the complete explanation.");
+    .toMatchTextContent("Open Operation details for the complete explanation.");
   await expect
     .element(grid.getByRole("gridcell", { name: "Ada", exact: true }))
     .not.toHaveAttribute("aria-busy");
@@ -2368,7 +2372,7 @@ test("clears Batch rejection presentation and notification on Reset", async () =
   await userEvent.click(screen.getByRole("button", { name: "Save" }));
   await expect
     .element(screen.getByRole("alert"))
-    .toHaveTextContent("Open Operation details for the complete explanation.");
+    .toMatchTextContent("Open Operation details for the complete explanation.");
 
   await userEvent.click(screen.getByRole("button", { name: "Reset edits" }));
   const resetDialog = screen.getByRole("alertdialog", { name: "Reset Review" });
@@ -2446,7 +2450,7 @@ test("clears only an ambiguous failure whose submitted values later converge", a
 
   await expect
     .element(screen.getByRole("alert"))
-    .toHaveTextContent("Open Operation details for the complete explanation.");
+    .toMatchTextContent("Open Operation details for the complete explanation.");
   await expect
     .element(grid.getByRole("gridcell", { name: "Ada", exact: true }))
     .toHaveAttribute("data-bruno-save-failed");
@@ -2567,7 +2571,7 @@ test("remembers and prunes pending Batch convergence through a rebound column", 
   await expect.element(batchEditing).toBeEnabled();
   await expect
     .element(screen.getByRole("region", { name: "Edit safety" }))
-    .toHaveTextContent("No unsaved changes");
+    .toMatchTextContent("No unsaved changes");
   await expect
     .element(grid.getByRole("gridcell", { name: "Countess", exact: true }))
     .toHaveAttribute("data-bruno-save-success");
@@ -2629,7 +2633,7 @@ test("prunes rejected Batch drafts when captured schema authority later converge
   await expect.element(batchEditing).toBeEnabled();
   await expect
     .element(screen.getByRole("region", { name: "Edit safety" }))
-    .toHaveTextContent("No unsaved changes");
+    .toMatchTextContent("No unsaved changes");
 });
 
 test("preserves a later Batch draft when an older rejected save converges", async () => {
@@ -2676,7 +2680,7 @@ test("preserves a later Batch draft when an older rejected save converges", asyn
   await expect.element(grid.getByRole("gridcell", { name: "Countess", exact: true })).toBeVisible();
   await expect
     .element(screen.getByRole("region", { name: "Edit safety" }))
-    .toHaveTextContent("1 conflict · 1 unsaved");
+    .toMatchTextContent("1 conflict · 1 unsaved");
   await userEvent.click(screen.getByRole("button", { name: "Reset edits" }));
   const resetAllChanges = screen.getByRole("button", { name: "Reset All Changes" });
   const historyDescriptionId = resetAllChanges.element().getAttribute("aria-describedby");
@@ -2901,14 +2905,14 @@ test("keeps concurrent same-row Immediate operations isolated by Cell Identity",
   ]);
   await expect
     .element(screen.getByRole("region", { name: "Edit safety" }))
-    .toHaveTextContent("2 Immediate saves pending");
+    .toMatchTextContent("2 Immediate saves pending");
 
   settlements[0]!.resolve();
   await expect.element(grid.getByRole("gridcell", { name: "Augusta", exact: true })).toBeVisible();
   await expect.element(grid.getByRole("gridcell", { name: "Byron", exact: true })).toBeVisible();
   await expect
     .element(screen.getByRole("region", { name: "Edit safety" }))
-    .toHaveTextContent(
+    .toMatchTextContent(
       "1 Immediate save pending · 1 Immediate save accepted · waiting for live confirmation",
     );
   await expect.element(screen.getByRole("switch", { name: "Batch editing" })).toBeDisabled();
@@ -2986,7 +2990,7 @@ test("blocks Edit Mode changes while an editor or committed draft owns work", as
       .getByRole("region", { name: "Edit safety" })
       .element()
       .querySelector('[aria-live="polite"]'),
-  ).toHaveTextContent("1 unsaved change");
+  ).toMatchTextContent("1 unsaved change");
   await expect.element(screen.getByRole("button", { name: "Reset edits" })).toBeEnabled();
   await expect.element(screen.getByRole("button", { name: "Save" })).toBeEnabled();
 });
@@ -3032,7 +3036,7 @@ test("reconciles current draft convergence against replacement column semantics"
       .getByRole("region", { name: "Edit safety" })
       .element()
       .querySelector('[aria-live="polite"]'),
-  ).toHaveTextContent("No unsaved changes");
+  ).toMatchTextContent("No unsaved changes");
 });
 
 test("reconciles redo-only convergence against replacement column semantics", async () => {
@@ -3109,15 +3113,15 @@ test("keeps an open Reset Review in the replacement column value domain", async 
   await screen.rerender(renderTable(replacementColumns, 1));
   expect(
     review.element().querySelector('td[data-bruno-column-id="COL_ID_SERVER_NOW"]'),
-  ).toHaveTextContent("ada");
+  ).toMatchTextContent("ada");
   expect(
     review.element().querySelector('td[data-bruno-column-id="COL_ID_YOURS"]'),
-  ).toHaveTextContent("mine");
+  ).toMatchTextContent("mine");
 
   await screen.rerender(renderTable(replacementColumns, 2));
   expect(
     review.element().querySelector('td[data-bruno-column-id="COL_ID_SERVER_NOW"]'),
-  ).toHaveTextContent("ada");
+  ).toMatchTextContent("ada");
   expect(save).not.toHaveBeenCalled();
 });
 
@@ -3192,7 +3196,7 @@ test("conflicts a preserved draft when simultaneous replacement makes equality s
   await expect.element(grid.getByRole("gridcell", { name: "FOO", exact: true })).toBeVisible();
   await expect
     .element(screen.getByRole("region", { name: "Edit safety" }))
-    .toHaveTextContent("1 conflict · 1 unsaved");
+    .toMatchTextContent("1 conflict · 1 unsaved");
   await expect.element(screen.getByRole("button", { name: "Reset edits" })).toBeEnabled();
   grid.element().focus();
   await userEvent.keyboard(
@@ -3207,7 +3211,7 @@ test("conflicts a preserved draft when simultaneous replacement makes equality s
   await expect.element(grid.getByRole("gridcell", { name: "FOO", exact: true })).toBeVisible();
   await expect
     .element(screen.getByRole("region", { name: "Edit safety" }))
-    .toHaveTextContent("1 conflict · 1 unsaved");
+    .toMatchTextContent("1 conflict · 1 unsaved");
 });
 
 test("uses captured equality when a pending save receives a looser replacement schema", async () => {
@@ -3253,17 +3257,17 @@ test("uses captured equality when a pending save receives a looser replacement s
   await expect.element(grid.getByRole("gridcell", { name: "FOO", exact: true })).toBeVisible();
   await expect
     .element(screen.getByRole("region", { name: "Edit safety" }))
-    .toHaveTextContent("1 unsaved");
+    .toMatchTextContent("1 unsaved");
   await expect.element(screen.getByRole("button", { name: "Reset edits" })).toBeEnabled();
   await expect
     .element(screen.getByRole("alert"))
-    .toHaveTextContent("Open Operation details for the complete explanation.");
+    .toMatchTextContent("Open Operation details for the complete explanation.");
 
   const convergedRows = [{ id: "ada", name: "FOO", revision: 3n }] as const;
   await screen.rerender(renderTable(makeCaseSensitivityColumns(false), convergedRows, 3));
   await expect
     .element(screen.getByRole("region", { name: "Edit safety" }))
-    .toHaveTextContent("No unsaved changes");
+    .toMatchTextContent("No unsaved changes");
 });
 
 test("captures Row Version evidence through the latest extractor", async () => {
@@ -3336,14 +3340,14 @@ test("blocks Batch Save while Row Version extraction fails and recovers", async 
   await screen.rerender(renderTable(2));
   await expect
     .element(screen.getByRole("region", { name: "Edit safety" }))
-    .toHaveTextContent("1 blocked change");
+    .toMatchTextContent("1 blocked change");
   await expect.element(screen.getByRole("button", { name: "Save" })).toBeDisabled();
 
   extractorAvailable = true;
   await screen.rerender(renderTable(3));
   await expect
     .element(screen.getByRole("region", { name: "Edit safety" }))
-    .toHaveTextContent("1 unsaved change");
+    .toMatchTextContent("1 unsaved change");
   await expect.element(screen.getByRole("button", { name: "Save" })).toBeEnabled();
 });
 
@@ -3443,7 +3447,7 @@ test("reviews pending work before Reset and changes nothing until confirmation",
       .getByRole("region", { name: "Edit safety" })
       .element()
       .querySelector('[aria-live="polite"]'),
-  ).toHaveTextContent("No unsaved changes");
+  ).toMatchTextContent("No unsaved changes");
   await expect.element(reset).toBeDisabled();
   await expect.element(screen.getByRole("button", { name: "Save" })).toBeDisabled();
 });
@@ -3486,7 +3490,7 @@ test("reviews and resets a lone invalid active candidate", async () => {
       .getByRole("region", { name: "Edit safety" })
       .element()
       .querySelector('[aria-live="polite"]'),
-  ).toHaveTextContent("1 invalid · 1 unsaved");
+  ).toMatchTextContent("1 invalid · 1 unsaved");
 
   const reset = screen.getByRole("button", { name: "Reset edits" });
   await expect.element(reset).toBeEnabled();
@@ -4065,7 +4069,7 @@ test("keeps bounded Batch undo and redo local to the current unsaved session", a
       .getByRole("region", { name: "Edit safety" })
       .element()
       .querySelector('[aria-live="polite"]'),
-  ).toHaveTextContent("No unsaved changes");
+  ).toMatchTextContent("No unsaved changes");
   await expect.element(batchEditing).toBeDisabled();
   expect(grid.element().getAttribute("aria-keyshortcuts")).not.toMatch(/Control\+Z Meta\+Z/);
   expect(grid.element().getAttribute("aria-keyshortcuts")).toMatch(/Control\+Shift\+Z/);
@@ -4095,7 +4099,7 @@ test("keeps bounded Batch undo and redo local to the current unsaved session", a
       .getByRole("region", { name: "Edit safety" })
       .element()
       .querySelector('[aria-live="polite"]'),
-  ).toHaveTextContent("1 unsaved change");
+  ).toMatchTextContent("1 unsaved change");
 
   await userEvent.keyboard(
     detectPlatform() === "mac" ? "{Meta>}z{/Meta}" : "{Control>}z{/Control}",
@@ -4224,7 +4228,7 @@ test("reconciles hidden drafts while filtering leaves the row projection empty",
       .getByRole("region", { name: "Edit safety" })
       .element()
       .querySelector('[aria-live="polite"]'),
-  ).toHaveTextContent("No unsaved changes");
+  ).toMatchTextContent("No unsaved changes");
 });
 
 test("does not rescan retained Batch edit evidence for a query-only transition", async () => {
@@ -4304,7 +4308,7 @@ test("does not treat a filtered in-flight row as authoritative disappearance", a
   resolveSave();
   await expect
     .element(screen.getByRole("region", { name: "Edit safety" }))
-    .toHaveTextContent("Immediate save accepted · waiting for live confirmation");
+    .toMatchTextContent("Immediate save accepted · waiting for live confirmation");
   await expect.element(batchEditing).toBeDisabled();
 
   const confirmedRows = [{ id: "ada", name: "Augusta", revision: 2n }] as const;
@@ -4339,10 +4343,10 @@ test("retains a filtered rejected save until the raw source converges", async ()
   await userEvent.keyboard("{Enter}");
   await userEvent.fill(screen.getByRole("textbox", { name: "Edit Name" }), "Augusta");
   await userEvent.keyboard("{Enter}");
-  await expect.element(screen.getByRole("alert")).toHaveTextContent("A save operation failed.");
+  await expect.element(screen.getByRole("alert")).toMatchTextContent("A save operation failed.");
 
   await userEvent.fill(screen.getByRole("searchbox", { name: "Quick Filter" }), "missing");
-  await expect.element(screen.getByRole("alert")).toHaveTextContent("A save operation failed.");
+  await expect.element(screen.getByRole("alert")).toMatchTextContent("A save operation failed.");
 
   const convergedRows = [{ id: "ada", name: "Augusta", revision: 2n }] as const;
   await screen.rerender(renderTable(convergedRows, 2));
@@ -4392,7 +4396,7 @@ test("leaves native undo and redo owned by interactive cell content", async () =
       .getByRole("region", { name: "Edit safety" })
       .element()
       .querySelector('[aria-live="polite"]'),
-  ).toHaveTextContent("1 unsaved change");
+  ).toMatchTextContent("1 unsaved change");
   await userEvent.keyboard(
     detectPlatform() === "mac"
       ? "{Meta>}{Shift>}z{/Shift}{/Meta}"
@@ -4407,7 +4411,7 @@ test("leaves native undo and redo owned by interactive cell content", async () =
       .getByRole("region", { name: "Edit safety" })
       .element()
       .querySelector('[aria-live="polite"]'),
-  ).toHaveTextContent("1 unsaved change");
+  ).toMatchTextContent("1 unsaved change");
 });
 
 test("keeps Reset Review stable while live source convergence prunes drafts and history", async () => {
@@ -4461,7 +4465,7 @@ test("keeps Reset Review stable while live source convergence prunes drafts and 
       .getByRole("region", { name: "Edit safety" })
       .element()
       .querySelector('[aria-live="polite"]'),
-  ).toHaveTextContent("No unsaved changes");
+  ).toMatchTextContent("No unsaved changes");
   (screen.getByRole("button", { name: "Keep Editing" }).element() as HTMLButtonElement).click();
   await expect.element(grid).toHaveFocus();
   await expect.element(batchEditing).toBeEnabled();
@@ -4539,7 +4543,7 @@ test("reconciles a Batch draft after an invalid query candidate restores fallbac
         .getByRole("region", { name: "Edit safety" })
         .element()
         .querySelector('[aria-live="polite"]'),
-    ).toHaveTextContent("1 unsaved change"),
+    ).toMatchTextContent("1 unsaved change"),
   );
   const save = screen.getByRole("button", { name: "Save" });
   await expect.element(save).toBeEnabled();
@@ -4646,7 +4650,7 @@ test("preserves missing-row drafts as blocked work and reconnects the same Row I
       .getByRole("region", { name: "Edit safety" })
       .element()
       .querySelector('[aria-live="polite"]'),
-  ).toHaveTextContent("1 unsaved change");
+  ).toMatchTextContent("1 unsaved change");
   await expect.element(screen.getByRole("button", { name: "Save" })).toBeDisabled();
 
   await screen.rerender(
@@ -4666,7 +4670,7 @@ test("preserves missing-row drafts as blocked work and reconnects the same Row I
       .getByRole("region", { name: "Edit safety" })
       .element()
       .querySelector('[aria-live="polite"]'),
-  ).toHaveTextContent("1 blocked change · 1 unsaved");
+  ).toMatchTextContent("1 blocked change · 1 unsaved");
   await expect.element(screen.getByRole("button", { name: "Save" })).toBeDisabled();
   await userEvent.click(screen.getByRole("button", { name: "Reset edits" }));
   await expect
@@ -4707,7 +4711,7 @@ test("preserves missing-row drafts as blocked work and reconnects the same Row I
       .getByRole("region", { name: "Edit safety" })
       .element()
       .querySelector('[aria-live="polite"]'),
-  ).toHaveTextContent("1 unsaved change");
+  ).toMatchTextContent("1 unsaved change");
   await expect.element(screen.getByRole("button", { name: "Save" })).toBeEnabled();
   await expect.element(grid.getByRole("gridcell", { name: "Augusta", exact: true })).toBeVisible();
   await userEvent.click(screen.getByRole("button", { name: "Save" }));
@@ -4787,7 +4791,7 @@ test("exposes live conflict and permission-block evidence without replacing Your
   await expect.element(editStateDescription!).toHaveClass("sr-only");
   await expect
     .element(editStateDescription!)
-    .toHaveTextContent(
+    .toMatchTextContent(
       "This cell is no longer editable. The server value also conflicts with your unsaved change.",
     );
   await expect
@@ -4797,7 +4801,7 @@ test("exposes live conflict and permission-block evidence without replacing Your
     );
   await expect
     .element(screen.getByRole("region", { name: "Edit safety" }))
-    .toHaveTextContent("1 conflict · 1 blocked change · 1 unsaved");
+    .toMatchTextContent("1 conflict · 1 blocked change · 1 unsaved");
   await expect.element(screen.getByRole("button", { name: "Save" })).toBeDisabled();
   expect(onSaveEdits).not.toHaveBeenCalled();
 
@@ -4818,7 +4822,7 @@ test("exposes live conflict and permission-block evidence without replacing Your
   await expect
     .element(
       blockedConflictReview.getByRole("button", {
-        name: "Keep Server for row ada, column Name",
+        name: /^Keep Server for row ada, column Name(?:\.|$)/u,
       }),
     )
     .toBeEnabled();
@@ -4835,7 +4839,7 @@ test("exposes live conflict and permission-block evidence without replacing Your
   await expect.element(conflictedCell).not.toHaveAttribute("data-bruno-edit-blocked");
   await expect
     .element(screen.getByRole("region", { name: "Edit safety" }))
-    .toHaveTextContent("1 conflict · 1 unsaved");
+    .toMatchTextContent("1 conflict · 1 unsaved");
 
   await userEvent.click(grid.getByRole("gridcell", { name: "Augusta", exact: true }));
   await userEvent.keyboard("{F2}");
@@ -4865,7 +4869,7 @@ test("exposes live conflict and permission-block evidence without replacing Your
   await expect.element(convergedCell).not.toHaveAttribute("data-bruno-edit-blocked");
   await expect
     .element(screen.getByRole("region", { name: "Edit safety" }))
-    .toHaveTextContent("No unsaved changes");
+    .toMatchTextContent("No unsaved changes");
 });
 
 test("reviews every conflict explicitly and safely rebases Mine before Batch Save", async () => {
@@ -4927,7 +4931,7 @@ test("reviews every conflict explicitly and safely rebases Mine before Batch Sav
     .toBeVisible();
   await expect.element(review.getByRole("button", { name: "Save" })).toBeDisabled();
   const mineChoice = review.getByRole("button", {
-    name: "Keep Mine for row ada, column Name",
+    name: /^Keep Mine for row ada, column Name(?:\.|$)/u,
   });
   await userEvent.click(mineChoice);
   await expect.element(mineChoice).toHaveAttribute("aria-pressed", "true");
@@ -4940,7 +4944,7 @@ test("reviews every conflict explicitly and safely rebases Mine before Batch Sav
     .toBeVisible();
   await expect.element(review.getByRole("button", { name: "Save" })).toBeDisabled();
   const sameVersionMineChoice = review.getByRole("button", {
-    name: "Keep Mine for row ada, column Name",
+    name: /^Keep Mine for row ada, column Name(?:\.|$)/u,
   });
   await expect.element(sameVersionMineChoice).toHaveAttribute("aria-pressed", "false");
   await expect.element(sameVersionMineChoice).toBeEnabled();
@@ -4952,7 +4956,7 @@ test("reviews every conflict explicitly and safely rebases Mine before Batch Sav
   scrollReviewGridToEnd(reopenedGrid);
   await expect.element(review.getByRole("button", { name: "Save" })).toBeDisabled();
   const refreshedMineChoice = review.getByRole("button", {
-    name: "Keep Mine for row ada, column Name",
+    name: /^Keep Mine for row ada, column Name(?:\.|$)/u,
   });
   await expect.element(refreshedMineChoice).toHaveAttribute("aria-pressed", "false");
   await userEvent.click(refreshedMineChoice);
@@ -5018,20 +5022,20 @@ test("discards one conflict with Server as one reversible local command", async 
   let reviewGrid = review.getByRole("grid", { name: "Conflict Review changes" });
   scrollReviewGridToEnd(reviewGrid);
   let serverChoice = review.getByRole("button", {
-    name: "Keep Server for row ada, column Name",
+    name: /^Keep Server for row ada, column Name(?:\.|$)/u,
   });
   await userEvent.click(serverChoice);
 
   await expect.element(serverChoice).toHaveAttribute("aria-pressed", "true");
   await expect.element(serverChoice).toBeDisabled();
   await expect
-    .element(review.getByRole("button", { name: "Keep Mine for row ada, column Name" }))
+    .element(review.getByRole("button", { name: /^Keep Mine for row ada, column Name(?:\.|$)/u }))
     .toBeDisabled();
   await userEvent.click(review.getByRole("button", { name: "Save" }));
   await expect.element(review).not.toBeInTheDocument();
   await expect
     .element(screen.getByRole("region", { name: "Edit safety" }))
-    .toHaveTextContent("No unsaved changes");
+    .toMatchTextContent("No unsaved changes");
   expect(onSaveEdits).not.toHaveBeenCalled();
   await screen.rerender(renderTable([{ id: "ada", name: "Server", revision: 3n }] as const, 3));
   await expect.element(screen.getByRole("button", { name: "1 conflict" })).not.toBeInTheDocument();
@@ -5044,10 +5048,16 @@ test("discards one conflict with Server as one reversible local command", async 
   restoredReview.getByRole("grid", { name: "Conflict Review changes" }).element().scrollLeft =
     restoredReview.getByRole("grid", { name: "Conflict Review changes" }).element().scrollWidth;
   await expect
-    .element(restoredReview.getByRole("button", { name: "Keep Mine for row ada, column Name" }))
+    .element(
+      restoredReview.getByRole("button", { name: /^Keep Mine for row ada, column Name(?:\.|$)/u }),
+    )
     .toBeEnabled();
   await expect
-    .element(restoredReview.getByRole("button", { name: "Keep Server for row ada, column Name" }))
+    .element(
+      restoredReview.getByRole("button", {
+        name: /^Keep Server for row ada, column Name(?:\.|$)/u,
+      }),
+    )
     .toBeEnabled();
   await userEvent.click(restoredReview.getByRole("button", { name: "Cancel" }));
   await userEvent.click(screen.getByRole("button", { name: "Test Redo" }));
@@ -5127,13 +5137,13 @@ test.each(["mine", "server"] as const)(
       .not.toBeInTheDocument();
     await expect
       .element(screen.getByRole("region", { name: "Edit safety" }))
-      .toHaveTextContent("1 unsaved change");
+      .toMatchTextContent("1 unsaved change");
     await userEvent.click(screen.getByRole("button", { name: "Test Redo" }));
     expect(onHistoryResult).toHaveBeenLastCalledWith("redo", false);
     await userEvent.click(screen.getByRole("button", { name: "Test Undo" }));
     await expect
       .element(screen.getByRole("region", { name: "Edit safety" }))
-      .toHaveTextContent("No unsaved changes");
+      .toMatchTextContent("No unsaved changes");
   },
 );
 
@@ -5169,7 +5179,9 @@ test("keeps Conflict Review open when its Save is rejected", async () => {
   const review = screen.getByRole("alertdialog", { name: "Conflict Review" });
   const reviewGrid = review.getByRole("grid", { name: "Conflict Review changes" });
   scrollReviewGridToEnd(reviewGrid);
-  await userEvent.click(review.getByRole("button", { name: "Keep Mine for row ada, column Name" }));
+  await userEvent.click(
+    review.getByRole("button", { name: /^Keep Mine for row ada, column Name(?:\.|$)/u }),
+  );
   await userEvent.click(review.getByRole("button", { name: "Save" }));
   expect(onSaveEdits).toHaveBeenCalledOnce();
   rejectSave(new Error("Compare-and-set rejected the save."));
@@ -5178,7 +5190,7 @@ test("keeps Conflict Review open when its Save is rejected", async () => {
     .element(reviewGrid.getByRole("gridcell", { name: "Augusta", exact: true }))
     .toBeVisible();
   await expect
-    .element(review.getByRole("button", { name: "Keep Mine for row ada, column Name" }))
+    .element(review.getByRole("button", { name: /^Keep Mine for row ada, column Name(?:\.|$)/u }))
     .toHaveAttribute("aria-pressed", "true");
 });
 
@@ -5247,7 +5259,9 @@ test("clears a canceled Conflict Review choice after a successful footer Save", 
   review.getByRole("grid", { name: "Conflict Review changes" }).element().scrollLeft = review
     .getByRole("grid", { name: "Conflict Review changes" })
     .element().scrollWidth;
-  await userEvent.click(review.getByRole("button", { name: "Keep Mine for row ada, column Name" }));
+  await userEvent.click(
+    review.getByRole("button", { name: /^Keep Mine for row ada, column Name(?:\.|$)/u }),
+  );
   await userEvent.click(review.getByRole("button", { name: "Cancel" }));
 
   await userEvent.click(screen.getByRole("button", { name: "Save" }));
@@ -5255,7 +5269,7 @@ test("clears a canceled Conflict Review choice after a successful footer Save", 
   resolveSave();
   await expect
     .element(screen.getByRole("region", { name: "Edit safety" }))
-    .toHaveTextContent("No unsaved changes");
+    .toMatchTextContent("No unsaved changes");
   await screen.rerender(renderTable([{ id: "ada", name: "Augusta", revision: 3n }] as const, 3));
 
   grid.element().focus();
@@ -5268,8 +5282,10 @@ test("clears a canceled Conflict Review choice after a successful footer Save", 
   review.getByRole("grid", { name: "Conflict Review changes" }).element().scrollLeft = review
     .getByRole("grid", { name: "Conflict Review changes" })
     .element().scrollWidth;
-  const mine = review.getByRole("button", { name: "Keep Mine for row ada, column Name" });
-  const server = review.getByRole("button", { name: "Keep Server for row ada, column Name" });
+  const mine = review.getByRole("button", { name: /^Keep Mine for row ada, column Name(?:\.|$)/u });
+  const server = review.getByRole("button", {
+    name: /^Keep Server for row ada, column Name(?:\.|$)/u,
+  });
   await expect.element(mine).toHaveAttribute("aria-pressed", "false");
   await expect.element(server).toHaveAttribute("aria-pressed", "false");
   await expect.element(mine).toBeEnabled();
@@ -5356,12 +5372,14 @@ test("keeps an open Conflict Review stable when every conflict converges externa
     .toBeEnabled();
   const convergingReviewGrid = review.getByRole("grid", { name: "Conflict Review changes" });
   scrollReviewGridToEnd(convergingReviewGrid);
-  await userEvent.click(review.getByRole("button", { name: "Keep Mine for row ada, column Name" }));
+  await userEvent.click(
+    review.getByRole("button", { name: /^Keep Mine for row ada, column Name(?:\.|$)/u }),
+  );
 
   await screen.rerender(renderTable([{ id: "ada", name: "Augusta", revision: 3n }], 3));
 
   await expect.element(review).toBeVisible();
-  await expect.element(review.getByRole("status")).toHaveTextContent("All conflicts are current.");
+  await expect.element(review.getByRole("status")).toMatchTextContent("All conflicts are current.");
   await expect
     .element(review.getByRole("grid", { name: "Conflict Review changes" }))
     .not.toBeInTheDocument();
@@ -5374,7 +5392,7 @@ test("keeps an open Conflict Review stable when every conflict converges externa
   await expect.element(review.getByRole("button", { name: "Save" })).toBeDisabled();
   await expect
     .element(screen.getByRole("region", { name: "Edit safety" }))
-    .toHaveTextContent("No unsaved changes");
+    .toMatchTextContent("No unsaved changes");
   await userEvent.click(review.getByRole("button", { name: "Cancel" }));
   await expect.element(review).not.toBeInTheDocument();
 });
@@ -5423,7 +5441,7 @@ test("saves remaining Batch work when an open Conflict Review becomes all-curren
   const convergedRows = [{ id: "ada", name: "Augusta", revision: 3n }, initialRows[1]] as const;
   await screen.rerender(renderTable(convergedRows, 3));
   await expect.element(review).toBeVisible();
-  await expect.element(review.getByRole("status")).toHaveTextContent("All conflicts are current.");
+  await expect.element(review.getByRole("status")).toMatchTextContent("All conflicts are current.");
   const save = review.getByRole("button", { name: "Save" });
   await expect.element(save).toBeEnabled();
 
@@ -5480,7 +5498,7 @@ test("disables bulk conflict actions after the selected conflict is resolved wit
   const reviewGrid = review.getByRole("grid", { name: "Conflict Review changes" });
   scrollReviewGridToEnd(reviewGrid);
   await userEvent.click(
-    review.getByRole("button", { name: "Keep Server for row ada, column Name" }),
+    review.getByRole("button", { name: /^Keep Server for row ada, column Name(?:\.|$)/u }),
   );
   await expect
     .element(review.getByRole("button", { name: "Apply Mine to Selected" }))
@@ -5490,7 +5508,7 @@ test("disables bulk conflict actions after the selected conflict is resolved wit
     .toBeDisabled();
   await screen.rerender(renderTable([{ id: "ada", name: "Augusta", revision: 3n }], 3));
   await expect.element(review).toBeVisible();
-  await expect.element(review.getByRole("status")).toHaveTextContent("All conflicts are current.");
+  await expect.element(review.getByRole("status")).toMatchTextContent("All conflicts are current.");
   await expect
     .element(review.getByRole("grid", { name: "Conflict Review changes" }))
     .not.toBeInTheDocument();
@@ -5915,10 +5933,16 @@ test("resolves an explicit selected conflict set as one reversible Batch command
   restoredReview.getByRole("grid", { name: "Conflict Review changes" }).element().scrollLeft =
     restoredReview.getByRole("grid", { name: "Conflict Review changes" }).element().scrollWidth;
   await expect
-    .element(restoredReview.getByRole("button", { name: "Keep Mine for row ada, column Name" }))
+    .element(
+      restoredReview.getByRole("button", { name: /^Keep Mine for row ada, column Name(?:\.|$)/u }),
+    )
     .toBeEnabled();
   await expect
-    .element(restoredReview.getByRole("button", { name: "Keep Server for row ada, column Name" }))
+    .element(
+      restoredReview.getByRole("button", {
+        name: /^Keep Server for row ada, column Name(?:\.|$)/u,
+      }),
+    )
     .toBeEnabled();
   await userEvent.click(restoredReview.getByRole("button", { name: "Cancel" }));
   await userEvent.click(screen.getByRole("button", { name: "Test Redo" }));
@@ -5999,7 +6023,7 @@ test("discards only selected blocked changes as one undoable Batch command", asy
   await userEvent.click(discard);
   await expect
     .element(review.getByRole("status"))
-    .toHaveTextContent("All blocked changes are current.");
+    .toMatchTextContent("All blocked changes are current.");
   expect(onSaveEdits).not.toHaveBeenCalled();
   await userEvent.click(review.getByRole("button", { name: "Close" }));
   await expect.element(grid).toHaveFocus();
@@ -6063,7 +6087,7 @@ test("does not offer targeted discard for a blocked active candidate", async () 
     .toBeDisabled();
   await expect
     .element(review.getByRole("status"))
-    .toHaveTextContent("Finish or cancel the active edit before discarding it.");
+    .toMatchTextContent("Finish or cancel the active edit before discarding it.");
   await userEvent.click(review.getByRole("button", { name: "Close" }));
   blockedReviewButton.element().focus();
   await userEvent.keyboard("{Enter}");
@@ -6116,10 +6140,10 @@ test("refreshes selected blocked discardability when a Batch save lock releases"
   await expect.element(discard).toBeDisabled();
   await expect
     .element(review.getByRole("status"))
-    .toHaveTextContent("Wait for the current save to finish before discarding these changes.");
+    .toMatchTextContent("Wait for the current save to finish before discarding these changes.");
   await expect
     .element(review.getByRole("status"))
-    .not.toHaveTextContent("Finish or cancel the active edit");
+    .not.toMatchTextContent("Finish or cancel the active edit");
 
   rejectSave(new Error("The save lost its compare-and-set race."));
   await expect.element(review.getByRole("checkbox", { name: "Select row 1" })).toBeChecked();
@@ -6169,7 +6193,7 @@ test("keeps Blocked Changes Review stable when every row converges externally", 
   await expect.element(review).toBeVisible();
   await expect
     .element(review.getByRole("status"))
-    .toHaveTextContent("All blocked changes are current.");
+    .toMatchTextContent("All blocked changes are current.");
   await expect
     .element(review.getByRole("button", { name: "Discard Selected Changes" }))
     .toBeDisabled();
@@ -6280,5 +6304,5 @@ test("publishes ordinary live row updates without creating edit-owned evidence",
   await expect.element(cell).not.toHaveAttribute("data-bruno-edit-blocked");
   await expect
     .element(screen.getByRole("region", { name: "Edit safety" }))
-    .toHaveTextContent("No unsaved changes");
+    .toMatchTextContent("No unsaved changes");
 });

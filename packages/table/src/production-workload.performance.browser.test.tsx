@@ -57,14 +57,12 @@ type RenderedFrameWorkSample = {
   reactDurationMs: number;
 };
 const rows = Object.freeze(
-  Array.from(
-    { length: ROW_COUNT },
-    (_unused, index): ProductionWorkloadRow =>
-      Object.freeze({
-        id: `row-${String(index).padStart(4, "0")}`,
-        sequence: index,
-        symbol: `SYMBOL-${String(index % 500).padStart(3, "0")}`,
-      }),
+  Array.from({ length: ROW_COUNT }, (_unused, index): ProductionWorkloadRow =>
+    Object.freeze({
+      id: `row-${String(index).padStart(4, "0")}`,
+      sequence: index,
+      symbol: `SYMBOL-${String(index % 500).padStart(3, "0")}`,
+    }),
   ),
 );
 const columns = [
@@ -140,10 +138,10 @@ describe("BrunoTable production-semantics performance Browser harness", () => {
     const grid = screen.getByRole("grid", { name: "Data for TABLE_ID_PRODUCTION_WORKLOAD" });
     await expect.element(grid).toHaveAttribute("aria-rowcount", String(ROW_COUNT + 1));
     await expect
-      .element(screen.getByRole("columnheader", { name: "Production 000" }))
+      .element(screen.getByRole("columnheader", { name: /^Production 000(?:,|$)/u }))
       .toBeInTheDocument();
     await expect
-      .element(screen.getByRole("columnheader", { name: "Production 149" }))
+      .element(screen.getByRole("columnheader", { name: /^Production 149(?:,|$)/u }))
       .toBeInTheDocument();
     expect(screen.getByRole("columnheader").all().length).toBeLessThan(20);
     expect(screen.getByRole("gridcell").all().length).toBeLessThan(250);

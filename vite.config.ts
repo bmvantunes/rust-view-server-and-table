@@ -21,7 +21,7 @@ export default defineConfig({
       verify: task("vp run generate && vp run build && vp run check && vp run test && vp run test:e2e"),
       "test:provider": task("vp -C packages/rust-view-server exec tsc --noEmit -p tsconfig.browser.json && vp -C packages/rust-view-server test run --config browser.config.ts", ["build:sdk"]),
       "test:sdk": task("vp test run packages/rust-view-server/src/complete-client.test.ts"),
-      test: task("vp run @bruno/table#test --run", ["generate", "test:rust", "test:infra", "test:sdk", "test:provider"]),
+      test: task("vp run @bruno/table#test --run && vp run @bruno/table#test:browser", ["generate", "test:rust", "test:infra", "test:sdk", "test:provider"]),
       build: task("vp run @bruno/shadcn#build && vp run @bruno/table#build && vp run @bruno/web#build", ["generate", "build:sdk", "build:native"]),
       dev: task("python3 scripts/dev.py --no-build", ["build"]),
       seed: task("python3 scripts/seed.py"),

@@ -571,14 +571,18 @@ describe("BrunoTableClient browser surface", () => {
     await expect
       .element(screen.getByRole("region", { name: "TABLE_ID_PEOPLE", exact: true }))
       .toBeInTheDocument();
-    await expect.element(screen.getByRole("columnheader", { name: "Name" })).toBeInTheDocument();
-    await expect.element(screen.getByRole("columnheader", { name: "Score" })).toBeInTheDocument();
+    await expect
+      .element(screen.getByRole("columnheader", { name: /^Name(?:,|$)/u }))
+      .toBeInTheDocument();
+    await expect
+      .element(screen.getByRole("columnheader", { name: /^Score(?:,|$)/u }))
+      .toBeInTheDocument();
     await expect
       .element(screen.getByRole("row").nth(1).getByRole("gridcell").nth(0))
-      .toHaveTextContent("Grace");
+      .toMatchTextContent("Grace");
     await expect
       .element(screen.getByRole("row").nth(2).getByRole("gridcell").nth(0))
-      .toHaveTextContent("Ada");
+      .toMatchTextContent("Ada");
     await expect.element(screen.getByRole("button", { name: "Next page" })).not.toBeInTheDocument();
 
     await screen.rerender(
@@ -592,7 +596,7 @@ describe("BrunoTableClient browser surface", () => {
     );
     await expect
       .element(screen.getByRole("row").nth(1).getByRole("gridcell").nth(0))
-      .toHaveTextContent("Ada");
+      .toMatchTextContent("Ada");
   });
 
   test("opens each built-in filter overlay and applies a debounced text candidate", async () => {
@@ -820,7 +824,7 @@ describe("BrunoTableClient browser surface", () => {
       await userEvent.fill(input, "1.2");
       await expect
         .element(dialog.getByRole("alert"))
-        .toHaveTextContent("Expected signed base-10 integer digits.");
+        .toMatchTextContent("Expected signed base-10 integer digits.");
       await vi.advanceTimersByTimeAsync(150);
 
       expect(commands.filter((command) => command.type === "column.filter.replace")).toHaveLength(
@@ -981,7 +985,7 @@ describe("BrunoTableClient browser surface", () => {
       viewRenders.mockClear();
       rowRenders.mockClear();
 
-      await userEvent.click(screen.getByRole("button", { name: "Filter Name" }));
+      await userEvent.click(screen.getByRole("button", { name: "Filter Name (active)" }));
       const dialog = screen.getByRole("dialog", { name: "Filter Name" });
       expect(filterRenders).toHaveBeenCalledWith("COL_ID_FILTER_NAME");
       expect(filterSubscriptions).toContainEqual({
@@ -1125,7 +1129,7 @@ describe("BrunoTableClient browser surface", () => {
       await expect.element(screen.getByRole("menu")).not.toBeInTheDocument();
       await expect.element(screen.getByRole("textbox", { name: "Invalid editor" })).toHaveFocus();
       await expect
-        .element(screen.getByRole("columnheader", { name: "Name" }))
+        .element(screen.getByRole("columnheader", { name: /^Name(?:,|$)/u }))
         .not.toHaveAttribute("aria-sort");
 
       await userEvent.click(screen.getByRole("button", { name: "Column menu for Name" }));
@@ -1241,7 +1245,7 @@ describe("BrunoTableClient browser surface", () => {
     const scoreDialog = screen.getByRole("dialog", { name: "Filter Score" });
     await userEvent.click(scoreDialog.getByRole("spinbutton", { name: "Filter value for Score" }));
     await userEvent.keyboard("1e");
-    await expect.element(scoreDialog.getByRole("alert")).toHaveTextContent("Enter a valid value.");
+    await expect.element(scoreDialog.getByRole("alert")).toMatchTextContent("Enter a valid value.");
     await expect
       .element(screen.getByRole("gridcell", { name: "Ada", exact: true }))
       .toBeInTheDocument();
@@ -1258,7 +1262,7 @@ describe("BrunoTableClient browser surface", () => {
     );
     await expect
       .element(quantityDialog.getByRole("alert"))
-      .toHaveTextContent("Expected signed base-10 integer digits.");
+      .toMatchTextContent("Expected signed base-10 integer digits.");
     await userEvent.keyboard("{Escape}");
 
     await screen.getByRole("button", { name: "Clear filter for Name" }).click();
@@ -1340,7 +1344,7 @@ describe("BrunoTableClient browser surface", () => {
       await userEvent.keyboard("1e");
       await expect
         .element(scoreDialog.getByRole("alert"))
-        .toHaveTextContent("Enter a valid value.");
+        .toMatchTextContent("Enter a valid value.");
       expect(commands).toHaveLength(0);
       expect(queryTransitions).not.toHaveBeenCalled();
       expect(rowOrderPlans).not.toHaveBeenCalled();
@@ -1357,7 +1361,7 @@ describe("BrunoTableClient browser surface", () => {
       );
       await expect
         .element(quantityDialog.getByRole("alert"))
-        .toHaveTextContent("Expected signed base-10 integer digits.");
+        .toMatchTextContent("Expected signed base-10 integer digits.");
       expect(commands).toHaveLength(0);
       expect(queryTransitions).not.toHaveBeenCalled();
       expect(rowOrderPlans).not.toHaveBeenCalled();
@@ -1515,13 +1519,17 @@ describe("BrunoTableClient browser surface", () => {
       dialog.getByRole("combobox", { name: "Filter operator for Name (condition 1)" }),
       "in",
     );
-    await userEvent.click(dialog.getByRole("button", { name: "Add filter value for Name" }));
+    await userEvent.click(
+      dialog.getByRole("button", { name: "Add filter value for Name (condition 1)" }),
+    );
     await vi.waitFor(() =>
       expect(
         dialog.getByRole("textbox", { name: "Filter value 2 for Name (condition 1)" }),
       ).toHaveFocus(),
     );
-    await userEvent.click(dialog.getByRole("button", { name: "Remove filter value 2 for Name" }));
+    await userEvent.click(
+      dialog.getByRole("button", { name: /^Remove filter value 2 for Name\b/u }),
+    );
     await vi.waitFor(() => expect(firstNameValue).toHaveFocus());
     await userEvent.click(dialog.getByRole("button", { name: "Remove condition 1 for Name" }));
     await vi.waitFor(() =>
@@ -1585,14 +1593,18 @@ describe("BrunoTableClient browser surface", () => {
       await expect
         .element(dialog.getByRole("searchbox", { name: "Search values for Active" }))
         .toHaveFocus();
-      await expect.element(dialog.getByRole("checkbox", { name: "Select true, 1" })).toBeChecked();
-      await expect.element(dialog.getByRole("checkbox", { name: "Select false, 1" })).toBeChecked();
+      await expect
+        .element(dialog.getByRole("checkbox", { name: /^Select true, 1(?:$| )/u }))
+        .toBeChecked();
+      await expect
+        .element(dialog.getByRole("checkbox", { name: /^Select false, 1(?:$| )/u }))
+        .toBeChecked();
       expect(events).toContainEqual({
         columnId: "COL_ID_FILTER_ACTIVE",
         phase: "subscribe",
       });
 
-      await userEvent.click(dialog.getByRole("checkbox", { name: "Select false, 1" }));
+      await userEvent.click(dialog.getByRole("checkbox", { name: /^Select false, 1(?:$| )/u }));
       await expect
         .element(screen.getByRole("gridcell", { name: "Ada", exact: true }))
         .toBeInTheDocument();
@@ -1607,7 +1619,7 @@ describe("BrunoTableClient browser surface", () => {
       await userEvent.fill(search, "missing");
       await expect
         .element(dialog.getByRole("status", { name: /No values found/ }))
-        .toHaveTextContent("No values found");
+        .toMatchTextContent("No values found");
       expect(viewRenders).not.toHaveBeenCalled();
       expect(rowRenders).not.toHaveBeenCalled();
       expect(cellRenders).not.toHaveBeenCalled();
@@ -1619,7 +1631,7 @@ describe("BrunoTableClient browser surface", () => {
       cellRenders.mockClear();
       await screen.rerender(renderTable([filterRows[0]], 2));
       await expect
-        .element(dialog.getByRole("checkbox", { name: "Select false, 0" }))
+        .element(dialog.getByRole("checkbox", { name: /^Select false, 0(?:$| )/u }))
         .not.toBeChecked();
       expect(events).toEqual([{ columnId: "COL_ID_FILTER_ACTIVE", phase: "notify" }]);
       expect(viewRenders).not.toHaveBeenCalled();
@@ -1628,7 +1640,7 @@ describe("BrunoTableClient browser surface", () => {
       events.length = 0;
       await screen.rerender(renderTable(filterRows, 3));
       await expect
-        .element(dialog.getByRole("checkbox", { name: "Select false, 1" }))
+        .element(dialog.getByRole("checkbox", { name: /^Select false, 1(?:$| )/u }))
         .not.toBeChecked();
       expect(events).toEqual([{ columnId: "COL_ID_FILTER_ACTIVE", phase: "notify" }]);
 
@@ -1652,11 +1664,11 @@ describe("BrunoTableClient browser surface", () => {
         .toBeInTheDocument();
 
       await userEvent.click(dialog.getByRole("button", { name: "Clear All" }));
-      await userEvent.click(dialog.getByRole("checkbox", { name: "Select true, 2" }));
+      await userEvent.click(dialog.getByRole("checkbox", { name: /^Select true, 2(?:$| )/u }));
       await expect
         .element(screen.getByRole("gridcell", { name: "Grace", exact: true }))
         .not.toBeInTheDocument();
-      await userEvent.click(dialog.getByRole("checkbox", { name: "Select false, 1" }));
+      await userEvent.click(dialog.getByRole("checkbox", { name: /^Select false, 1(?:$| )/u }));
       await expect
         .element(screen.getByRole("gridcell", { name: "Grace", exact: true }))
         .toBeInTheDocument();
@@ -1666,12 +1678,14 @@ describe("BrunoTableClient browser surface", () => {
       await userEvent.click(screen.getByRole("button", { name: "Filter Status" }));
       const statusDialog = screen.getByRole("dialog", { name: "Filter Status" });
       await expect
-        .element(statusDialog.getByRole("checkbox", { name: "Select open, 2" }))
+        .element(statusDialog.getByRole("checkbox", { name: /^Select open, 2(?:$| )/u }))
         .toBeChecked();
       await expect
-        .element(statusDialog.getByRole("checkbox", { name: "Select closed, 1" }))
+        .element(statusDialog.getByRole("checkbox", { name: /^Select closed, 1(?:$| )/u }))
         .toBeChecked();
-      await userEvent.click(statusDialog.getByRole("checkbox", { name: "Select closed, 1" }));
+      await userEvent.click(
+        statusDialog.getByRole("checkbox", { name: /^Select closed, 1(?:$| )/u }),
+      );
       await expect
         .element(screen.getByRole("gridcell", { name: "Grace", exact: true }))
         .not.toBeInTheDocument();
@@ -1710,7 +1724,7 @@ describe("BrunoTableClient browser surface", () => {
 
     await userEvent.click(screen.getByRole("button", { name: "Filter Score" }));
     let dialog = screen.getByRole("dialog", { name: "Filter Score" });
-    await userEvent.click(dialog.getByRole("checkbox", { name: "Select 1.5, 1" }));
+    await userEvent.click(dialog.getByRole("checkbox", { name: /^Select 1\.5, 1(?:$| )/u }));
     await expect
       .element(screen.getByRole("gridcell", { name: "first", exact: true }))
       .not.toBeInTheDocument();
@@ -1719,7 +1733,9 @@ describe("BrunoTableClient browser surface", () => {
 
     await userEvent.click(screen.getByRole("button", { name: "Filter Quantity" }));
     dialog = screen.getByRole("dialog", { name: "Filter Quantity" });
-    await userEvent.click(dialog.getByRole("checkbox", { name: "Select 9007199254740993, 1" }));
+    await userEvent.click(
+      dialog.getByRole("checkbox", { name: /^Select 9007199254740993, 1(?:$| )/u }),
+    );
     await expect
       .element(screen.getByRole("gridcell", { name: "first", exact: true }))
       .not.toBeInTheDocument();
@@ -1728,8 +1744,10 @@ describe("BrunoTableClient browser surface", () => {
 
     await userEvent.click(screen.getByRole("button", { name: "Filter Token" }));
     dialog = screen.getByRole("dialog", { name: "Filter Token" });
-    await expect.element(dialog.getByRole("checkbox", { name: "Select Token A, 2" })).toBeChecked();
-    await userEvent.click(dialog.getByRole("checkbox", { name: "Select Token A, 2" }));
+    await expect
+      .element(dialog.getByRole("checkbox", { name: /^Select Token A, 2(?:$| )/u }))
+      .toBeChecked();
+    await userEvent.click(dialog.getByRole("checkbox", { name: /^Select Token A, 2(?:$| )/u }));
     await expect
       .element(screen.getByRole("gridcell", { name: "first", exact: true }))
       .not.toBeInTheDocument();
@@ -1738,7 +1756,7 @@ describe("BrunoTableClient browser surface", () => {
 
     await userEvent.click(screen.getByRole("button", { name: "Filter Price" }));
     dialog = screen.getByRole("dialog", { name: "Filter Price" });
-    await userEvent.click(dialog.getByRole("checkbox", { name: "Select 1.5, 1" }));
+    await userEvent.click(dialog.getByRole("checkbox", { name: /^Select 1\.5, 1(?:$| )/u }));
     await expect
       .element(screen.getByRole("gridcell", { name: "first", exact: true }))
       .not.toBeInTheDocument();
@@ -1762,7 +1780,9 @@ describe("BrunoTableClient browser surface", () => {
 
     await userEvent.click(screen.getByRole("button", { name: "Filter Label" }));
     const dialog = screen.getByRole("dialog", { name: "Filter Label" });
-    await userEvent.click(dialog.getByRole("checkbox", { name: "Select A, 1, option 1 of 5" }));
+    await userEvent.click(
+      dialog.getByRole("checkbox", { name: /^Select A, 1, option 1 of 5(?:$| )/u }),
+    );
     await expect
       .element(screen.getByRole("gridcell", { name: "upper", exact: true }))
       .not.toBeInTheDocument();
@@ -1771,7 +1791,9 @@ describe("BrunoTableClient browser surface", () => {
       .toBeInTheDocument();
 
     await userEvent.click(dialog.getByRole("button", { name: "Select All" }));
-    await userEvent.click(dialog.getByRole("checkbox", { name: "Select é, 1, option 3 of 5" }));
+    await userEvent.click(
+      dialog.getByRole("checkbox", { name: /^Select é, 1, option 3 of 5(?:$| )/u }),
+    );
     await expect
       .element(screen.getByRole("gridcell", { name: "accent", exact: true }))
       .not.toBeInTheDocument();
@@ -1801,8 +1823,10 @@ describe("BrunoTableClient browser surface", () => {
 
     await userEvent.click(screen.getByRole("button", { name: "Filter Case-folded Label" }));
     const dialog = screen.getByRole("dialog", { name: "Filter Case-folded Label" });
-    await expect.element(dialog.getByRole("checkbox", { name: "Select A, 2" })).toBeChecked();
-    await userEvent.click(dialog.getByRole("checkbox", { name: "Select A, 2" }));
+    await expect
+      .element(dialog.getByRole("checkbox", { name: /^Select A, 2(?:$| )/u }))
+      .toBeChecked();
+    await userEvent.click(dialog.getByRole("checkbox", { name: /^Select A, 2(?:$| )/u }));
     await expect
       .element(screen.getByRole("gridcell", { name: "upper", exact: true }))
       .not.toBeInTheDocument();
@@ -1835,7 +1859,7 @@ describe("BrunoTableClient browser surface", () => {
     const dialog = screen.getByRole("dialog", { name: "Filter Choice" });
     await expect
       .element(dialog.getByRole("status").nth(1))
-      .toHaveTextContent("Showing options 1–64 of 65");
+      .toMatchTextContent("Showing options 1–64 of 65");
     await expect.element(dialog.getByRole("option", { name: "option-64" })).toBeInTheDocument();
     await expect
       .element(dialog.getByRole("button", { name: "Previous filter options for Choice" }))
@@ -1844,7 +1868,7 @@ describe("BrunoTableClient browser surface", () => {
     await userEvent.click(dialog.getByRole("button", { name: "Next filter options for Choice" }));
     await expect
       .element(dialog.getByRole("status").nth(1))
-      .toHaveTextContent("Showing options 2–65 of 65");
+      .toMatchTextContent("Showing options 2–65 of 65");
     await expect.element(dialog.getByRole("option", { name: "option-0" })).not.toBeInTheDocument();
     await expect.element(dialog.getByRole("option", { name: "option-64" })).toBeInTheDocument();
 
@@ -1853,7 +1877,7 @@ describe("BrunoTableClient browser surface", () => {
     );
     await expect
       .element(dialog.getByRole("status").nth(1))
-      .toHaveTextContent("Showing options 1–64 of 65");
+      .toMatchTextContent("Showing options 1–64 of 65");
     await expect.element(dialog.getByRole("option", { name: "option-0" })).toBeInTheDocument();
   });
 
@@ -1876,16 +1900,16 @@ describe("BrunoTableClient browser surface", () => {
       />,
     );
 
-    await userEvent.click(screen.getByRole("button", { name: "Filter Name" }));
+    await userEvent.click(screen.getByRole("button", { name: "Filter Name (active)" }));
     const dialog = screen.getByRole("dialog", { name: "Filter Name" });
     await expect
       .element(dialog.getByRole("status"))
-      .toHaveTextContent("Showing conditions 1–64 of 2,048");
+      .toMatchTextContent("Showing conditions 1–64 of 2,048");
     expect(dialog.getByRole("group").all()).toHaveLength(64);
     await userEvent.click(dialog.getByRole("button", { name: "Next filter conditions for Name" }));
     await expect
       .element(dialog.getByRole("status"))
-      .toHaveTextContent("Showing conditions 65–128 of 2,048");
+      .toMatchTextContent("Showing conditions 65–128 of 2,048");
     expect(dialog.getByRole("group").all()).toHaveLength(64);
     const nextConditions = dialog.getByRole("button", {
       name: "Next filter conditions for Name",
@@ -1898,7 +1922,7 @@ describe("BrunoTableClient browser surface", () => {
     }
     await expect
       .element(dialog.getByRole("status"))
-      .toHaveTextContent("Showing conditions 1985–2048 of 2,048");
+      .toMatchTextContent("Showing conditions 1985–2048 of 2,048");
     await userEvent.fill(
       dialog.getByRole("textbox", { name: "Filter value for Name (condition 2048)" }),
       "Grace",
@@ -2324,7 +2348,7 @@ describe("BrunoTableClient browser surface", () => {
       await userEvent.clear(secondRoot);
       await expect
         .element(dialog.getByRole("alert"))
-        .toHaveTextContent("Expected signed base-10 integer digits.");
+        .toMatchTextContent("Expected signed base-10 integer digits.");
       await userEvent.fill(secondRoot, "9007199254740993");
       await vi.advanceTimersByTimeAsync(150);
 
@@ -2704,11 +2728,11 @@ describe("BrunoTableClient browser surface", () => {
       await expect
         .element(screen.getByRole("gridcell", { name: "new", exact: true }))
         .not.toBeInTheDocument();
-      await userEvent.click(screen.getByRole("button", { name: "Filter Name" }));
+      await userEvent.click(screen.getByRole("button", { name: "Filter Name (active)" }));
       let dialog = screen.getByRole("dialog", { name: "Filter Name" });
       const input = dialog.getByRole("textbox", { name: "Filter value for Name" });
       await userEvent.fill(input, "new");
-      await expect.element(dialog.getByRole("alert")).toHaveTextContent("Old parser rejects.");
+      await expect.element(dialog.getByRole("alert")).toMatchTextContent("Old parser rejects.");
       await userEvent.keyboard("{F9}");
       dialog = screen.getByRole("dialog", { name: "Filter Name" });
       await expect.element(dialog).toBeInTheDocument();
@@ -2904,7 +2928,7 @@ describe("BrunoTableClient browser surface", () => {
       await expect.element(quickFilter).toHaveValue("Ada");
       await expect
         .element(screen.getByRole("alert"))
-        .toHaveTextContent("Quick Filter could not be committed.");
+        .toMatchTextContent("Quick Filter could not be committed.");
       (quickFilter.element() as HTMLInputElement).value = "Grace";
       quickFilter
         .element()
@@ -2987,7 +3011,7 @@ describe("BrunoTableClient browser surface", () => {
     const dialog = screen.getByRole("dialog", { name: "Active filters" });
     await expect
       .element(dialog.getByRole("status"))
-      .toHaveTextContent("Showing filters 1–64 of 65");
+      .toMatchTextContent("Showing filters 1–64 of 65");
     await expect
       .element(dialog.getByRole("button", { name: 'Remove Filter 63: equals "Ada"' }))
       .toBeInTheDocument();
@@ -2995,7 +3019,7 @@ describe("BrunoTableClient browser surface", () => {
     await userEvent.click(dialog.getByRole("button", { name: "Next active filters" }));
     await expect
       .element(dialog.getByRole("status"))
-      .toHaveTextContent("Showing filters 2–65 of 65");
+      .toMatchTextContent("Showing filters 2–65 of 65");
     const lastEntry = dialog.getByRole("button", { name: 'Remove Filter 64: equals "Ada"' });
     await expect.element(lastEntry).toBeInTheDocument();
     await userEvent.click(lastEntry);
@@ -3046,7 +3070,7 @@ describe("BrunoTableClient browser surface", () => {
     await userEvent.click(dialog.getByRole("button", { name: "Next active filters" }));
     await expect
       .element(dialog.getByRole("status"))
-      .toHaveTextContent("Showing filters 3–66 of 66");
+      .toMatchTextContent("Showing filters 3–66 of 66");
 
     await userEvent.click(dialog.getByRole("button", { name: "Clear all Grid Filters" }));
     await expect
@@ -3991,7 +4015,7 @@ describe("BrunoTableClient browser surface", () => {
 
   test("keeps narrow header and body cells on identical fixed column geometry", async () => {
     const screen = await render(<BrunoTableClient {...props} clientSource={readySource()} />);
-    const header = screen.getByRole("columnheader", { name: "Name" }).element();
+    const header = screen.getByRole("columnheader", { name: /^Name(?:,|$)/u }).element();
     const bodyCell = screen.getByRole("gridcell", { name: "Grace" }).element();
     const headerBounds = header.getBoundingClientRect();
     const bodyBounds = bodyCell.getBoundingClientRect();
@@ -4016,7 +4040,7 @@ describe("BrunoTableClient browser surface", () => {
 
     await expect
       .element(screen.getByRole("row").nth(1).getByRole("gridcell").nth(0))
-      .toHaveTextContent("Zulu");
+      .toMatchTextContent("Zulu");
   });
 
   test("routes undefined and null sorting through BrunoTable value semantics", async () => {
@@ -4061,13 +4085,13 @@ describe("BrunoTableClient browser surface", () => {
 
     await expect
       .element(screen.getByRole("row").nth(1).getByRole("gridcell").nth(0))
-      .toHaveTextContent("Undefined");
+      .toMatchTextContent("Undefined");
     await expect
       .element(screen.getByRole("row").nth(2).getByRole("gridcell").nth(0))
-      .toHaveTextContent("Null");
+      .toMatchTextContent("Null");
     await expect
       .element(screen.getByRole("row").nth(3).getByRole("gridcell").nth(0))
-      .toHaveTextContent("Number");
+      .toMatchTextContent("Number");
     await expect
       .element(screen.getByRole("row").nth(1).getByRole("gridcell").nth(1))
       .toHaveTextContent("");
@@ -4096,7 +4120,7 @@ describe("BrunoTableClient browser surface", () => {
     );
     await expect
       .element(screen.getByRole("row").nth(3).getByRole("gridcell").nth(0))
-      .toHaveTextContent("Null becomes two");
+      .toMatchTextContent("Null becomes two");
 
     const valueToUndefinedRows: readonly OptionalRow[] = Object.freeze([
       { id: "z-undefined", name: "Undefined" },
@@ -4119,13 +4143,13 @@ describe("BrunoTableClient browser surface", () => {
     );
     await expect
       .element(screen.getByRole("row").nth(1).getByRole("gridcell").nth(0))
-      .toHaveTextContent("Undefined");
+      .toMatchTextContent("Undefined");
     await expect
       .element(screen.getByRole("row").nth(2).getByRole("gridcell").nth(0))
-      .toHaveTextContent("Two becomes undefined");
+      .toMatchTextContent("Two becomes undefined");
     await expect
       .element(screen.getByRole("row").nth(3).getByRole("gridcell").nth(1))
-      .toHaveTextContent("1");
+      .toMatchTextContent("1");
 
     const updatedRows = [
       optionalRows[0]!,
@@ -4220,7 +4244,7 @@ describe("BrunoTableClient browser surface", () => {
     );
     await expect
       .element(screen.getByRole("alert"))
-      .toHaveTextContent("Unreadable Client Source lifecycle field: totalRows.");
+      .toMatchTextContent("Unreadable Client Source lifecycle field: totalRows.");
 
     await screen.rerender(
       <BrunoTableClient
@@ -4230,7 +4254,7 @@ describe("BrunoTableClient browser surface", () => {
     );
     await expect
       .element(screen.getByRole("alert"))
-      .toHaveTextContent("Unreadable Client Source lifecycle field: totalRows.");
+      .toMatchTextContent("Unreadable Client Source lifecycle field: totalRows.");
 
     await screen.rerender(
       <BrunoTableClient
@@ -4251,7 +4275,7 @@ describe("BrunoTableClient browser surface", () => {
     );
     await expect
       .element(screen.getByRole("alert"))
-      .toHaveTextContent("Expected 2 rows but received 1");
+      .toMatchTextContent("Expected 2 rows but received 1");
 
     await screen.rerender(
       <BrunoTableClient
@@ -4266,9 +4290,9 @@ describe("BrunoTableClient browser surface", () => {
       />,
     );
     const staleAlert = screen.getByRole("alert");
-    await expect.element(staleAlert).toHaveTextContent("Live data delayed");
-    await expect.element(staleAlert).toHaveTextContent("Delayed");
-    await expect.element(staleAlert).toHaveTextContent("Expected 2 rows but received 1");
+    await expect.element(staleAlert).toMatchTextContent("Live data delayed");
+    await expect.element(staleAlert).toMatchTextContent("Delayed");
+    await expect.element(staleAlert).toMatchTextContent("Expected 2 rows but received 1");
   });
 
   test("preserves compiled column geometry and static presentation while loading", async () => {
@@ -4415,7 +4439,7 @@ describe("BrunoTableClient browser surface", () => {
 
     await expect
       .element(screen.getByRole("alert"))
-      .toHaveTextContent("Source row 1, column COL_ID_SCORE: Expected a finite number value.");
+      .toMatchTextContent("Source row 1, column COL_ID_SCORE: Expected a finite number value.");
     await expect
       .element(screen.getByRole("grid", { name: "Data for TABLE_ID_PEOPLE" }))
       .toBeInTheDocument();
@@ -4439,7 +4463,7 @@ describe("BrunoTableClient browser surface", () => {
       .toBeInTheDocument();
     await expect
       .element(screen.getByRole("alert"))
-      .toHaveTextContent("Source row 2, column COL_ID_SCORE: Expected a finite number value.");
+      .toMatchTextContent("Source row 2, column COL_ID_SCORE: Expected a finite number value.");
 
     await screen.getByRole("button", { name: "Sort by Score" }).click();
     await vi.waitFor(() =>
@@ -4931,7 +4955,7 @@ describe("BrunoTableClient browser surface", () => {
         }}
       />,
     );
-    await expect.element(screen.getByRole("alert")).toHaveTextContent("Live data error");
+    await expect.element(screen.getByRole("alert")).toMatchTextContent("Live data error");
     const rekeyedAdaCell = screen.getByRole("gridcell", { name: "Ada" });
     await expect.element(rekeyedAdaCell).toBeInTheDocument();
     expect(rekeyedAdaCell.element().id).not.toBe(acceptedAdaCellId);
@@ -4970,8 +4994,10 @@ describe("BrunoTableClient browser surface", () => {
       />,
     );
 
-    await expect.element(screen.getByRole("alert")).toHaveTextContent("Live updates stopped");
-    await expect.element(screen.getByRole("columnheader", { name: "Alias" })).toBeInTheDocument();
+    await expect.element(screen.getByRole("alert")).toMatchTextContent("Live updates stopped");
+    await expect
+      .element(screen.getByRole("columnheader", { name: /^Alias(?:,|$)/u }))
+      .toBeInTheDocument();
     await expect.element(screen.getByRole("gridcell", { name: "Ada" })).toBeInTheDocument();
     await expect.element(screen.getByRole("gridcell", { name: "Grace" })).toBeInTheDocument();
   });
@@ -5014,7 +5040,7 @@ describe("BrunoTableClient browser surface", () => {
       />,
     );
 
-    await expect.element(screen.getByRole("alert")).toHaveTextContent("Live data error");
+    await expect.element(screen.getByRole("alert")).toMatchTextContent("Live data error");
     await expect.element(screen.getByRole("gridcell", { name: "Ada latest" })).toBeInTheDocument();
     await expect
       .element(screen.getByRole("gridcell", { name: "Grace latest" }))
@@ -5059,7 +5085,7 @@ describe("BrunoTableClient browser surface", () => {
     );
     await expect
       .element(screen.getByRole("alert"))
-      .toHaveTextContent("Expected 2 rows but received 1");
+      .toMatchTextContent("Expected 2 rows but received 1");
 
     await screen.rerender(
       <BrunoTableClient
@@ -5071,13 +5097,13 @@ describe("BrunoTableClient browser surface", () => {
       />,
     );
 
-    await expect.element(screen.getByRole("alert")).toHaveTextContent("Live updates stopped");
+    await expect.element(screen.getByRole("alert")).toMatchTextContent("Live updates stopped");
     await expect
-      .element(screen.getByRole("columnheader", { name: "Score alias" }))
+      .element(screen.getByRole("columnheader", { name: /^Score alias(?:,|$)/u }))
       .toBeInTheDocument();
     const visibleRows = screen.getByRole("row").all();
-    await expect.element(visibleRows[1]!.getByRole("gridcell")).toHaveTextContent("2");
-    await expect.element(visibleRows[2]!.getByRole("gridcell")).toHaveTextContent("4");
+    await expect.element(visibleRows[1]!.getByRole("gridcell")).toMatchTextContent("2");
+    await expect.element(visibleRows[2]!.getByRole("gridcell")).toMatchTextContent("4");
     expect(visibleRows[2]!.getByRole("gridcell").element().id).toContain(
       encodeExpectedDomIdSegment("replacement:ada"),
     );
@@ -5369,7 +5395,7 @@ describe("BrunoTableClient browser surface", () => {
     );
 
     const tableRegion = screen.getByRole("region", { name: "TABLE_ID_PEOPLE", exact: true });
-    await expect.element(screen.getByRole("alert")).toHaveTextContent("Connection lost");
+    await expect.element(screen.getByRole("alert")).toMatchTextContent("Connection lost");
     await expect.element(screen.getByRole("gridcell", { name: "Ada" })).toBeInTheDocument();
     await screen.getByRole("button", { name: "Retry" }).click();
     expect(run).toHaveBeenCalledOnce();
@@ -5380,7 +5406,7 @@ describe("BrunoTableClient browser surface", () => {
         clientSource={{ ...readySource(), status: "stale", message: "Delayed" }}
       />,
     );
-    await expect.element(screen.getByRole("alert")).toHaveTextContent("Live data delayed");
+    await expect.element(screen.getByRole("alert")).toMatchTextContent("Live data delayed");
     await expect.element(screen.getByRole("button", { name: "Retry" })).not.toBeInTheDocument();
     await vi.waitFor(() => expect(document.activeElement).toBe(tableRegion.element()));
   });
@@ -5401,7 +5427,7 @@ describe("BrunoTableClient browser surface", () => {
       />,
     );
     const tableRegion = screen.getByRole("region", { name: "TABLE_ID_PEOPLE", exact: true });
-    const retry = screen.getByRole("button", { name: "Retry" });
+    const retry = screen.getByRole("button", { name: /^(?:Loading )?Retry$/u });
     await retry.click();
     expect(run).toHaveBeenCalledOnce();
     expect(document.activeElement).toBe(retry.element());
@@ -5449,7 +5475,7 @@ describe("BrunoTableClient browser surface", () => {
       />,
     );
 
-    await expect.element(screen.getByRole("alert")).toHaveTextContent("Connection lost");
+    await expect.element(screen.getByRole("alert")).toMatchTextContent("Connection lost");
     await expect.element(screen.getByRole("gridcell", { name: "Ada" })).toBeInTheDocument();
     await expect.element(screen.getByRole("gridcell", { name: "Grace" })).toBeInTheDocument();
   });
@@ -5464,7 +5490,7 @@ describe("BrunoTableClient browser surface", () => {
         clientSource={{ ...readySource(), status: "stale", message: "Delayed" }}
       />,
     );
-    await expect.element(screen.getByRole("alert")).toHaveTextContent("Live data delayed");
+    await expect.element(screen.getByRole("alert")).toMatchTextContent("Live data delayed");
     await expect.element(screen.getByRole("gridcell", { name: "Ada" })).toBeInTheDocument();
   });
 
@@ -5793,8 +5819,8 @@ describe("BrunoTableClient browser surface", () => {
     await screen.getByRole("button", { name: "Sort by Score" }).click();
 
     const announcement = screen.getByRole("alert");
-    await expect.element(announcement).toHaveTextContent("Both projections are invalid");
-    await expect.element(announcement).toHaveTextContent("Expected a finite number value.");
+    await expect.element(announcement).toMatchTextContent("Both projections are invalid");
+    await expect.element(announcement).toMatchTextContent("Expected a finite number value.");
     await expect
       .element(screen.getByRole("grid", { name: "Data for TABLE_ID_PEOPLE" }))
       .not.toBeInTheDocument();
@@ -5815,7 +5841,7 @@ describe("BrunoTableClient browser surface", () => {
     );
     await expect
       .element(screen.getByRole("alert"))
-      .toHaveTextContent("Invalid Client Source rows: null.");
+      .toMatchTextContent("Invalid Client Source rows: null.");
     await expect
       .element(screen.getByRole("grid", { name: "Data for TABLE_ID_PEOPLE" }))
       .not.toBeInTheDocument();
@@ -5834,7 +5860,7 @@ describe("BrunoTableClient browser surface", () => {
         }
       />,
     );
-    await expect.element(screen.getByRole("alert")).toHaveTextContent("Unsupported source status");
+    await expect.element(screen.getByRole("alert")).toMatchTextContent("Unsupported source status");
     await expect
       .element(screen.getByRole("grid", { name: "Data for TABLE_ID_PEOPLE" }))
       .not.toBeInTheDocument();
@@ -5925,7 +5951,7 @@ describe("BrunoTableClient browser surface", () => {
       );
       await expect
         .element(screen.getByRole("alert"))
-        .toHaveTextContent("Invalid Client Source rows: null.");
+        .toMatchTextContent("Invalid Client Source rows: null.");
       await expect
         .element(screen.getByRole("grid", { name: "Data for TABLE_ID_EMPTY_QUERY_RECOVERY" }))
         .not.toBeInTheDocument();
@@ -5936,7 +5962,7 @@ describe("BrunoTableClient browser surface", () => {
       await screen.getByRole("button", { name: "Retry Score" }).click();
       await expect
         .element(screen.getByRole("alert"))
-        .toHaveTextContent("Invalid Client Source rows: null.");
+        .toMatchTextContent("Invalid Client Source rows: null.");
       await expect
         .element(screen.getByRole("grid", { name: "Data for TABLE_ID_EMPTY_QUERY_RECOVERY" }))
         .not.toBeInTheDocument();
@@ -5957,7 +5983,7 @@ describe("BrunoTableClient browser surface", () => {
       );
       await expect
         .element(screen.getByRole("alert"))
-        .toHaveTextContent("Unsupported source status");
+        .toMatchTextContent("Unsupported source status");
       await expect
         .element(screen.getByRole("grid", { name: "Data for TABLE_ID_EMPTY_QUERY_RECOVERY" }))
         .not.toBeInTheDocument();
@@ -5971,7 +5997,7 @@ describe("BrunoTableClient browser surface", () => {
     }
 
     await screen.getByRole("button", { name: "Retry Score" }).click();
-    await expect.element(screen.getByRole("alert")).toHaveTextContent("Unsupported source status");
+    await expect.element(screen.getByRole("alert")).toMatchTextContent("Unsupported source status");
     await expect
       .element(screen.getByRole("grid", { name: "Data for TABLE_ID_EMPTY_QUERY_RECOVERY" }))
       .not.toBeInTheDocument();
@@ -6040,7 +6066,7 @@ describe("BrunoTableClient browser surface", () => {
       .not.toBeInTheDocument();
     await expect
       .element(screen.getByRole("alert"))
-      .toHaveTextContent("Expected a finite number value.");
+      .toMatchTextContent("Expected a finite number value.");
 
     const queryReads = vi.fn();
     const gridSurfaceRenders = vi.fn();
@@ -6057,7 +6083,7 @@ describe("BrunoTableClient browser surface", () => {
           message: "Terminal chrome update",
         }),
       );
-      await expect.element(screen.getByRole("alert")).toHaveTextContent("Terminal chrome update");
+      await expect.element(screen.getByRole("alert")).toMatchTextContent("Terminal chrome update");
       expect(queryReads).not.toHaveBeenCalled();
       expect(gridSurfaceRenders).not.toHaveBeenCalled();
     } finally {
@@ -6127,10 +6153,10 @@ describe("BrunoTableClient browser surface", () => {
       expect(fallback?.rowSpace?.loadedRows).toBe(0);
       if (fallback === undefined) throw new Error("Expected an empty stale fallback.");
       runtime.publish(fallback);
-      await expect.element(screen.getByRole("alert")).toHaveTextContent("Live data delayed");
+      await expect.element(screen.getByRole("alert")).toMatchTextContent("Live data delayed");
       await expect
         .element(screen.getByRole("region", { name: "No rows" }))
-        .toHaveTextContent("Waiting for a valid projection");
+        .toMatchTextContent("Waiting for a valid projection");
       await expect
         .element(screen.getByRole("grid", { name: "Data for TABLE_ID_EMPTY_STALE_FALLBACK" }))
         .not.toBeInTheDocument();
@@ -6152,7 +6178,7 @@ describe("BrunoTableClient browser surface", () => {
           }),
         );
         const announcement = screen.getByRole(status === "closed" ? "status" : "alert");
-        await expect.element(announcement).toHaveTextContent("Terminal without retained rows");
+        await expect.element(announcement).toMatchTextContent("Terminal without retained rows");
         expect(screen.getByRole(status === "closed" ? "status" : "alert").all()).toHaveLength(1);
         expect(screen.getByRole("button", { name: "Retry" }).all()).toHaveLength(1);
         expect(queryReads).not.toHaveBeenCalled();
@@ -6185,8 +6211,8 @@ describe("BrunoTableClient browser surface", () => {
       const announcement = screen.getByRole(status === "closed" ? "status" : "alert");
       await expect
         .element(announcement)
-        .toHaveTextContent(status === "closed" ? "Live updates stopped" : "Live data error");
-      await expect.element(announcement).toHaveTextContent("Expected a finite number value.");
+        .toMatchTextContent(status === "closed" ? "Live updates stopped" : "Live data error");
+      await expect.element(announcement).toMatchTextContent("Expected a finite number value.");
       await expect
         .element(screen.getByRole("grid", { name: "Data for TABLE_ID_PEOPLE" }))
         .not.toBeInTheDocument();
@@ -6242,7 +6268,7 @@ describe("BrunoTableClient browser surface", () => {
       />,
     );
 
-    await expect.element(screen.getByRole("alert")).toHaveTextContent("Expected 2 rows");
+    await expect.element(screen.getByRole("alert")).toMatchTextContent("Expected 2 rows");
     await expect.element(screen.getByRole("gridcell", { name: "Ada" })).toBeInTheDocument();
     await expect.element(screen.getByRole("gridcell", { name: "Grace" })).toBeInTheDocument();
   });
@@ -6269,10 +6295,10 @@ describe("BrunoTableClient browser surface", () => {
       />,
     );
 
-    await expect.element(screen.getByRole("alert")).toHaveTextContent("Expected 2 rows");
+    await expect.element(screen.getByRole("alert")).toMatchTextContent("Expected 2 rows");
     await expect
       .element(screen.getByRole("region", { name: "No rows" }))
-      .toHaveTextContent("Partial delivery");
+      .toMatchTextContent("Partial delivery");
     await expect.element(screen.getByRole("gridcell", { name: "Ada" })).not.toBeInTheDocument();
   });
 
@@ -6309,7 +6335,7 @@ describe("BrunoTableClient browser surface", () => {
         clientSource={{ rows: [], totalRows: 0, version: 1, status: "error", message: "First" }}
       />,
     );
-    await expect.element(screen.getByRole("alert")).toHaveTextContent("First");
+    await expect.element(screen.getByRole("alert")).toMatchTextContent("First");
 
     await screen.rerender(
       <BrunoTableClient
@@ -6317,7 +6343,7 @@ describe("BrunoTableClient browser surface", () => {
         clientSource={{ rows: [], totalRows: 0, version: 2, status: "error", message: "Second" }}
       />,
     );
-    await expect.element(screen.getByRole("alert")).toHaveTextContent("Second");
+    await expect.element(screen.getByRole("alert")).toMatchTextContent("Second");
   });
 
   test("rejects an unsupported runtime source status with visible error chrome", async () => {
@@ -6328,8 +6354,8 @@ describe("BrunoTableClient browser surface", () => {
     const screen = await render(<BrunoTableClient {...props} clientSource={malformedSource} />);
 
     const alert = screen.getByRole("alert");
-    await expect.element(alert).toHaveTextContent("Live data error");
-    await expect.element(alert).toHaveTextContent("Unsupported source status: offline.");
+    await expect.element(alert).toMatchTextContent("Live data error");
+    await expect.element(alert).toMatchTextContent("Unsupported source status: offline.");
     await expect
       .element(screen.getByRole("grid", { name: `Data for ${props.tableId}` }))
       .not.toBeInTheDocument();
@@ -6388,7 +6414,7 @@ describe("BrunoTableClient browser surface", () => {
 
     await expect
       .element(screen.getByRole("alert"))
-      .toHaveTextContent("Unreadable Client Source lifecycle field: totalRows.");
+      .toMatchTextContent("Unreadable Client Source lifecycle field: totalRows.");
     expect(screen.getByRole("gridcell", { name: "Ada" }).element()).toBe(acceptedAdaCell);
     await expect.element(screen.getByRole("gridcell", { name: "Grace" })).toBeInTheDocument();
     await expect
@@ -6406,8 +6432,8 @@ describe("BrunoTableClient browser surface", () => {
     const screen = await render(<BrunoTableClient {...props} clientSource={malformedSource} />);
 
     const alert = screen.getByRole("alert");
-    await expect.element(alert).toHaveTextContent("Live data error");
-    await expect.element(alert).toHaveTextContent("Invalid Client Source rows: null.");
+    await expect.element(alert).toMatchTextContent("Live data error");
+    await expect.element(alert).toMatchTextContent("Invalid Client Source rows: null.");
     await expect
       .element(screen.getByRole("grid", { name: `Data for ${props.tableId}` }))
       .not.toBeInTheDocument();
@@ -6429,8 +6455,8 @@ describe("BrunoTableClient browser surface", () => {
     );
 
     const alert = screen.getByRole("alert");
-    await expect.element(alert).toHaveTextContent("Live data error");
-    await expect.element(alert).toHaveTextContent("Invalid Client Source rows: sparse array.");
+    await expect.element(alert).toMatchTextContent("Live data error");
+    await expect.element(alert).toMatchTextContent("Invalid Client Source rows: sparse array.");
     await expect
       .element(screen.getByRole("grid", { name: `Data for ${props.tableId}` }))
       .not.toBeInTheDocument();
@@ -6455,8 +6481,8 @@ describe("BrunoTableClient browser surface", () => {
     );
 
     const alert = screen.getByRole("alert");
-    await expect.element(alert).toHaveTextContent("Live data error");
-    await expect.element(alert).toHaveTextContent("Invalid Client Source rows: null.");
+    await expect.element(alert).toMatchTextContent("Live data error");
+    await expect.element(alert).toMatchTextContent("Invalid Client Source rows: null.");
     await expect.element(screen.getByRole("gridcell", { name: "Ada" })).toBeInTheDocument();
     await expect.element(screen.getByRole("gridcell", { name: "Grace" })).toBeInTheDocument();
   });
@@ -6480,7 +6506,7 @@ describe("BrunoTableClient browser surface", () => {
     );
 
     const alert = screen.getByRole("alert");
-    await expect.element(alert).toHaveTextContent("Invalid Client Source rows: sparse array.");
+    await expect.element(alert).toMatchTextContent("Invalid Client Source rows: sparse array.");
     expect(screen.getByRole("gridcell", { name: "Ada" }).element()).toBe(acceptedAdaCell);
     await expect.element(screen.getByRole("gridcell", { name: "Grace" })).toBeInTheDocument();
     await expect
@@ -6502,8 +6528,8 @@ describe("BrunoTableClient browser surface", () => {
       />,
     );
 
-    await expect.element(screen.getByRole("status")).toHaveTextContent("Live updates stopped");
-    await expect.element(screen.getByRole("status")).toHaveTextContent("Socket closed");
+    await expect.element(screen.getByRole("status")).toMatchTextContent("Live updates stopped");
+    await expect.element(screen.getByRole("status")).toMatchTextContent("Socket closed");
   });
 
   test("keeps closed rows visible and exposes the explicit closed-source retry", async () => {
@@ -6519,7 +6545,7 @@ describe("BrunoTableClient browser surface", () => {
       />,
     );
 
-    await expect.element(screen.getByRole("alert")).toHaveTextContent("Live updates stopped");
+    await expect.element(screen.getByRole("alert")).toMatchTextContent("Live updates stopped");
     await screen.getByRole("button", { name: "Retry" }).click();
     expect(run).toHaveBeenCalledOnce();
     await expect.element(screen.getByRole("gridcell", { name: "Ada" })).toBeInTheDocument();
@@ -6538,7 +6564,7 @@ describe("BrunoTableClient browser surface", () => {
       />,
     );
 
-    const retry = screen.getByRole("button", { name: "Retry" });
+    const retry = screen.getByRole("button", { name: /^(?:Loading )?Retry$/u });
     retry.element().focus();
     await screen.rerender(
       <BrunoTableClient
@@ -6751,7 +6777,9 @@ describe("BrunoTableClient browser surface", () => {
       />,
     );
 
-    await expect.element(screen.getByRole("columnheader", { name: "Wide 01" })).toBeInTheDocument();
+    await expect
+      .element(screen.getByRole("columnheader", { name: /^Wide 01(?:,|$)/u }))
+      .toBeInTheDocument();
     expect(screen.getByRole("columnheader").all().length).toBeLessThan(wideColumns.length);
 
     const grid = screen.getByRole("grid", { name: "Data for TABLE_ID_WIDE" });
@@ -6761,7 +6789,7 @@ describe("BrunoTableClient browser surface", () => {
     await vi.waitFor(() => expect(grid.element().scrollLeft).toBeGreaterThan(0));
 
     const proxy = screen.getByRole("columnheader", {
-      name: "Wide 01, sorted ascending, priority 1",
+      name: /^Wide 01(?:,|$)/u,
     });
     await expect.element(proxy).toHaveAttribute("aria-sort", "ascending");
     await expect.element(proxy).toHaveAttribute("aria-keyshortcuts", "Alt+Enter Alt+Shift+Enter");
@@ -6794,6 +6822,10 @@ describe("BrunoTableClient browser surface", () => {
       const tableId = `TABLE_ID_ACTIVE_OWNER_${direction.toUpperCase()}`;
       const activeColumnIndex = pinned ? "2" : "1";
       const activeHeaderName = pinned ? "Active owner 01" : "Active owner 00";
+      const activeHeader = () =>
+        screen.getByRole("columnheader", {
+          name: new RegExp(`^${activeHeaderName}(?:,|$)`, "u"),
+        });
       const ownershipRows = Array.from({ length: 100 }, (_, index) => ({
         id: `ownership-row-${index}`,
         name: `Ownership ${String(index).padStart(3, "0")}`,
@@ -6895,16 +6927,12 @@ describe("BrunoTableClient browser surface", () => {
         gridElement.scrollLeft =
           direction === "rtl" ? -gridElement.scrollWidth : gridElement.scrollWidth;
         gridElement.dispatchEvent(new Event("scroll"));
-        await expect
-          .element(screen.getByRole("columnheader", { name: activeHeaderName }))
-          .not.toBeInTheDocument();
+        await expect.element(activeHeader()).not.toBeInTheDocument();
       };
       const restoreActiveColumn = async () => {
         gridElement.scrollLeft = 0;
         gridElement.dispatchEvent(new Event("scroll"));
-        await expect
-          .element(screen.getByRole("columnheader", { name: activeHeaderName }))
-          .toBeInTheDocument();
+        await expect.element(activeHeader()).toBeInTheDocument();
       };
 
       gridElement.focus();
@@ -7026,7 +7054,7 @@ describe("BrunoTableClient browser surface", () => {
         direction === "rtl" ? -gridElement.scrollWidth : gridElement.scrollWidth;
       gridElement.dispatchEvent(new Event("scroll"));
       await expect
-        .element(screen.getByRole("columnheader", { name: "Moving owner 00" }))
+        .element(screen.getByRole("columnheader", { name: /^Moving owner 00(?:,|$)/u }))
         .not.toBeInTheDocument();
       const activeId = gridElement.getAttribute("aria-activedescendant");
       if (activeId === null) throw new Error("The active body cell did not retain its identity.");
@@ -7083,7 +7111,9 @@ describe("BrunoTableClient browser surface", () => {
         </div>,
       );
       const grid = screen.getByRole("grid").element();
-      await expect.element(screen.getByRole("columnheader", { name: "Coverage 0" })).toBeVisible();
+      await expect
+        .element(screen.getByRole("columnheader", { name: /^Coverage 0(?:,|$)/u }))
+        .toBeVisible();
       const outward = Array.from({ length: 17 }, (_, index) => index + 3);
       for (const column of [...outward, ...outward.toReversed().slice(1)]) {
         grid.scrollLeft = column * 120 * (direction === "rtl" ? -1 : 1);
@@ -7160,7 +7190,7 @@ describe("BrunoTableClient browser surface", () => {
       );
       const grid = screen.getByRole("grid").element();
       await expect
-        .element(screen.getByRole("columnheader", { name: "Atomic projection 0" }))
+        .element(screen.getByRole("columnheader", { name: /^Atomic projection 0(?:,|$)/u }))
         .toBeVisible();
       await settleBrunoTableBrowserFrames(2);
       rowRenders.mockClear();
@@ -7168,7 +7198,7 @@ describe("BrunoTableClient browser surface", () => {
       grid.scrollLeft = 600;
       grid.dispatchEvent(new Event("scroll"));
       await expect
-        .element(screen.getByRole("columnheader", { name: "Atomic projection 5" }))
+        .element(screen.getByRole("columnheader", { name: /^Atomic projection 5(?:,|$)/u }))
         .toBeVisible();
       await settleBrunoTableBrowserFrames(2);
 
@@ -7292,7 +7322,7 @@ describe("BrunoTableClient browser surface", () => {
     );
     const grid = screen.getByRole("grid", { name: "Data for TABLE_ID_MIXED_OWNER" });
     const gridElement = grid.element();
-    const firstHeader = screen.getByRole("columnheader", { name: "Mixed owner 00" });
+    const firstHeader = screen.getByRole("columnheader", { name: /^Mixed owner 00(?:,|$)/u });
 
     gridElement.focus();
     await vi.waitFor(() =>
@@ -7500,26 +7530,26 @@ describe("BrunoTableClient browser surface", () => {
     const grid = screen.getByRole("grid", { name: "Data for TABLE_ID_150_COLUMNS" });
     await expect.element(grid).toHaveAttribute("aria-rowcount", "5001");
     await expect
-      .element(screen.getByRole("columnheader", { name: "Stress 000" }))
+      .element(screen.getByRole("columnheader", { name: /^Stress 000(?:,|$)/u }))
       .toBeInTheDocument();
     await expect
-      .element(screen.getByRole("columnheader", { name: "Stress 149" }))
+      .element(screen.getByRole("columnheader", { name: /^Stress 149(?:,|$)/u }))
       .toBeInTheDocument();
     expect(screen.getByRole("columnheader").all().length).toBeLessThan(20);
     expect(screen.getByRole("gridcell").all().length).toBeLessThan(250);
     await expect
-      .element(screen.getByRole("columnheader", { name: "Stress 075" }))
+      .element(screen.getByRole("columnheader", { name: /^Stress 075(?:,|$)/u }))
       .not.toBeInTheDocument();
 
     await grid.wheel({ delta: { x: 9_000 } });
     await expect
-      .element(screen.getByRole("columnheader", { name: "Stress 075" }))
+      .element(screen.getByRole("columnheader", { name: /^Stress 075(?:,|$)/u }))
       .toBeInTheDocument();
     await expect
-      .element(screen.getByRole("columnheader", { name: "Stress 000" }))
+      .element(screen.getByRole("columnheader", { name: /^Stress 000(?:,|$)/u }))
       .toBeInTheDocument();
     await expect
-      .element(screen.getByRole("columnheader", { name: "Stress 149" }))
+      .element(screen.getByRole("columnheader", { name: /^Stress 149(?:,|$)/u }))
       .toBeInTheDocument();
     expect(screen.getByRole("columnheader").all().length).toBeLessThan(20);
     expect(screen.getByRole("gridcell").all().length).toBeLessThan(250);
@@ -7619,8 +7649,8 @@ describe("BrunoTableClient browser surface", () => {
     );
     const grid = screen.getByRole("grid", { name: "Data for TABLE_ID_RTL" });
     const gridElement = grid.element() as HTMLElement;
-    const startHeader = screen.getByRole("columnheader", { name: "RTL start" }).element();
-    const endHeader = screen.getByRole("columnheader", { name: "RTL end" }).element();
+    const startHeader = screen.getByRole("columnheader", { name: /^RTL start(?:,|$)/u }).element();
+    const endHeader = screen.getByRole("columnheader", { name: /^RTL end(?:,|$)/u }).element();
     const gridRect = gridElement.getBoundingClientRect();
     const assertPinnedBodyEdges = () => {
       const bodyCells = screen.getByRole("gridcell").all();
@@ -7673,7 +7703,7 @@ describe("BrunoTableClient browser surface", () => {
     assertPinnedBodyEdges();
     gridElement.dispatchEvent(new Event("scroll"));
     await expect
-      .element(screen.getByRole("columnheader", { name: "RTL center 09" }))
+      .element(screen.getByRole("columnheader", { name: /^RTL center 09(?:,|$)/u }))
       .toBeInTheDocument();
     const overlay = gridElement.parentElement?.querySelector<HTMLElement>(
       "[data-bruno-scrollbar-overlay]",
@@ -7694,7 +7724,7 @@ describe("BrunoTableClient browser surface", () => {
     await vi.waitFor(() => expect(getComputedStyle(gridElement).direction).toBe("ltr"));
     await vi.waitFor(() => expect(gridElement.clientWidth).toBe(720));
     await expect
-      .element(screen.getByRole("columnheader", { name: "RTL center 09" }))
+      .element(screen.getByRole("columnheader", { name: /^RTL center 09(?:,|$)/u }))
       .toBeInTheDocument();
     await vi.waitFor(() => expect(gridElement.scrollLeft).toBeCloseTo(960, 0));
     await vi.waitFor(() =>
@@ -7708,12 +7738,12 @@ describe("BrunoTableClient browser surface", () => {
     gridElement.scrollLeft = 0;
     gridElement.dispatchEvent(new Event("scroll"));
     await expect
-      .element(screen.getByRole("columnheader", { name: "RTL center 00" }))
+      .element(screen.getByRole("columnheader", { name: /^RTL center 00(?:,|$)/u }))
       .toBeInTheDocument();
     gridElement.scrollLeft = 960;
     gridElement.dispatchEvent(new Event("scroll"));
     await expect
-      .element(screen.getByRole("columnheader", { name: "RTL center 09" }))
+      .element(screen.getByRole("columnheader", { name: /^RTL center 09(?:,|$)/u }))
       .toBeInTheDocument();
   });
 
@@ -7840,7 +7870,7 @@ describe("BrunoTableClient browser surface", () => {
       gridElement.style.width = "800px";
       await vi.waitFor(() => expect(gridElement.clientWidth).toBe(800));
       await expect
-        .element(screen.getByRole("columnheader", { name: "Wide 07" }))
+        .element(screen.getByRole("columnheader", { name: /^Wide 07(?:,|$)/u }))
         .toBeInTheDocument();
       const expandedHeaderCount = screen.getByRole("columnheader").all().length;
       const expandedColumnIndexes = screen
@@ -8053,7 +8083,7 @@ describe("BrunoTableClient browser surface", () => {
         .element(screen.getByRole("grid", { name: "Data for TABLE_ID_LAZY_SECONDARY_SORT" }))
         .toBeInTheDocument();
       await expect
-        .element(screen.getByRole("columnheader", { name: "Lazy 075" }))
+        .element(screen.getByRole("columnheader", { name: /^Lazy 075(?:,|$)/u }))
         .not.toBeInTheDocument();
       expect(secondaryDecode).not.toHaveBeenCalled();
 
@@ -8067,7 +8097,7 @@ describe("BrunoTableClient browser surface", () => {
         .toBeInTheDocument();
       await expect.element(screen.getByRole("alert")).not.toBeInTheDocument();
       await expect
-        .element(screen.getByRole("columnheader", { name: "Lazy 075" }))
+        .element(screen.getByRole("columnheader", { name: /^Lazy 075(?:,|$)/u }))
         .not.toBeInTheDocument();
 
       runtime.toggleColumnSort("COL_ID_LAZY_000", false);
@@ -8254,7 +8284,7 @@ describe("BrunoTableClient browser surface", () => {
 
     await region.wheel({ delta: { x: 1200 } });
     await expect
-      .element(screen.getByRole("columnheader", { name: "Scroll end" }))
+      .element(screen.getByRole("columnheader", { name: /^Scroll end(?:,|$)/u }))
       .toBeInTheDocument();
     expect(screen.getByRole("columnheader").all().length).toBeLessThan(wideColumns.length + 1);
     await vi.waitFor(() =>
@@ -8324,8 +8354,8 @@ describe("BrunoTableClient browser surface", () => {
   test("navigates Home, End, and Ctrl/Cmd arrow boundaries through the logical grid", async () => {
     const screen = await render(<BrunoTableClient {...props} clientSource={readySource()} />);
     const grid = screen.getByRole("grid", { name: "Data for TABLE_ID_PEOPLE" });
-    const nameHeader = screen.getByRole("columnheader", { name: "Name" });
-    const scoreHeader = screen.getByRole("columnheader", { name: "Score" });
+    const nameHeader = screen.getByRole("columnheader", { name: /^Name(?:,|$)/u });
+    const scoreHeader = screen.getByRole("columnheader", { name: /^Score(?:,|$)/u });
     grid.element().focus();
 
     grid.element().dispatchEvent(new KeyboardEvent("keydown", { bubbles: true, key: "End" }));
@@ -8397,7 +8427,7 @@ describe("BrunoTableClient browser surface", () => {
     );
 
     await expect
-      .element(screen.getByRole("columnheader", { name: "Pinned end" }))
+      .element(screen.getByRole("columnheader", { name: /^Pinned end(?:,|$)/u }))
       .toBeInTheDocument();
     await expect
       .element(screen.getByRole("grid", { name: "Data for TABLE_ID_PINNED" }))
@@ -8413,15 +8443,15 @@ describe("BrunoTableClient browser surface", () => {
       .element()
       .getBoundingClientRect();
     const endBounds = screen
-      .getByRole("columnheader", { name: "Pinned end" })
+      .getByRole("columnheader", { name: /^Pinned end(?:,|$)/u })
       .element()
       .getBoundingClientRect();
     const centerBounds = screen
-      .getByRole("columnheader", { name: "Score" })
+      .getByRole("columnheader", { name: /^Score(?:,|$)/u })
       .element()
       .getBoundingClientRect();
-    const startHeader = screen.getByRole("columnheader", { name: "Name" }).element();
-    const endHeader = screen.getByRole("columnheader", { name: "Pinned end" }).element();
+    const startHeader = screen.getByRole("columnheader", { name: /^Name(?:,|$)/u }).element();
+    const endHeader = screen.getByRole("columnheader", { name: /^Pinned end(?:,|$)/u }).element();
     expect(startHeader.tagName).toBe("TH");
     expect(startHeader).toHaveAttribute("scope", "col");
     expect(endHeader.tagName).toBe("TH");
@@ -8430,7 +8460,7 @@ describe("BrunoTableClient browser surface", () => {
     expect(endBounds.height).toBe(36);
     expect(centerBounds.height).toBe(36);
     const headerLayer = screen
-      .getByRole("columnheader", { name: "Pinned end" })
+      .getByRole("columnheader", { name: /^Pinned end(?:,|$)/u })
       .element()
       .closest("thead");
     const bodyPinnedLayer = screen
@@ -8525,15 +8555,21 @@ describe("BrunoTableClient browser surface", () => {
     );
     expect(
       screen
-        .getByRole("columnheader", { name: "Start 29" })
+        .getByRole("columnheader", { name: /^Start 29(?:,|$)/u })
         .element()
         .getAttribute("aria-colindex"),
     ).toBe("30");
     expect(
-      screen.getByRole("columnheader", { name: "Score" }).element().getAttribute("aria-colindex"),
+      screen
+        .getByRole("columnheader", { name: /^Score(?:,|$)/u })
+        .element()
+        .getAttribute("aria-colindex"),
     ).toBe("31");
     expect(
-      screen.getByRole("columnheader", { name: "End 0" }).element().getAttribute("aria-colindex"),
+      screen
+        .getByRole("columnheader", { name: /^End 0(?:,|$)/u })
+        .element()
+        .getAttribute("aria-colindex"),
     ).toBe("32");
 
     moveHorizontally("ArrowRight");
@@ -8589,14 +8625,17 @@ describe("BrunoTableClient browser surface", () => {
     await vi.waitFor(() => expect(grid.element().scrollLeft).toBe(0));
 
     await screen.rerender(renderAtWidth(8_000));
-    const restoredStart = screen.getByRole("columnheader", { name: "Start 0" });
-    const restoredEnd = screen.getByRole("columnheader", { name: "End 29" });
+    const restoredStart = screen.getByRole("columnheader", { name: /^Start 0(?:,|$)/u });
+    const restoredEnd = screen.getByRole("columnheader", { name: /^End 29(?:,|$)/u });
     await vi.waitFor(() =>
       expect(restoredStart.element().closest('[data-pinned-region="start"]')).not.toBeNull(),
     );
     expect(restoredEnd.element().closest('[data-pinned-region="end"]')).not.toBeNull();
     expect(
-      screen.getByRole("columnheader", { name: "Score" }).element().getAttribute("aria-colindex"),
+      screen
+        .getByRole("columnheader", { name: /^Score(?:,|$)/u })
+        .element()
+        .getAttribute("aria-colindex"),
     ).toBe("31");
     expect(restoredEnd.element().getAttribute("aria-colindex")).toBe("61");
   });
@@ -8674,8 +8713,8 @@ describe("BrunoTableClient browser surface", () => {
     );
 
     await screen.rerender(renderAtWidth(8_000));
-    const restoredStart = screen.getByRole("columnheader", { name: "All pinned start 0" });
-    const restoredEnd = screen.getByRole("columnheader", { name: "All pinned end 29" });
+    const restoredStart = screen.getByRole("columnheader", { name: /^All pinned start 0(?:,|$)/u });
+    const restoredEnd = screen.getByRole("columnheader", { name: /^All pinned end 29(?:,|$)/u });
     await vi.waitFor(() =>
       expect(restoredStart.element().closest('[data-pinned-region="start"]')).not.toBeNull(),
     );
@@ -8779,7 +8818,7 @@ describe("BrunoTableClient browser surface", () => {
         }}
       />,
     );
-    await expect.element(screen.getByRole("status").nth(0)).toHaveTextContent("Enabled");
+    await expect.element(screen.getByRole("status").nth(0)).toMatchTextContent("Enabled");
     await expect.element(screen.getByRole("checkbox")).not.toBeInTheDocument();
   });
 
@@ -8841,7 +8880,9 @@ describe("BrunoTableClient browser surface", () => {
     expect(passiveSetupProbe).toHaveBeenCalledWith({ focused: false, inert: true });
     await action.click();
     expect(activate).toHaveBeenCalledWith("grace");
-    await expect.element(screen.getByRole("columnheader", { name: "Action" })).toBeInTheDocument();
+    await expect
+      .element(screen.getByRole("columnheader", { name: /^Action(?:,|$)/u }))
+      .toBeInTheDocument();
 
     const grid = screen.getByRole("grid", { name: "Data for TABLE_ID_ACTIONS" });
     grid.element().focus();
@@ -10222,10 +10263,10 @@ describe("BrunoTableClient browser surface", () => {
     const host = document.createElement("div");
     host.innerHTML = markup;
     document.body.append(host);
-    await expect.element(page.getByRole("status", { name: "Result rows" })).toHaveTextContent("1");
+    await expect.element(page.getByRole("status", { name: "Result rows" })).toMatchTextContent("1");
     await expect
       .element(page.getByRole("status", { name: "Active filters" }))
-      .toHaveTextContent("1");
+      .toMatchTextContent("1");
     let root: Root | undefined;
     const recoverable = vi.fn();
     try {
@@ -10237,10 +10278,10 @@ describe("BrunoTableClient browser surface", () => {
       await expect.element(grid.getByRole("gridcell", { name: "Ada" })).not.toBeInTheDocument();
       await expect
         .element(page.getByRole("status", { name: "Result rows" }))
-        .toHaveTextContent("1");
+        .toMatchTextContent("1");
       await expect
         .element(page.getByRole("status", { name: "Active filters" }))
-        .toHaveTextContent("1");
+        .toMatchTextContent("1");
       const headers = grid.getByRole("columnheader").all();
       await expect
         .element(headers[0]!)
@@ -10267,7 +10308,7 @@ describe("BrunoTableClient browser surface", () => {
       grid.element().scrollTop = 40;
       grid.element().dispatchEvent(new Event("scroll"));
       expect(secondCallback).not.toHaveBeenCalled();
-      await userEvent.click(grid.getByRole("button", { name: "Sort by Score" }));
+      await userEvent.click(grid.getByRole("button", { name: /^Sort by Score(?:,|$)/u }));
       await vi.waitFor(() => expect(secondCallback).toHaveBeenCalledOnce());
       expect(firstCallback).not.toHaveBeenCalled();
       expect(secondCallback.mock.lastCall?.[0]).toMatchObject({
@@ -10310,16 +10351,16 @@ describe("BrunoTableClient browser surface", () => {
     try {
       await expect
         .element(page.getByRole("status", { name: "Result rows" }))
-        .toHaveTextContent("0 result rows");
+        .toMatchTextContent("0 result rows");
       await act(async () => {
         root = hydrateRoot(host, table, { onRecoverableError: recoverable });
       });
       await expect
         .element(page.getByRole("status", { name: "Result rows" }))
-        .toHaveTextContent("0 result rows");
+        .toMatchTextContent("0 result rows");
       await expect
         .element(page.getByRole("alert"))
-        .toHaveTextContent("Expected a finite number value.");
+        .toMatchTextContent("Expected a finite number value.");
       expect(recoverable).not.toHaveBeenCalled();
     } finally {
       await act(async () => root?.unmount());
@@ -10345,7 +10386,7 @@ describe("BrunoTableClient browser surface", () => {
     await screen.rerender(renderTable("TABLE_ID_PREFERENCES_SECOND", secondCallback));
     const grid = screen.getByRole("grid", { name: "Data for TABLE_ID_PREFERENCES_SECOND" });
     await expect.element(grid).toBeInTheDocument();
-    await userEvent.click(grid.getByRole("button", { name: "Sort by Score" }));
+    await userEvent.click(grid.getByRole("button", { name: /^Sort by Score(?:,|$)/u }));
     await vi.waitFor(() => expect(secondCallback).toHaveBeenCalledOnce());
 
     expect(firstCallback).not.toHaveBeenCalled();
@@ -10828,7 +10869,7 @@ describe("BrunoTableClient browser surface", () => {
       -1,
     );
     await expect
-      .element(screen.getByRole("columnheader", { name: "Name" }))
+      .element(screen.getByRole("columnheader", { name: /^Name(?:,|$)/u }))
       .toHaveAttribute("aria-keyshortcuts", "Alt+Enter Alt+Shift+Enter");
     expect(
       screen
@@ -10868,13 +10909,13 @@ describe("BrunoTableClient browser surface", () => {
       .click();
     await expect
       .element(screen.getByRole("row").nth(1).getByRole("gridcell").nth(0))
-      .toHaveTextContent("Ada");
+      .toMatchTextContent("Ada");
     await expect
-      .element(screen.getByRole("columnheader", { name: "Score" }))
+      .element(screen.getByRole("columnheader", { name: /^Score(?:,|$)/u }))
       .toHaveAttribute("aria-sort", "descending");
     await expect
-      .element(screen.getByRole("columnheader", { name: "Score" }))
-      .toHaveTextContent("↓1");
+      .element(screen.getByRole("columnheader", { name: /^Score(?:,|$)/u }))
+      .toMatchTextContent("↓1");
 
     await userEvent.keyboard("{Shift>}");
     screen
@@ -10883,14 +10924,14 @@ describe("BrunoTableClient browser surface", () => {
       .dispatchEvent(new MouseEvent("click", { bubbles: true, shiftKey: false }));
     await userEvent.keyboard("{/Shift}");
     await expect
-      .element(screen.getByRole("columnheader", { name: "Score" }))
+      .element(screen.getByRole("columnheader", { name: /^Score(?:,|$)/u }))
       .toHaveAttribute("aria-sort", "descending");
     await expect
-      .element(screen.getByRole("columnheader", { name: "Name" }))
+      .element(screen.getByRole("columnheader", { name: /^Name(?:,|$)/u }))
       .not.toHaveAttribute("aria-sort");
     await expect
-      .element(screen.getByRole("columnheader", { name: "Name" }))
-      .toHaveTextContent("↑2");
+      .element(screen.getByRole("columnheader", { name: /^Name(?:,|$)/u }))
+      .toMatchTextContent("↑2");
   });
 
   test("does not revisit resident source rows for a query-only command", async () => {
@@ -10912,7 +10953,7 @@ describe("BrunoTableClient browser surface", () => {
     await screen.getByRole("button", { name: "Sort by Name" }).click();
 
     await expect
-      .element(screen.getByRole("columnheader", { name: "Name" }))
+      .element(screen.getByRole("columnheader", { name: /^Name(?:,|$)/u }))
       .toHaveAttribute("aria-sort", "ascending");
     expect(sourceIndexRead).not.toHaveBeenCalled();
   });
@@ -10927,7 +10968,7 @@ describe("BrunoTableClient browser surface", () => {
     );
     const grid = screen.getByRole("grid", { name: "Data for TABLE_ID_PEOPLE" });
     grid.element().focus();
-    const nameHeaderId = screen.getByRole("columnheader", { name: "Name" }).element().id;
+    const nameHeaderId = screen.getByRole("columnheader", { name: /^Name(?:,|$)/u }).element().id;
     await vi.waitFor(() =>
       expect(grid.element().getAttribute("aria-activedescendant")).toBe(nameHeaderId),
     );
@@ -10935,11 +10976,11 @@ describe("BrunoTableClient browser surface", () => {
     grid
       .element()
       .dispatchEvent(new KeyboardEvent("keydown", { bubbles: true, key: "ArrowRight" }));
-    const scoreHeaderId = screen.getByRole("columnheader", { name: "Score" }).element().id;
+    const scoreHeaderId = screen.getByRole("columnheader", { name: /^Score(?:,|$)/u }).element().id;
     expect(grid.element().getAttribute("aria-activedescendant")).toBe(scoreHeaderId);
     grid.element().dispatchEvent(new KeyboardEvent("keydown", { bubbles: true, key: "Enter" }));
     await expect
-      .element(screen.getByRole("columnheader", { name: "Score" }))
+      .element(screen.getByRole("columnheader", { name: /^Score(?:,|$)/u }))
       .toHaveAttribute("aria-sort", "descending");
     expect(grid.element().getAttribute("aria-activedescendant")).toBe(scoreHeaderId);
 
@@ -11020,7 +11061,7 @@ describe("BrunoTableClient browser surface", () => {
     grid.element().dispatchEvent(new KeyboardEvent("keydown", { bubbles: true, key: "Enter" }));
     await expect
       .element(screen.getByRole("row").nth(1).getByRole("gridcell").nth(0))
-      .toHaveTextContent("Row 99");
+      .toMatchTextContent("Row 99");
     expect(grid.element().getAttribute("aria-activedescendant")).toBe(headerId);
   });
 
@@ -11037,7 +11078,7 @@ describe("BrunoTableClient browser surface", () => {
       .getByRole("button", { name: "Sort by Score, currently ascending, priority 1" })
       .click();
 
-    const scoreHeader = screen.getByRole("columnheader", { name: "Score" });
+    const scoreHeader = screen.getByRole("columnheader", { name: /^Score(?:,|$)/u });
     await vi.waitFor(() => {
       expect(document.activeElement).toBe(grid.element());
       expect(grid.element().getAttribute("aria-activedescendant")).toBe(scoreHeader.element().id);
@@ -11045,7 +11086,7 @@ describe("BrunoTableClient browser surface", () => {
 
     grid.element().dispatchEvent(new KeyboardEvent("keydown", { bubbles: true, key: "ArrowLeft" }));
     expect(grid.element().getAttribute("aria-activedescendant")).toBe(
-      screen.getByRole("columnheader", { name: "Name" }).element().id,
+      screen.getByRole("columnheader", { name: /^Name(?:,|$)/u }).element().id,
     );
   });
 
@@ -11076,7 +11117,7 @@ describe("BrunoTableClient browser surface", () => {
       .click();
     await vi.waitFor(() => expect(grid.element().scrollTop).toBe(0));
     expect(grid.element().getAttribute("aria-activedescendant")).toBe(
-      screen.getByRole("columnheader", { name: "Score" }).element().id,
+      screen.getByRole("columnheader", { name: /^Score(?:,|$)/u }).element().id,
     );
   });
 
@@ -11171,7 +11212,9 @@ describe("BrunoTableClient browser surface", () => {
       />,
     );
 
-    await expect.element(screen.getByRole("columnheader", { name: "Alias" })).toBeInTheDocument();
+    await expect
+      .element(screen.getByRole("columnheader", { name: /^Alias(?:,|$)/u }))
+      .toBeInTheDocument();
     await expect.element(screen.getByRole("gridcell", { name: "Ada" })).toBeInTheDocument();
     await expect.element(screen.getByRole("gridcell", { name: "Grace" })).toBeInTheDocument();
   });
@@ -11549,7 +11592,7 @@ describe("BrunoTableClient browser surface", () => {
           clientSource={{ ...readySource(), version: 2, status: "stale", message: "Delayed" }}
         />,
       );
-      await expect.element(screen.getByRole("alert")).toHaveTextContent("Live data delayed");
+      await expect.element(screen.getByRole("alert")).toMatchTextContent("Live data delayed");
       expect(gridSurfaceRenders).toHaveBeenCalledTimes(structuralRenderCount);
       expect(renderCounts).toEqual(
         new Map([
@@ -11720,7 +11763,7 @@ describe("BrunoTableClient browser surface", () => {
 
       await screen.getByRole("button", { name: "Sort by Name" }).click();
       await expect
-        .element(screen.getByRole("columnheader", { name: "Name" }))
+        .element(screen.getByRole("columnheader", { name: /^Name(?:,|$)/u }))
         .toHaveAttribute("aria-sort", "ascending");
       expect(rowOrderPlans).toHaveBeenCalledTimes(2);
       expect(rowOrderPlans).toHaveBeenLastCalledWith("TABLE_ID_PEOPLE");
@@ -11830,7 +11873,7 @@ describe("BrunoTableClient browser surface", () => {
       cellRenders.mockClear();
       await userEvent.click(screen.getByRole("button", { name: "Sort by Name" }));
       await expect
-        .element(screen.getByRole("columnheader", { name: "Name" }))
+        .element(screen.getByRole("columnheader", { name: /^Name(?:,|$)/u }))
         .toHaveAttribute("aria-sort", "ascending");
       await vi.waitFor(() =>
         expect(rowRenders.mock.calls.map(([rowId]) => rowId)).toEqual(
@@ -12014,7 +12057,7 @@ describe("BrunoTableClient browser surface", () => {
       );
       await expect
         .element(screen.getByRole("status", { name: "Result rows" }))
-        .toHaveTextContent("2 result rows");
+        .toMatchTextContent("2 result rows");
       lifetimeEvents.mockClear();
 
       await screen.rerender(
@@ -12092,16 +12135,16 @@ describe("BrunoTableClient browser surface", () => {
 
       await expect
         .element(screen.getByRole("status", { name: "Result rows" }))
-        .toHaveTextContent("2");
+        .toMatchTextContent("2");
       await expect
         .element(screen.getByRole("status", { name: "Loaded rows" }))
-        .toHaveTextContent("2");
+        .toMatchTextContent("2");
       await expect
         .element(screen.getByRole("status", { name: "Active filters" }))
-        .toHaveTextContent("0");
+        .toMatchTextContent("0");
       await expect
         .element(screen.getByRole("status", { name: "Active sorts" }))
-        .toHaveTextContent("1");
+        .toMatchTextContent("1");
       expect(commandRenders).toHaveBeenCalledOnce();
       expect(
         subscriptionEvents.mock.calls
@@ -12132,10 +12175,10 @@ describe("BrunoTableClient browser surface", () => {
       await screen.getByRole("button", { name: "Show Ada" }).click();
       await expect
         .element(screen.getByRole("status", { name: "Active filters" }))
-        .toHaveTextContent("1");
+        .toMatchTextContent("1");
       await expect
         .element(screen.getByRole("status", { name: "Result rows" }))
-        .toHaveTextContent("1");
+        .toMatchTextContent("1");
       expect(
         subscriptionEvents.mock.calls
           .map(([event]) => event)
@@ -12180,7 +12223,7 @@ describe("BrunoTableClient browser surface", () => {
     expect(result).toBe(false);
     await expect
       .element(screen.getByRole("status", { name: "Result rows" }))
-      .toHaveTextContent("2 result rows");
+      .toMatchTextContent("2 result rows");
     await expect.element(screen.getByRole("gridcell", { name: "Ada", exact: true })).toBeVisible();
     await expect
       .element(screen.getByRole("gridcell", { name: "Grace", exact: true }))
@@ -12261,16 +12304,16 @@ describe("BrunoTableClient browser surface", () => {
     expect(caught).toBe(persistenceFailure);
     await expect
       .element(screen.getByRole("status", { name: "Active filters" }))
-      .toHaveTextContent("0 active filters");
+      .toMatchTextContent("0 active filters");
     await userEvent.click(screen.getByRole("button", { name: "Filter Name" }));
     const editor = screen.getByRole("dialog", { name: "Filter Name" });
     await userEvent.fill(editor.getByRole("textbox", { name: "Filter value for Name" }), "Ada");
     await expect
       .element(editor.getByRole("alert"))
-      .toHaveTextContent("This filter could not be applied.");
+      .toMatchTextContent("This filter could not be applied.");
     await expect
       .element(screen.getByRole("status", { name: "Active filters" }))
-      .toHaveTextContent("0 active filters");
+      .toMatchTextContent("0 active filters");
     await expect
       .element(screen.getByRole("gridcell", { name: "Grace", exact: true }))
       .toBeVisible();
@@ -12335,7 +12378,7 @@ describe("BrunoTableClient browser surface", () => {
     );
     await expect
       .element(screen.getByRole("status", { name: "Result rows" }))
-      .toHaveTextContent("2 result rows");
+      .toMatchTextContent("2 result rows");
 
     await screen.rerender(
       <BrunoTableClient
@@ -12351,10 +12394,10 @@ describe("BrunoTableClient browser surface", () => {
       .toBeInTheDocument();
     await expect
       .element(screen.getByRole("status", { name: "Loaded rows" }))
-      .toHaveTextContent("0 loaded rows");
+      .toMatchTextContent("0 loaded rows");
     await expect
       .element(screen.getByRole("status", { name: "Result rows" }))
-      .toHaveTextContent("0 result rows");
+      .toMatchTextContent("0 result rows");
 
     for (const [index, status] of (["stale", "error", "closed"] as const).entries()) {
       await screen.rerender(
@@ -12375,10 +12418,10 @@ describe("BrunoTableClient browser surface", () => {
         .toBeInTheDocument();
       await expect
         .element(screen.getByRole("status", { name: "Loaded rows" }))
-        .toHaveTextContent("2 loaded rows");
+        .toMatchTextContent("2 loaded rows");
       await expect
         .element(screen.getByRole("status", { name: "Result rows" }))
-        .toHaveTextContent("2 result rows");
+        .toMatchTextContent("2 result rows");
 
       if (status !== "closed") {
         await screen.rerender(
@@ -12396,7 +12439,7 @@ describe("BrunoTableClient browser surface", () => {
         );
         await expect
           .element(screen.getByRole("status", { name: "Result rows" }))
-          .toHaveTextContent("0 result rows");
+          .toMatchTextContent("0 result rows");
       }
     }
   });
@@ -12415,7 +12458,7 @@ describe("BrunoTableClient browser surface", () => {
     );
     await expect
       .element(screen.getByRole("status", { name: "Result rows" }))
-      .toHaveTextContent("2 result rows");
+      .toMatchTextContent("2 result rows");
 
     await screen.rerender(
       <BrunoTableClient
@@ -12428,13 +12471,13 @@ describe("BrunoTableClient browser surface", () => {
 
     await expect
       .element(screen.getByRole("alert"))
-      .toHaveTextContent("Expected 3 rows but received 2.");
+      .toMatchTextContent("Expected 3 rows but received 2.");
     await expect
       .element(screen.getByRole("status", { name: "Loaded rows" }))
-      .toHaveTextContent("0 loaded rows");
+      .toMatchTextContent("0 loaded rows");
     await expect
       .element(screen.getByRole("status", { name: "Result rows" }))
-      .toHaveTextContent("0 result rows");
+      .toMatchTextContent("0 result rows");
   });
 
   test("composes application-controlled External Filter UI without a grid capability", async () => {
@@ -12601,9 +12644,9 @@ describe("BrunoTableClient browser surface", () => {
     await screen.getByRole("button", { name: "First table" }).click();
     await expect
       .element(screen.getByRole("status", { name: "Result rows" }).nth(0))
-      .toHaveTextContent("First table: 1");
+      .toMatchTextContent("First table: 1");
     await expect
       .element(screen.getByRole("status", { name: "Result rows" }).nth(1))
-      .toHaveTextContent("Second table: 2");
+      .toMatchTextContent("Second table: 2");
   });
 });
