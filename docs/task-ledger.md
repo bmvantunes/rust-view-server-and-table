@@ -25,3 +25,5 @@ IN PROGRESS. No integrated 200,000-row-per-topic acceptance is claimed.
 Raw campaign results, failed runs, screenshots and producer receipts remain under ignored `.local/e2e/`; failures are retained. Broker data volumes are owned per run and preserved after shutdown. Fast tests do not need Kafka or OrbStack. Heavy builds/campaigns are coordinated between owners.
 
 Local foundation commit: a8c2fbf. Integrated implementation checkpoint: bf06e06. No remote push or publication.
+
+Full run781b40b / e2e-6bd3ea5593d44ecc reached exact200,000-row Client payload equality in16.93s and Server200,000 total with18 mounted rows. It failed the cumulative initial delivery gate because native catchup was still producing bounded live windows. A separately recorded native catchup phase now precedes browser measurement, preserving the original delivery bounds and bootstrap mutation. Worker payload bytes are measured at the actual socket receiver. Independent review and17 integration regressions pass; full rerun pending.

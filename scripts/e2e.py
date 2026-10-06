@@ -13,6 +13,8 @@ import subprocess
 import sys
 import time
 import uuid
+import urllib.request
+import urllib.error
 import kafka
 from demo_config import ROOT, TOPICS, prepare
 from dev import stop
@@ -30,6 +32,33 @@ def fingerprint():
         if path.is_file():
             digest.update(raw + b'\0' + path.read_bytes() + b'\0')
     return digest.hexdigest()
+
+
+def native_caught_up(snapshot, expected):
+    if not snapshot.get('ready') or not snapshot.get('authority_safe'):
+        return False
+    sources = {source['topic']: source for source in snapshot.get('sources', [])}
+    for topic, wanted in expected.items():
+        source = sources.get(topic)
+        if not source:
+            return False
+        retention = source.get('retention', {})
+        if retention.get('active_payload_rows') != wanted['count'] or not retention.get('safe') or retention.get('pending_due'):
+            return False
+        partitions = {str(partition['partition']): partition for partition in source.get('partitions', [])}
+        wanted_cuts = {str(partition): cut for partition, cut in wanted['sourceNext'].items()}
+        if partitions.keys() != wanted_cuts.keys():
+            return False
+        for partition, cut in wanted_cuts.items():
+            actual = partitions[partition]
+            if not actual.get('assigned') or not actual.get('bootstrap_complete'):
+                return False
+            try:
+                if any(int(actual.get(field, '-1')) < cut for field in ('durable_next', 'derived_next', 'serving_next')):
+                    return False
+            except (TypeError, ValueError):
+                return False
+    return True
 
 
 def free_port():
@@ -160,6 +189,28 @@ def main():
             print(json.dumps({'seededDistinct': {topic: len(producer.rows[topic])}}), flush=True)
         result['seedCompletedMonotonic'] = time.monotonic()
         result['initialReceipts'] = producer.expected()
+        catchup_started = time.monotonic()
+        catchup_deadline = catchup_started + 120
+        request = urllib.request.Request(f'http://127.0.0.1:{ports[2]}/health', headers={'Authorization': f'Bearer {token}'})
+        with (directory / 'initial-native-catchup.ndjson').open('w') as catchup_log:
+            while True:
+                if service.poll() is not None:
+                    raise RuntimeError('Owned native service exited during initial catchup')
+                try:
+                    with urllib.request.urlopen(request, timeout=2) as response:
+                        snapshot = json.load(response)
+                    catchup_log.write(json.dumps({'seconds': time.monotonic() - catchup_started, 'health': snapshot}) + '\n')
+                    catchup_log.flush()
+                    if native_caught_up(snapshot, result['initialReceipts']):
+                        result['nativeInitialCatchupSeconds'] = time.monotonic() - catchup_started
+                        result['nativeInitialCatchupHealth'] = snapshot
+                        break
+                except (urllib.error.URLError, TimeoutError) as error:
+                    catchup_log.write(json.dumps({'seconds': time.monotonic() - catchup_started, 'error': str(error)}) + '\n')
+                    catchup_log.flush()
+                if time.monotonic() >= catchup_deadline:
+                    raise RuntimeError('Native sources did not reach all acknowledged cuts and exact row counts within 120 seconds')
+                time.sleep(0.5)
         web_env = {**os.environ, 'VITE_RVS_URL': f'ws://127.0.0.1:{ports[1]}/v15', 'VITE_RVS_TOKEN': token,
                    'VITE_RVS_CONTROL_URL': f'http://127.0.0.1:{ports[4]}', 'VITE_RVS_CONTROL_TOKEN': token, 'VITE_RVS_RUN': name,
                    'VITE_RVS_CATALOG': json.dumps(json.loads(config.read_text())['catalog']), 'VITE_RVS_E2E': '1'}

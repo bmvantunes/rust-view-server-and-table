@@ -2,11 +2,34 @@
 from pathlib import Path
 import sys
 import unittest
+from copy import deepcopy
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / 'scripts'))
-from e2e import check_candidate, finalize_acceptance, perform_cleanup, validate_build_mode
+from e2e import native_caught_up, check_candidate, finalize_acceptance, perform_cleanup, validate_build_mode
 
 
 class CampaignEvidence(unittest.TestCase):
+    def test_native_catchup_requires_exact_counts_and_every_acknowledged_cut(self):
+        expected = {topic: {'count': 200000, 'sourceNext': {0: 100199, 1: 100199}} for topic in ('client_orders', 'server_orders')}
+        health = {'ready': True, 'authority_safe': True, 'sources': [{'topic': topic, 'retention': {'active_payload_rows': 200000, 'safe': True, 'pending_due': False}, 'partitions': [{'partition': partition, 'assigned': True, 'bootstrap_complete': True, 'durable_next': '100199', 'derived_next': '100199', 'serving_next': '100200', 'fetched_next': '100999'} for partition in (0, 1)]} for topic in expected]}
+        self.assertTrue(native_caught_up(health, expected))
+        serialized_expected = {topic: {**value, 'sourceNext': {str(partition): cut for partition, cut in value['sourceNext'].items()}} for topic, value in expected.items()}
+        self.assertTrue(native_caught_up(health, serialized_expected))
+        for field in ('durable_next', 'derived_next', 'serving_next'):
+            stale = deepcopy(health)
+            stale['sources'][1]['partitions'][1][field] = '100198'
+            self.assertFalse(native_caught_up(stale, expected), field + ' cannot be replaced by fetched progress')
+            stale['sources'][1]['partitions'][1][field] = None
+            self.assertFalse(native_caught_up(stale, expected), field + ' null is not ready')
+        for modification in ('count', 'ready', 'safe', 'pending', 'missing', 'bootstrap'):
+            stale = deepcopy(health)
+            if modification == 'count': stale['sources'][0]['retention']['active_payload_rows'] -= 1
+            elif modification == 'ready': stale['ready'] = False
+            elif modification == 'safe': stale['sources'][1]['retention']['safe'] = False
+            elif modification == 'pending': stale['sources'][1]['retention']['pending_due'] = True
+            elif modification == 'missing': stale['sources'][1]['partitions'].pop()
+            elif modification == 'bootstrap': stale['sources'][0]['partitions'][0]['bootstrap_complete'] = False
+            self.assertFalse(native_caught_up(stale, expected), modification)
+
     def test_full_campaign_cannot_reuse_stale_native_executable(self):
         with self.assertRaisesRegex(ValueError, 'only permitted'):
             validate_build_mode(None, True)

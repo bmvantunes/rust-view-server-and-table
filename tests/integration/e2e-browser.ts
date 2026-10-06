@@ -13,7 +13,7 @@ type SourceRow=CompatRow<typeof catalog.client_orders.schema>;
 type SerializedRow=Omit<SourceRow,'units'|'price'> & {units:string;price:string};
 type StatusDiagnostic={client:{status:string;loaded:number;error?:string};server:{status:string;totalRows:number;message?:string};health:HealthObservation;connection:string;diagnostics:unknown};
 type Diagnostic={status():StatusDiagnostic;row(orderId:string):SerializedRow|undefined;snapshot():Omit<StatusDiagnostic,'client'> & {client:StatusDiagnostic['client'] & {rows:readonly SerializedRow[]}};dispose():void;queryCase:ReturnType<typeof queryCases>};
-declare global {interface Window {__RVS_E2E__?:Diagnostic;__RVS_WORKERS__?:{active:number;resultRows:number;maximumResultRows:number};__RVS_FRAME_INTERVALS__?:number[]}}
+declare global {interface Window {__RVS_E2E__?:Diagnostic;__RVS_WORKERS__?:{active:number;resultRows:number;maximumResultRows:number;distinctResultRows:number;invalidIdentityResults:number;receivedBinaryBytes:number;completeBinaryBytes:number;viewportBinaryBytes:number};__RVS_FRAME_INTERVALS__?:number[]}}
 type Expected=Record<string,{count:number;sha256:string;sourceNext:Record<string,number>;producerReceipts:number}>;
 const require=createRequire(new URL('../../packages/rust-view-server/package.json',import.meta.url));
 const {chromium}=require('playwright') as typeof import('playwright');
@@ -32,12 +32,18 @@ const browser=await chromium.launch({headless:true});
 const context=await browser.newContext({viewport:{width:1600,height:1000}});
 await context.addInitScript(()=>{
  const intervals:number[]=[];window.__RVS_FRAME_INTERVALS__=intervals;let previous:number|undefined;const frame=(now:number)=>{if(previous!==undefined)intervals.push(now-previous);previous=now;if(intervals.length<2048)requestAnimationFrame(frame);};requestAnimationFrame(frame);
- const Original=window.Worker;const stats={active:0,resultRows:0,maximumResultRows:0};window.__RVS_WORKERS__=stats;
+ const Original=window.Worker;const identities=new Set<string>();const stats={active:0,resultRows:0,maximumResultRows:0,distinctResultRows:0,invalidIdentityResults:0,receivedBinaryBytes:0,completeBinaryBytes:0,viewportBinaryBytes:0};window.__RVS_WORKERS__=stats;
  window.Worker=class extends Original{
   private ended=false;
   constructor(url:string|URL,options?:WorkerOptions){super(url,options);stats.active++;this.addEventListener('message',(event:MessageEvent<unknown>)=>{
-   const message=event.data;if(typeof message!=='object'||message===null||!('results'in message)||typeof message.results!=='object'||message.results===null)return;
-   for(const value of Object.values(message.results)){if(typeof value!=='object'||value===null||!('rows'in value)||!Array.isArray(value.rows))continue;stats.resultRows+=value.rows.length;stats.maximumResultRows=Math.max(stats.maximumResultRows,value.rows.length);}
+   const message=event.data;if(typeof message!=='object'||message===null)return;
+   if('type'in message&&message.type==='v13_metrics'&&'receivedBinaryBytes'in message&&typeof message.receivedBinaryBytes==='number'){
+    stats.receivedBinaryBytes+=message.receivedBinaryBytes;
+    if('receivedFrameType'in message&&message.receivedFrameType==='complete')stats.completeBinaryBytes+=message.receivedBinaryBytes;
+    if('receivedFrameType'in message&&message.receivedFrameType==='result')stats.viewportBinaryBytes+=message.receivedBinaryBytes;
+   }
+   if(!('results'in message)||typeof message.results!=='object'||message.results===null)return;
+   for(const value of Object.values(message.results)){if(typeof value!=='object'||value===null||!('rows'in value)||!Array.isArray(value.rows))continue;stats.resultRows+=value.rows.length;stats.maximumResultRows=Math.max(stats.maximumResultRows,value.rows.length);if(!('keys'in value)||!Array.isArray(value.keys)||value.keys.length!==value.rows.length||!value.keys.every((key:unknown):key is string=>typeof key==='string'))stats.invalidIdentityResults++;else for(const key of value.keys)identities.add(key);stats.distinctResultRows=identities.size;}
   });}
   terminate(){if(!this.ended){this.ended=true;stats.active--;}super.terminate();}
  };
@@ -118,9 +124,12 @@ try{
  assert(mounted>0&&mounted<500&&(smoke?mounted<=rows:mounted<rows),'Server mounted rows must remain sparse');
  sample('server-mounted-row-identities',mounted);
  const delivery=await page.evaluate(()=>window.__RVS_WORKERS__!);
+ sample('server-worker-delivery-before-probes',delivery);
+ assert.equal(delivery.invalidIdentityResults,0,'Every Worker result must have one authoritative key per row');
+ assert(delivery.distinctResultRows>0&&delivery.distinctResultRows<500&&(smoke?delivery.distinctResultRows<=rows:delivery.distinctResultRows<rows),'Distinct delivered server rows must remain sparse');
+ assert(delivery.receivedBinaryBytes>0&&delivery.completeBinaryBytes>0&&delivery.viewportBinaryBytes>0,'Worker must measure actual complete and viewport binary traffic');
  assert(delivery.maximumResultRows>0&&delivery.maximumResultRows<500&&(smoke?delivery.maximumResultRows<=rows:delivery.maximumResultRows<rows),'Worker must deliver bounded server windows');
  assert(delivery.resultRows<(smoke?1000:Math.min(rows,1000)),'Initial server must not preload full dataset');
- sample('server-worker-delivery-before-probes',delivery);
  // Actual UI scroll requests the deep viewport, with no bulk application row read.
  await server.getByRole('grid').evaluate(element=>{element.scrollTop=element.scrollHeight;});
  await server.getByText(`order-${String(rows-1).padStart(6,'0')}`,{exact:true}).first().waitFor();
@@ -272,7 +281,7 @@ try{
  sample('frame-cadence-summary',{samples:intervals.length,over32ms:intervals.filter(value=>value>32).length,estimatedMissed60HzOpportunities:intervals.reduce((sum,value)=>sum+Math.max(0,Math.round(value/(1000/60))-1),0),assumption:'60Hz requestAnimationFrame opportunities, not physical dropped paints'});
  sample('native-memory',await rpc('native-memory'));
  sample('browser-performance',await cdp.send('Performance.getMetrics'));
- sample('application-bytes',{websocketReceived:receivedBytes,httpEncoded:responseBytes});
+ sample('application-bytes',{worker:await page.evaluate(()=>{const s=window.__RVS_WORKERS__!;return {receivedBinaryBytes:s.receivedBinaryBytes,completeBinaryBytes:s.completeBinaryBytes,viewportBinaryBytes:s.viewportBinaryBytes};}),pageCdpWebsocketReceived:receivedBytes,httpEncoded:responseBytes});
  // Block worker/WASM assets separately from the above transport-only interruption.
  await context.route(/(?:worker[^/]*\.(?:js|ts)|\.wasm)(?:\?.*)?$/i,route=>route.abort('failed'));
  await page.reload({waitUntil:'domcontentloaded'});
@@ -288,7 +297,7 @@ try{
  outcome='passed';
 }catch(error){
  sample('failure-diagnostics',await page.evaluate(()=>({status:window.__RVS_E2E__?.status(),workers:window.__RVS_WORKERS__,clientLabel:document.querySelector('[data-testid="client-count"]')?.textContent,serverLabel:document.querySelector('[data-testid="server-count"]')?.textContent})).catch(reason=>({captureError:String(reason)})));
- sample('failure-application-bytes',{websocketReceived:receivedBytes,httpEncoded:responseBytes});
+ sample('failure-application-bytes',{pageCdpWebsocketReceived:receivedBytes,httpEncoded:responseBytes});
  writeFileSync(`${directory}/failure-dom.html`,await page.content().catch(()=>''));sample('failure',{message:String(error),stack:error instanceof Error?error.stack:undefined});throw error;
 }
 finally{

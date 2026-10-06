@@ -45,7 +45,7 @@ scope.onmessage=async e=>{
   socket.onmessage=e=>{
    if(done)return;if(!(e.data instanceof ArrayBuffer)){fatal('binary frame required');return;}
    if(e.data.byteLength>4*1024*1024){fatal('remote frame budget');return;}
-   let v:unknown;let decodeNs=0,adaptNs=0;try{const t=performance.now();const native=catalog?decodeGeneric(new Uint8Array(e.data)):decodeNative(new Uint8Array(e.data),codec);decodeNs=Math.round((performance.now()-t)*1e6);const a=performance.now();v=catalog?native:adapt(native,codec);adaptNs=Math.round((performance.now()-a)*1e6);}catch{fatal('malformed binary frame');return;}
+   let v:unknown;let decodeNs=0,adaptNs=0;try{const t=performance.now();const native=catalog?decodeGeneric(new Uint8Array(e.data)):decodeNative(new Uint8Array(e.data),codec);decodeNs=Math.round((performance.now()-t)*1e6);const a=performance.now();v=catalog?native:adapt(native,codec);adaptNs=Math.round((performance.now()-a)*1e6);}catch{fatal('malformed binary frame');return;}finally{scope.postMessage({type:'v13_metrics',receivedBinaryBytes:e.data.byteLength,receivedFrameType:record(v)&&typeof v.type==='string'?v.type:'invalid'});}
    if(!record(v)||v.v!==version){fatal('incompatible binary envelope version');return;}
    if(!record(v)||v.v!==version||v.nonce!==nonce||typeof v.incarnation!=='string'||typeof v.connection!=='string'||!/^[0-9a-f]{32}$/.test(v.incarnation)||!/^\d{1,20}$/.test(v.connection))return;
    if(v.type==='ready'){
