@@ -1,6 +1,6 @@
 # Implementation ledger
 
-Cleanup in progress on `refactor/typescript-tooling`, based on `202833c`. The qualification below records the previous delivered product; it does not qualify the in-progress tooling migration. Fresh integrated acceptance through the new tooling remains required.
+Current cleanup/split: branch `refactor/typescript-tooling`, frozen executable commit `31e24ec2962ad7312ec28b213c60ce5982ebb54f`. Fresh full campaign `e2e-25491a17557af84e` passed all 12 checks with 200,000 initial live rows per topic and no cleanup errors. See [current cleanup qualification](cleanup-split.md) and [machine-readable evidence](cleanup-qualification.json). The ledger below is retained historical evidence for the previous delivery.
 
 The integrated product and full local campaign are qualified at `468e40cb9eefc4198499d98fed27141d7b057e5d`. Final documentation records those frozen executable bytes. See [qualification](qualification.md) and its [machine-readable evidence](qualification.json).
 

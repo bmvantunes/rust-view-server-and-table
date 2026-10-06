@@ -1,6 +1,6 @@
 # TypeScript cleanup and package split
 
-Branch: `refactor/typescript-tooling`. Baseline: `202833c9211cae9f9720c46a6ddff4f1dffc7594`. Final acceptance is in progress; historical PASS logs do not qualify these changes.
+Branch: `refactor/typescript-tooling`. Baseline: `202833c9211cae9f9720c46a6ddff4f1dffc7594`. The cleanup/split is qualified at executable commit `31e24ec2962ad7312ec28b213c60ce5982ebb54f`. The final handoff commit adds documentation only. No push was made.
 
 | Owner | Maintained source |
 | --- | --- |
@@ -25,4 +25,30 @@ WASM is built into `artifacts/wasm`, verified against source and artifact hashes
 
 The separate [decimal clarification](decimal-integration.md) records genuine Effect values, exact conversion checks and public result domains. Company source decoder mapping remains pending; decimal support is present.
 
-Fresh integrated qualification, final review, exact commit and executed result inventory will be recorded here before delivery.
+## Executed qualification
+
+The fresh full campaign **e2e-25491a17557af84e passed all 12 browser checks**, with **200,000 distinct initial live rows in each topic**, two partitions each, and no cleanup errors. It ran through the new TypeScript tooling and final package layout at frozen executable commit `31e24ec2962ad7312ec28b213c60ce5982ebb54f`. The machine-readable report is [cleanup-qualification.json](cleanup-qualification.json). Raw evidence remains in ignored `.local/e2e/e2e-25491a17557af84e/` and `.local/cleanup/`.
+
+The campaign qualifies complete Client row identity/payload hashes and source cuts; bounded Server windows, deep scroll and 2,048 facets; exact aggregate results; real editing/paste/fill, conflict and selection behavior; live update/delete; recovery; and disposal. The deliberate deletion leaves 199,999 rows in each topic. Initial native catchup took 13.06 seconds; the runner took 239.64 seconds and browser checks 144.32 seconds.
+
+Short transport interruption recovered automatically. Native restart recovered broker-backed state in **32.68 seconds**, after the unchanged browser retry budget expired; the existing **Reconnect and reacquire** action then reacquired complete data and observed a later update. This is explicit browser retry after native restart, not automatic browser recovery across the entire restart. Worker asset failure was tested separately and recovered through the same explicit action. All five owned children, container and network were confirmed stopped. The owned broker volume remains preserved; no reset occurred.
+
+The earlier cleanup campaign `e2e-a911768a59f2bdd1` is retained as **failed**. Its inherited whole-browser offline fault also disabled replacement Worker downloads. The reviewed repair closes a real Worker transport through an owned loopback pass-through, keeps asset HTTP available, and requires a lost-attempt event, a new attempt and full coherence. A separate EOF/exit race fix reports browser failures accurately and tolerates signal errors only after observed child exit. Product recovery policy was unchanged.
+
+| Verification actually executed | Result |
+| --- | --- |
+| Fresh same-repository worktree, frozen install → generate → build → check → full fast suite | PASS on `675aaa3`; no copied outputs, no VP task-cache hits |
+| Final `31e24ec` tooling repair in that clean worktree | Strict TypeScript, all 46 infrastructure tests, authoring and dependency graph PASS |
+| Native compilation with SDK/table output directories absent | PASS; actual app recompilation through VP, outputs restored afterward |
+| Native suites | 208 passes, 11 intentionally ignored, plus 5 legacy socket passes; one nested helper excluded from count |
+| Provider / complete SDK / table / UI browser | 101 / 5 / 1,176 / 16 passes |
+| Runtime protocol/assets / table tooling | 15 / 16 passes |
+| Source and emitted type consumers | PASS with pinned TypeScript 7.0.2 |
+| Installed client tarball, actual Workers/default WASM assets | 10 checks PASS; no Rust invocation, source fallback or external service |
+| Installed table and production React Compiler | PASS for types/runtime, SSR/hydration and exact numeric gates |
+| Independent engine mutation and real cancellation negative controls | Expected failures observed; source restoration and cleanup verified |
+| Effect clarification | 44 focused tests, eight genuine Effect values, exact roundtrip and inference PASS |
+
+Fresh installation reused 569 cached pnpm packages and downloaded registry policy metadata; native compilation reused cached crate sources and existing toolchains/Chromium. This qualifies a fresh checkout with those declared caches, not an entirely uncached network install. Fresh WASM outputs matched the main checkout byte-for-byte. Rust 1.99.0, TypeScript 7.0.2, Effect 4.0.0-rc.111 and workspace locks remain pinned.
+
+Independent review covered the complete cleanup/split and the exact final repair commit. The independent campaign audit replayed all 409 committed batches / 400,014 records and matched the starting/final distinct identities, hashes, source cuts and frozen Git source fingerprint; its evidence is indexed in the machine-readable report. The only company-specific pending work is source decoder mapping; decimal support is implemented. Broader charter acceptance remains false for that pending scope. Safari, cold-offline/PWA and broker-loss behavior remain outside this qualification. Local performance samples are observations, not peak-memory or production SLA claims.
