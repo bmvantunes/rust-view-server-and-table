@@ -1,5 +1,5 @@
 import {expect,test} from 'vite-plus/test';
-import {defineSchema,resultShape,validateQuery,validateGroupedRow} from '@bruno/rust-view-server/schema';
+import {defineSchema,resultShape,validateQuery,validateGroupedRow,requiresTextPredicate} from '@bruno/rust-view-server/schema';
 import {compile,decodeRows} from '../../src/rust/translate.ts';
 import * as BigDecimal from 'effect/BigDecimal';
 import type {ProductResult} from '@bruno/rust-view-server/react';
@@ -16,6 +16,23 @@ test('profile admits optional nonnullable numeric sums but rejects nullable nume
  const base={semanticProfile:'effect-4.2.8',groupBy:['group'],orderBy:[]} as const;
  expect(()=>validateQuery(schema,{...base,aggregates:{total:{aggFunc:'sum',field:'optional'}}})).not.toThrow();
  expect(()=>validateQuery(schema,{...base,aggregates:{total:{aggFunc:'sum',field:'nullable'}}})).toThrow();
+});
+test('SDK validates bounded profile Text IN while keeping text capability detection source-owned',()=>{
+ const values=Array.from({length:4096},(_,index)=>`facet-${index}`);const query={semanticProfile:'effect-4.2.8',select:['text'],where:{op:'text_in',field:'text',values,case_sensitive:true,accent_sensitive:true},orderBy:[]} as const;
+ expect(()=>validateQuery(schema,query)).not.toThrow();expect(requiresTextPredicate(query.where)).toBe(true);
+ expect(()=>validateQuery(schema,{...query,where:{...query.where,values:[...values,'overflow']}})).toThrow();
+ expect(()=>validateQuery(schema,{...query,where:{...query.where,case_sensitive:1}})).toThrow();
+});
+test('SDK enforces the native UTF-8 framed query identity byte bound around 4096-value sets',()=>{
+ const values=Array.from({length:4096},(_,index)=>`facet-${String(index).padStart(4,'0')}`);const topic='profile',fingerprint='f'.repeat(64);const query={semanticProfile:'effect-4.2.8',select:['text'],where:{op:'text_in',field:'text',values},orderBy:[]} as const;
+ const withPadding=(count:number)=>({...query,where:{...query.where,values:values.map(value=>`${value}${'界'.repeat(count)}`)}});
+ let low=0,high=10;while(low<high){const middle=Math.ceil((low+high)/2);try{validateQuery(schema,withPadding(middle),{topic,fingerprint});low=middle;}catch{high=middle-1;}}
+ expect(()=>validateQuery(schema,withPadding(low),{topic,fingerprint})).not.toThrow();
+ expect(()=>validateQuery(schema,withPadding(low+1),{topic,fingerprint})).toThrow('query byte bound');
+ expect(()=>validateQuery(schema,query,{topic,fingerprint})).not.toThrow();
+ const numbers=Array.from({length:4096},(_,index)=>index);
+ expect(()=>validateQuery(schema,{semanticProfile:'effect-4.2.8',select:['number'],where:{op:'in',field:'number',values:numbers},orderBy:[]},{topic,fingerprint})).not.toThrow();
+ expect(()=>validateQuery(schema,{semanticProfile:'effect-4.2.8',select:['number'],where:{op:'in',field:'number',values:[0.1,1e20,1e-7,-0,1.8446744073709552e19]},orderBy:[]},{topic,fingerprint})).not.toThrow();
 });
 test('exact profile Number aggregate and subnormal average decode as BigDecimal, missing min owns undefined',()=>{
  const query={groupBy:['group'],aggregates:{total:{aggFunc:'sum',field:'number'},mean:{aggFunc:'avg',field:'number'},minimum:{aggFunc:'min',field:'text'}},where:[],orderBy:[]} as const;

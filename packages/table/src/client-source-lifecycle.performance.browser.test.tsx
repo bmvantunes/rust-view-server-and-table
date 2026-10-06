@@ -34,9 +34,9 @@ test("removes a recovered lifecycle error without hiding a retained query reject
     status: "stale" as const,
   };
   await screen.rerender(<BrunoTableClient {...props} clientSource={rejectedSource} />);
-  await expect.element(screen.getByRole("alert").first()).toHaveTextContent("Live data delayed");
+  await expect.element(screen.getByRole("alert").first()).toMatchTextContent("Live data delayed");
   await screen.getByRole("button", { name: "Sort by Score" }).click();
-  await expect.element(screen.getByRole("alert").first()).toHaveTextContent("COL_ID_SCORE");
+  await expect.element(screen.getByRole("alert").first()).toMatchTextContent("COL_ID_SCORE");
   const acceptedCell = screen.getByRole("gridcell", { name: "Ada" }).element();
 
   const unreadableSource = { ...rejectedSource };
@@ -48,23 +48,25 @@ test("removes a recovered lifecycle error without hiding a retained query reject
   await screen.rerender(<BrunoTableClient {...props} clientSource={unreadableSource} />);
   await expect
     .element(screen.getByRole("alert").first())
-    .toHaveTextContent("Unreadable Client Source lifecycle field: status.");
+    .toMatchTextContent("Unreadable Client Source lifecycle field: status.");
   expect(screen.getByRole("gridcell", { name: "Ada" }).element()).toBe(acceptedCell);
 
   await screen.rerender(<BrunoTableClient {...props} clientSource={{ ...rejectedSource }} />);
   await expect
     .element(screen.getByRole("alert").first())
-    .not.toHaveTextContent("Unreadable Client Source");
-  await expect.element(screen.getByRole("alert").first()).toHaveTextContent("COL_ID_SCORE");
+    .not.toMatchTextContent("Unreadable Client Source");
+  await expect.element(screen.getByRole("alert").first()).toMatchTextContent("COL_ID_SCORE");
   const recoveredCell = screen.getByRole("gridcell", { name: "Ada" }).element();
   const repeatedSource = { ...rejectedSource, message: "Still awaiting corrected values." };
   await screen.rerender(<BrunoTableClient {...props} clientSource={repeatedSource} />);
-  await expect.element(screen.getByRole("alert").first()).toHaveTextContent(repeatedSource.message);
-  await expect.element(screen.getByRole("alert").first()).toHaveTextContent("COL_ID_SCORE");
+  await expect
+    .element(screen.getByRole("alert").first())
+    .toMatchTextContent(repeatedSource.message);
+  await expect.element(screen.getByRole("alert").first()).toMatchTextContent("COL_ID_SCORE");
   expect(screen.getByRole("gridcell", { name: "Ada" }).element()).toBe(recoveredCell);
   await screen.getByRole("button", { name: "Sort by Score" }).click();
   await expect
     .element(screen.getByRole("alert").first())
-    .not.toHaveTextContent("Unreadable Client Source");
-  await expect.element(screen.getByRole("alert").first()).toHaveTextContent("COL_ID_SCORE");
+    .not.toMatchTextContent("Unreadable Client Source");
+  await expect.element(screen.getByRole("alert").first()).toMatchTextContent("COL_ID_SCORE");
 });

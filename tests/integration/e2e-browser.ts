@@ -5,11 +5,11 @@ import {appendFileSync,writeFileSync} from 'node:fs';
 import {createInterface} from 'node:readline';
 import {fileURLToPath} from 'node:url';
 import type {catalog} from '../../packages/rust-view-server/src/generated/demo-catalog.ts';
-import type {CompatRow} from '../../packages/table/src/rust/types.ts';
+import type {BrunoTableRustCompatRow} from '@bruno/table/rust';
 import type {BrowserProductProvider,HealthObservation} from '../../packages/rust-view-server/src/product-provider.tsx';
 import type {queryCases} from '../../apps/web/src/e2e-queries.ts';
 
-type SourceRow=CompatRow<typeof catalog.client_orders.schema>;
+type SourceRow=BrunoTableRustCompatRow<typeof catalog.client_orders.schema>;
 type SerializedRow=Omit<SourceRow,'units'|'price'> & {units:string;price:string};
 type StatusDiagnostic={client:{status:string;loaded:number;error?:string};server:{status:string;totalRows:number;message?:string};health:HealthObservation;connection:string;diagnostics:BrowserProductProvider['connectionDiagnostics'];recoveryEvents:BrowserProductProvider['recoveryEvents']};
 type Diagnostic={status():StatusDiagnostic;row(orderId:string):SerializedRow|undefined;snapshot():Omit<StatusDiagnostic,'client'> & {client:StatusDiagnostic['client'] & {rows:readonly SerializedRow[]}};dispose():void;queryCase:ReturnType<typeof queryCases>};

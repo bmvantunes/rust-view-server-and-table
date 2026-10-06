@@ -200,8 +200,8 @@ test("confirms an orientation mismatch, reruns atomic parsing, and restores grid
       "Revenue, row forecast, row 2",
     ]);
 
-    await userEvent.click(dialog.getByRole("button", { name: "Paste" }));
-    await expect.element(dialog.getByRole("alert")).toHaveTextContent("finite decimal number");
+    await userEvent.click(dialog.getByRole("button", { name: /^Paste(?:\s|$)/u }));
+    await expect.element(dialog.getByRole("alert")).toMatchTextContent("finite decimal number");
     expect(onSaveEdits).not.toHaveBeenCalled();
 
     await userEvent.click(dialog.getByRole("button", { name: "Cancel" }));
@@ -240,7 +240,9 @@ test("confirms a valid mismatch as one Batch history command", async () => {
     grid.element().focus();
     await userEvent.keyboard("{ArrowRight}{Shift>}{ArrowRight}{/Shift}");
     await userEvent.keyboard(pasteGesture());
-    await userEvent.click(page.getByRole("alertdialog").getByRole("button", { name: "Paste" }));
+    await userEvent.click(
+      page.getByRole("alertdialog").getByRole("button", { name: /^Paste(?:\s|$)/u }),
+    );
     await vi.waitFor(() => {
       expect(grid.getByRole("gridcell", { name: "6", exact: true }).all()).toHaveLength(1);
       expect(grid.getByRole("gridcell", { name: "7", exact: true }).all()).toHaveLength(1);
@@ -288,7 +290,7 @@ test("rejects a copied rectangle with one bounded toast and no edit", async () =
           ),
       ).toHaveLength(1),
     );
-    await userEvent.click(page.getByRole("button", { name: "Close" }));
+    await userEvent.click(page.getByRole("button", { name: "Close toast", exact: true }));
     await vi.waitFor(() =>
       expect(
         page
@@ -350,7 +352,7 @@ test("retains a Paste rejection across ready and loading body transitions", asyn
     await screen.rerender(renderTable("ready", 3));
     await vi.waitFor(() => expect(rejectionIsVisible()).toBe(true));
 
-    await userEvent.click(screen.getByRole("button", { name: "Close" }));
+    await userEvent.click(screen.getByRole("button", { name: "Close toast", exact: true }));
     await vi.waitFor(() => expect(rejectionIsVisible()).toBe(false));
     expect(onSaveEdits).not.toHaveBeenCalled();
   } finally {
@@ -595,11 +597,11 @@ test("keeps an out-of-bounds mismatch open with no partial edit", async () => {
     const dialog = page.getByRole("alertdialog", { name: "Confirm paste" });
     await expect.element(dialog).toBeVisible();
 
-    await userEvent.click(dialog.getByRole("button", { name: "Paste" }));
+    await userEvent.click(dialog.getByRole("button", { name: /^Paste(?:\s|$)/u }));
 
     await expect
       .element(dialog.getByRole("alert"))
-      .toHaveTextContent("outside the available table");
+      .toMatchTextContent("outside the available table");
     await userEvent.click(dialog.getByRole("button", { name: "Cancel" }));
     await vi.waitFor(() => expect(page.getByRole("alertdialog").all()).toHaveLength(0));
     await expect.element(grid.getByRole("gridcell", { name: "4", exact: true })).toBeVisible();
@@ -646,11 +648,11 @@ test("keeps confirmation open when its retained destination identities disappear
         onSaveEdits={onSaveEdits}
       />,
     );
-    await userEvent.click(dialog.getByRole("button", { name: "Paste" }));
+    await userEvent.click(dialog.getByRole("button", { name: /^Paste(?:\s|$)/u }));
 
     await expect
       .element(dialog.getByRole("alert"))
-      .toHaveTextContent("destination changed before confirmation");
+      .toMatchTextContent("destination changed before confirmation");
     expect(onSaveEdits).not.toHaveBeenCalled();
   } finally {
     restoreClipboard();
@@ -906,9 +908,9 @@ test("keeps an unchanged confirmed mismatch open with an inline reason", async (
     await userEvent.keyboard("{ArrowRight}{Shift>}{ArrowRight}{/Shift}");
     await userEvent.keyboard(pasteGesture());
     const dialog = page.getByRole("alertdialog", { name: "Confirm paste" });
-    await userEvent.click(dialog.getByRole("button", { name: "Paste" }));
+    await userEvent.click(dialog.getByRole("button", { name: /^Paste(?:\s|$)/u }));
 
-    await expect.element(dialog.getByRole("alert")).toHaveTextContent("did not change the table");
+    await expect.element(dialog.getByRole("alert")).toMatchTextContent("did not change the table");
     await expect.element(dialog).toBeVisible();
     expect(page.getByRole("button", { name: "Undo" }).all()).toHaveLength(0);
     expect(onSaveEdits).not.toHaveBeenCalled();

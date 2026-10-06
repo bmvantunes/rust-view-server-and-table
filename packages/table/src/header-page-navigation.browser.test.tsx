@@ -37,7 +37,9 @@ test.each([false, true])(
     grid.focus();
     if (!empty) await userEvent.keyboard("{ArrowUp}");
     await userEvent.keyboard("{ArrowRight}");
-    const header = screen.getByRole("columnheader", { name: "Sequence" }).element();
+    const header = screen
+      .getByRole("columnheader", { name: /^Sequence, sorted ascending,/u })
+      .element();
     await vi.waitFor(() => expect(grid.getAttribute("aria-activedescendant")).toBe(header.id));
     await userEvent.keyboard("{PageUp}");
     expect(grid.getAttribute("aria-activedescendant")).toBe(header.id);

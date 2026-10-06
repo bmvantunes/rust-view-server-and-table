@@ -1,11 +1,11 @@
-import {createBrunoTableHooks,type CompatRow,type CompleteSelect,type CompatResult} from '@bruno/table/rust';
+import {BrunoTableCreateRustHooks,type BrunoTableRustCompatRow,type BrunoTableRustCompleteSelect,type BrunoTableRustCompatResult} from '@bruno/table/rust';
 import {catalog} from '@bruno/rust-view-server/generated/topics';
 import type {BrowserProductProvider} from '@bruno/rust-view-server/react';
 import {BrunoTableServer,type BrunoTableColumns} from '@bruno/table';
 import type {LiveQueryViewportBaseRow,LiveQueryViewportQueryAuthority,LiveQueryViewportRouteBy} from 'effect-view-server/react/viewport-base-row';
 import type * as BigDecimal from 'effect/BigDecimal';
-const hooks=createBrunoTableHooks({orders:catalog.orders});
-type Row=CompatRow<typeof catalog.orders.schema>;
+const hooks=BrunoTableCreateRustHooks({orders:catalog.orders});
+type Row=BrunoTableRustCompatRow<typeof catalog.orders.schema>;
 const columns=[{columnId:'COL_ID_UNITS',field:'units',headerName:'Units',valueType:'bigint'}] as const satisfies BrunoTableColumns<Row>;
 function Consumer({provider}:{provider:BrowserProductProvider}){
  const source=hooks.useViewportSource(provider,'orders');
@@ -33,18 +33,18 @@ const authorityPresent:LiveQueryViewportQueryAuthority<V> extends never?false:tr
 void[Consumer,rowWitness,materialized,authorityPresent];
 
 // @ts-expect-error a narrow tuple cannot forge the complete-projection witness
-const forged:CompleteSelect<typeof catalog.orders.schema>=['units'];
+const forged:BrunoTableRustCompleteSelect<typeof catalog.orders.schema>=['units'];
 void forged;
 
 // Dynamic aggregate fields preserve every possible result domain.
 declare const aggregateField:'units'|'price';
 const unionSum={groupBy:['open'],aggregates:{total:{aggFunc:'sum',field:aggregateField}},where:[],orderBy:[]} as const;
-declare const unionSumRow:CompatResult<typeof catalog.orders.schema,typeof unionSum>;
+declare const unionSumRow:BrunoTableRustCompatResult<typeof catalog.orders.schema,typeof unionSum>;
 const unionSumValue:bigint|BigDecimal.BigDecimal=unionSumRow.total;
 // @ts-expect-error a dynamic Decimal/integer field cannot promise bigint alone
 const falselyOnlyInteger:bigint=unionSumRow.total;
 const unionMin={groupBy:['open'],aggregates:{low:{aggFunc:'min',field:aggregateField}},where:[],orderBy:[]} as const;
-declare const unionMinRow:CompatResult<typeof catalog.orders.schema,typeof unionMin>;
+declare const unionMinRow:BrunoTableRustCompatResult<typeof catalog.orders.schema,typeof unionMin>;
 const unionMinValue:bigint|BigDecimal.BigDecimal=unionMinRow.low;
 // @ts-expect-error a dynamic minimum cannot collapse to never and permit string
 const falselyString:string=unionMinRow.low;
@@ -67,7 +67,7 @@ void[profileTotal,profileMean,profileMinimum,lossyProfileTotal,absentAsNull];
 
 declare const optionalMinField:'note'|'customer';
 const optionalMin={groupBy:['open'],aggregates:{low:{aggFunc:'min',field:optionalMinField}},where:[],orderBy:[]} as const;
-declare const optionalMinRow:CompatResult<typeof catalog.orders.schema,typeof optionalMin>;
+declare const optionalMinRow:BrunoTableRustCompatResult<typeof catalog.orders.schema,typeof optionalMin>;
 const optionalMinValue:string|null|undefined=optionalMinRow.low;
 // @ts-expect-error dynamic optional field cannot promise presence
 const falselyPresent:string|null=optionalMinRow.low;

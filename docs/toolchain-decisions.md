@@ -6,6 +6,8 @@ Rust commands use `scripts/rust.py` through VP. That wrapper selects rustup's ex
 
 React/React DOM and types are19.3.0. The table migration uses the selected current TanStack Table9.2.6, Hotkeys0.13, Pacer0.24.1, Store0.11.2, Base UI1.8 and Tailwind4.3.3. The single lockfile is authoritative for full versions. Effect4.0.0-rc.111 and effect-view-server4.2.8 remain the pinned reference compatibility pair; choosing a v4 RC is explicitly permitted by the charter. The newer stable Effect version was inspected, but the reference pair remains coupled to the existing public table numeric/query contract. Its older exact React peer declaration requires behavioral qualification with the selected single React19.3 runtime.
 
+Vitest5 makes `toHaveTextContent` an exact equality assertion and provides `toMatchTextContent` for the prior substring and regular-expression matching behavior. Browser tests use the latter where they assert a contained message or pattern; explicit empty-content checks retain exact matching.
+
 ## React Compiler exception
 
 The inspected current Oxc React compiler0.153 still lowered large BigInt literals incorrectly to undefined. Babel compiler1.0.0 therefore remains the narrowly qualified compiler path. The repository patch fixes BigInt lowering, code generation and property keys. It is not a copied blanket disable. Compiler errors stay build failures.

@@ -7,9 +7,9 @@ import { catalog } from "@bruno/rust-view-server/generated/demo-catalog";
 import { BrunoTableClient, type BrunoTableColumns } from "@bruno/table";
 import { BrunoTableServer, BrunoTableBigIntColumn, BrunoTableBooleanColumn, BrunoTableToolbar, BrunoTableQuickFilter, BrunoTableLoadedRowCount, BrunoTableResultRowCount } from "@bruno/table/server";
 import { BrunoTableBigDecimalColumn } from "@bruno/table/effect";
-import { createBrunoTableHooks, type CompatRow } from "@bruno/table/rust";
-const hooks=createBrunoTableHooks(catalog);
-type Row=CompatRow<typeof catalog.client_orders.schema>;
+import { BrunoTableCreateRustHooks, type BrunoTableRustCompatRow } from "@bruno/table/rust";
+const hooks=BrunoTableCreateRustHooks(catalog);
+type Row=BrunoTableRustCompatRow<typeof catalog.client_orders.schema>;
 type DisplayFieldColumn<F extends keyof Row>=Extract<BrunoTableColumns<Row>[number],{readonly field:F}> ;
 const columns=[
  {columnId:"COL_ID_ORDER",field:"orderId",headerName:"Order",valueType:"text",width:180} satisfies DisplayFieldColumn<"orderId">,

@@ -117,14 +117,14 @@ test("commits through one parse-validation gate and preserves invalid editor evi
   await userEvent.keyboard("{Enter}");
   await expect.element(editor).toHaveFocus();
   await expect.element(editor).toHaveAttribute("aria-invalid", "true");
-  await expect.element(screen.getByRole("alert")).toHaveTextContent("Enter a valid number.");
+  await expect.element(screen.getByRole("alert")).toMatchTextContent("Enter a valid number.");
   await expect.element(screen.getByRole("alert")).toBeVisible();
   expect(onSaveEdits).not.toHaveBeenCalled();
 
   await userEvent.keyboard("{Backspace}1");
   await userEvent.keyboard("{Tab}");
   await expect.element(editor).toHaveFocus();
-  await expect.element(screen.getByRole("alert")).toHaveTextContent("Score must be at most 10.");
+  await expect.element(screen.getByRole("alert")).toMatchTextContent("Score must be at most 10.");
   expect(onSaveEdits).not.toHaveBeenCalled();
 
   await userEvent.fill(editor, "5");
@@ -316,6 +316,7 @@ test("contains hostile value equivalence without losing the raw candidate or foc
       isEditable: true,
     },
   ] satisfies BrunoTableColumns<HostileRow>;
+  const onSaveEdits = vi.fn(() => Promise.resolve());
   const screen = await render(
     <BrunoTableClient
       tableId="TABLE_ID_HOSTILE_EQUIVALENCE"
@@ -330,7 +331,7 @@ test("contains hostile value equivalence without losing the raw candidate or foc
       getRowId={(row) => row.id}
       editable
       getRowVersion={() => 1n}
-      onSaveEdits={() => Promise.resolve()}
+      onSaveEdits={onSaveEdits}
     />,
   );
   screen.getByRole("grid", { name: "Data for TABLE_ID_HOSTILE_EQUIVALENCE" }).element().focus();
@@ -342,8 +343,11 @@ test("contains hostile value equivalence without losing the raw candidate or foc
   await expect.element(editor).toHaveFocus();
   await expect.element(editor).toHaveValue(5);
   await expect.element(editor).toHaveAttribute("aria-invalid", "true");
-  await expect.element(screen.getByRole("alert")).toHaveTextContent("The value is invalid.");
-  expect(screen.getByRole("gridcell", { name: "4", exact: true }).all()).toHaveLength(1);
+  await expect.element(screen.getByRole("alert")).toMatchTextContent("The value is invalid.");
+  await userEvent.keyboard("{Escape}");
+  await expect.element(editor).not.toBeInTheDocument();
+  await expect.element(screen.getByRole("gridcell", { name: "4", exact: true })).toBeVisible();
+  expect(onSaveEdits).not.toHaveBeenCalled();
 });
 
 test("does not exempt another Table Instance's detached Cancel control", async () => {
@@ -748,16 +752,13 @@ test("does not retarget after a valid outside commit into a nested Table Instanc
 });
 
 test("keeps the validation explanation inside the scrollport across collision changes", async () => {
-  const manyRows = Array.from(
-    { length: 40 },
-    (_, index): Row => ({
-      id: `row-${String(index)}`,
-      name: `Person ${String(index)}`,
-      score: index,
-      note: `note-${String(index)}`,
-      revision: BigInt(index + 1),
-    }),
-  );
+  const manyRows = Array.from({ length: 40 }, (_, index): Row => ({
+    id: `row-${String(index)}`,
+    name: `Person ${String(index)}`,
+    score: index,
+    note: `note-${String(index)}`,
+    revision: BigInt(index + 1),
+  }));
   const screen = await render(
     <BrunoTableClient
       tableId="TABLE_ID_VALIDATION_COLLISION"
@@ -959,7 +960,7 @@ test("retains the editor and blocks every commit while live edit permission is d
   await expect.element(editor).toHaveAttribute("aria-invalid", "true");
   await expect
     .element(screen.getByRole("alert"))
-    .toHaveTextContent("This cell is no longer editable.");
+    .toMatchTextContent("This cell is no longer editable.");
   await userEvent.keyboard("{Enter}");
   await expect.element(editor).toHaveFocus();
   await expect.element(editor).toHaveValue("candidate");
@@ -1505,7 +1506,7 @@ test("gates outside pointer, sorting, and filtering before their actions", async
   await userEvent.click(screen.getByRole("button", { name: "After table" }));
   expect(outsideClick).not.toHaveBeenCalled();
   await expect.element(editor).toHaveFocus();
-  await userEvent.click(screen.getByRole("button", { name: "Sort by Name" }));
+  await userEvent.click(screen.getByRole("button", { name: /^Sort by Name\b/u }));
   await expect.element(editor).toHaveFocus();
   await expect
     .element(screen.getByRole("columnheader", { name: /^Name, sorted ascending/u }))
@@ -1514,7 +1515,7 @@ test("gates outside pointer, sorting, and filtering before their actions", async
   await expect.element(screen.getByRole("dialog", { name: "Filter Name" })).not.toBeInTheDocument();
 
   await userEvent.keyboard("{Backspace}{Backspace}6");
-  await userEvent.click(screen.getByRole("button", { name: "Sort by Name" }));
+  await userEvent.click(screen.getByRole("button", { name: /^Sort by Name\b/u }));
   await expect.element(editor).not.toBeInTheDocument();
   await expect
     .element(screen.getByRole("columnheader", { name: /^Name, sorted descending/u }))
@@ -1571,7 +1572,8 @@ test("rolls back Shift pointer range activation when the edit commit is invalid"
   const { grid, screen } = await renderBatchEditableTable();
   await userEvent.keyboard("{ArrowRight}");
   const originCell = screen.getByRole("gridcell", { name: "4", exact: true });
-  const originCellId = originCell.element().id;
+  const originCellElement = originCell.element();
+  const originCellId = originCellElement.id;
   const destination = screen.getByRole("gridcell", { name: "8", exact: true });
   await userEvent.keyboard("{F2}");
   const editor = screen.getByRole("spinbutton", { name: "Edit Score" });
@@ -1583,7 +1585,9 @@ test("rolls back Shift pointer range activation when the edit commit is invalid"
   await expect.element(editor).toHaveFocus();
   await expect.element(editor).toHaveAttribute("aria-invalid", "true");
   expect(grid.element().getAttribute("aria-activedescendant")).toBe(originCellId);
-  await expect.element(originCell).toHaveAttribute("aria-selected", "true");
+  const restoredOriginCell = grid.element().ownerDocument.getElementById(originCellId);
+  expect(restoredOriginCell).not.toBeNull();
+  expect(restoredOriginCell?.getAttribute("aria-selected")).toBe("true");
   await expect.element(destination).not.toHaveAttribute("aria-selected");
 });
 
@@ -1942,7 +1946,7 @@ test.each([
     flushSync(() => harnessRef.current?.detach());
     await expect
       .element(screen.getByRole("status"))
-      .toHaveTextContent("Row no longer matches current filters");
+      .toMatchTextContent("Row no longer matches current filters");
     if (reattach) {
       flushSync(() => harnessRef.current?.reattach());
       await expect.element(screen.getByRole("status")).not.toBeInTheDocument();
@@ -2410,7 +2414,7 @@ test("keeps one Row Identity edit session through sort, filter, deletion, and re
   );
   await expect
     .element(screen.getByRole("status"))
-    .toHaveTextContent("Row no longer matches current filters");
+    .toMatchTextContent("Row no longer matches current filters");
   await expect.element(screen.getByRole("status")).toBeVisible();
   await expect.element(screen.getByRole("gridcell", { name: "hidden", exact: true })).toBeVisible();
   await expect
@@ -2454,7 +2458,7 @@ test("keeps one Row Identity edit session through sort, filter, deletion, and re
   ).toHaveLength(1);
   await expect
     .element(tombstoneAlert!)
-    .toHaveTextContent("This row was removed from the server. Changes cannot be saved.");
+    .toMatchTextContent("This row was removed from the server. Changes cannot be saved.");
   await expect
     .element(screen.getByRole("textbox", { name: "Edit Value" }))
     .toHaveAttribute("aria-invalid", "true");
@@ -2498,7 +2502,7 @@ test("keeps one Row Identity edit session through sort, filter, deletion, and re
   await expect
     .element(screen.getByRole("textbox", { name: "Edit Value" }))
     .toHaveAttribute("aria-invalid", "true");
-  await expect.element(screen.getByRole("alert")).toHaveTextContent("Candidate remains invalid.");
+  await expect.element(screen.getByRole("alert")).toMatchTextContent("Candidate remains invalid.");
   await expect
     .element(screen.getByRole("checkbox", { name: "Select row 2", exact: true }))
     .toBeVisible();
@@ -2975,7 +2979,7 @@ test("compiles exact nullable blank policies without treating zero as blank", as
   await userEvent.clear(required);
   await userEvent.keyboard("{Enter}");
   await expect.element(required).toHaveFocus();
-  await expect.element(screen.getByRole("alert")).toHaveTextContent("Enter a value.");
+  await expect.element(screen.getByRole("alert")).toMatchTextContent("Enter a value.");
   await userEvent.keyboard("{Escape}");
 
   let resolveWrite: (() => void) | undefined;
@@ -3399,7 +3403,7 @@ test("contains a wrong-domain custom parser Success while preserving candidate f
   await userEvent.keyboard("{Enter}");
   await expect.element(editor).toHaveValue("candidate survives");
   await expect.element(editor).toHaveFocus();
-  await expect.element(screen.getByRole("alert")).toHaveTextContent("Expected string.");
+  await expect.element(screen.getByRole("alert")).toMatchTextContent("Expected string.");
   await userEvent.keyboard("{Escape}");
 });
 
@@ -3473,7 +3477,7 @@ test("copies a visible Immediate Accepted Overlay when the live value becomes in
     await vi.waitFor(() => expect(onSaveEdits).toHaveBeenCalledOnce());
     await expect
       .element(screen.getByRole("region", { name: "Edit safety" }))
-      .toHaveTextContent("1 Immediate save accepted · waiting for live confirmation");
+      .toMatchTextContent("1 Immediate save accepted · waiting for live confirmation");
 
     const invalidRows = [{ ...rows[0]!, score: Number.NaN }, rows[1]!] satisfies readonly Row[];
     await screen.rerender(renderTable(invalidRows, 2));

@@ -440,7 +440,7 @@ describe("BrunoTableServer", () => {
       expect(transport.requests).toHaveLength(0);
       await expect
         .element(page.getByRole("status", { name: "Result rows" }))
-        .toHaveTextContent("0 result rows");
+        .toMatchTextContent("0 result rows");
       await expect.element(page.getByRole("grid")).toHaveAttribute("aria-rowcount", "-1");
       expect(page.getByRole("gridcell", { name: "Loading Desk" }).all()).toHaveLength(18);
       await expect
@@ -489,7 +489,7 @@ describe("BrunoTableServer", () => {
       await expect.element(page.getByRole("gridcell", { name: "Desk Rates" })).toBeVisible();
       await expect
         .element(page.getByRole("status", { name: "Result rows" }))
-        .toHaveTextContent("1 result row");
+        .toMatchTextContent("1 result row");
       expect(
         page
           .getByRole("grid", { name: `Data for ${tableId}` })
@@ -1672,7 +1672,7 @@ describe("BrunoTableServer", () => {
 
     await screen.rerender(renderServer(first, "stale", 0, "rates"));
     await expect.element(screen.getByRole("gridcell", { name: "Desk Rates" })).toBeVisible();
-    await expect.element(screen.getByRole("alert")).toHaveTextContent("Live data delayed");
+    await expect.element(screen.getByRole("alert")).toMatchTextContent("Live data delayed");
     expect(first.requests).toHaveLength(2);
 
     await userEvent.fill(screen.getByRole("searchbox", { name: "Quick Filter" }), "Rates");
@@ -1750,7 +1750,7 @@ describe("BrunoTableServer", () => {
     for (const status of ["stale", "closed", "error"] as const) {
       await screen.rerender(renderServer(status, 2));
       await expect.element(screen.getByRole("gridcell", { name: "Desk Rates" })).toBeVisible();
-      await expect.element(screen.getByRole("alert")).toHaveTextContent(`Grouped ${status}`);
+      await expect.element(screen.getByRole("alert")).toMatchTextContent(`Grouped ${status}`);
     }
     expect(transport.requests).toHaveLength(2);
 
@@ -1986,14 +1986,16 @@ describe("BrunoTableServer", () => {
           }}
         />,
       );
-      await userEvent.click(screen.getByRole("button", { name: "Filter Symbol" }));
+      await userEvent.click(
+        screen.getByRole("button", { name: /^Filter Symbol(?: \(active\))?$/u }),
+      );
       const dialog = screen.getByRole("dialog", { name: "Filter Symbol" });
       const facetStatus = dialog.getByRole("status").nth(0);
       if (lifecycle.status === "ready") {
         await expect.element(facetStatus).toBeEmptyDOMElement();
-        await expect.element(dialog.getByRole("status").nth(1)).toHaveTextContent("All selected");
+        await expect.element(dialog.getByRole("status").nth(1)).toMatchTextContent("All selected");
       } else {
-        await expect.element(facetStatus).toHaveTextContent(lifecycle.label);
+        await expect.element(facetStatus).toMatchTextContent(lifecycle.label);
         expect(facetStatus.element().textContent).toBe(lifecycle.label);
       }
       if (
@@ -2007,7 +2009,7 @@ describe("BrunoTableServer", () => {
       }
       if (lifecycle.status === "loading") {
         await expect
-          .element(dialog.getByRole("checkbox", { name: "Select RETAINED INTENT, 0" }))
+          .element(dialog.getByRole("checkbox", { name: /^Select RETAINED INTENT, 0(?:\s|$)/u }))
           .toBeVisible();
         expect(dialog.getByRole("checkbox", { name: /UNACCEPTED/ }).query()).toBeNull();
       }
@@ -2035,8 +2037,8 @@ describe("BrunoTableServer", () => {
     await userEvent.click(screen.getByRole("button", { name: "Filter Symbol" }));
     const dialog = screen.getByRole("dialog", { name: "Filter Symbol" });
     const selectionStatus = dialog.getByRole("status").nth(1);
-    await expect.element(selectionStatus).toHaveTextContent("All selected");
-    await expect.element(selectionStatus).not.toHaveTextContent("0 selected");
+    await expect.element(selectionStatus).toMatchTextContent("All selected");
+    await expect.element(selectionStatus).not.toMatchTextContent("0 selected");
     expect(dialog.getByRole("checkbox", { name: /UNACCEPTED/ }).query()).toBeNull();
   });
 
@@ -2111,7 +2113,7 @@ describe("BrunoTableServer", () => {
       ).toBe(true);
       await settleBrunoTableBrowserFrames();
       await expect
-        .element(screen.getByRole("columnheader", { name: "Price" }))
+        .element(screen.getByRole("columnheader", { name: /^Price(?:,|$)/u }))
         .not.toBeInTheDocument();
       await expect.element(dialog).toBeInTheDocument();
       expect(wholeResult.useWholeResult).not.toHaveBeenCalled();
@@ -2273,9 +2275,11 @@ describe("BrunoTableServer", () => {
       where: [],
       orderBy: [{ field: "price", direction: "asc" }],
     });
-    await expect.element(screen.getByRole("columnheader", { name: "Price" })).toBeVisible();
     await expect
-      .element(screen.getByRole("columnheader", { name: "Symbol" }))
+      .element(screen.getByRole("columnheader", { name: /^Price(?:,|$)/u }))
+      .toBeVisible();
+    await expect
+      .element(screen.getByRole("columnheader", { name: /^Symbol(?:,|$)/u }))
       .not.toBeInTheDocument();
   });
 
@@ -3144,7 +3148,7 @@ describe("BrunoTableServer", () => {
       readyProxy = grid.element().ownerDocument.getElementById(activeId ?? "missing");
       expect(readyProxy).not.toBeNull();
       expect(readyProxy).toHaveAttribute("data-bruno-active-proxy", "");
-      expect(readyProxy).toHaveTextContent("RETAINED");
+      expect(readyProxy).toMatchTextContent("RETAINED");
     });
 
     transport.requests[0]?.sink.setRowData(
@@ -3167,8 +3171,8 @@ describe("BrunoTableServer", () => {
       const loadingProxy = grid.element().ownerDocument.getElementById(activeId ?? "missing");
       expect(loadingProxy).not.toBeNull();
       expect(loadingProxy).toHaveAttribute("data-bruno-active-proxy", "");
-      expect(loadingProxy).toHaveTextContent("Loading row");
-      expect(loadingProxy).not.toHaveTextContent("RETAINED");
+      expect(loadingProxy).toMatchTextContent("Loading row");
+      expect(loadingProxy).not.toMatchTextContent("RETAINED");
     });
   });
 
@@ -3200,7 +3204,7 @@ describe("BrunoTableServer", () => {
     await vi.waitFor(() => expect(transport.requests).toHaveLength(3));
     await expect
       .element(screen.getByRole("status", { name: "Active filters" }))
-      .toHaveTextContent("1 active filter");
+      .toMatchTextContent("1 active filter");
     expect(transport.requests.at(-1)?.query).toMatchObject({
       select: ["symbol", "price", "desk"],
       where: [
@@ -3244,7 +3248,7 @@ describe("BrunoTableServer", () => {
     await expect.element(screen.getByRole("searchbox", { name: "Quick Filter" })).toHaveValue("");
     await expect
       .element(screen.getByRole("status", { name: "Active filters" }))
-      .toHaveTextContent("0 active filters");
+      .toMatchTextContent("0 active filters");
     expect(transport.requests.at(-1)?.query).toEqual({
       select: ["symbol", "price", "desk"],
       where: [],
@@ -3415,7 +3419,7 @@ describe("BrunoTableServer", () => {
     );
     const resultRows = screen.getByRole("status", { name: "Result rows" });
     transport.requests[0]?.sink.setRowCount(250, true);
-    await expect.element(resultRows).toHaveTextContent("250 result rows");
+    await expect.element(resultRows).toMatchTextContent("250 result rows");
 
     await userEvent.click(
       screen.getByRole("button", {
@@ -3423,12 +3427,12 @@ describe("BrunoTableServer", () => {
       }),
     );
     await vi.waitFor(() => expect(transport.requests).toHaveLength(2));
-    await expect.element(resultRows).toHaveTextContent("0 result rows");
+    await expect.element(resultRows).toMatchTextContent("0 result rows");
     expect(transport.releases).toHaveBeenCalledTimes(1);
     transport.requests[0]?.sink.setRowCount(999, true);
-    await expect.element(resultRows).toHaveTextContent("0 result rows");
+    await expect.element(resultRows).toMatchTextContent("0 result rows");
     transport.requests[1]?.sink.setRowCount(3, true);
-    await expect.element(resultRows).toHaveTextContent("3 result rows");
+    await expect.element(resultRows).toMatchTextContent("3 result rows");
   });
 
   test("resets navigation once for semantic Route and External Filter changes", async () => {
@@ -3771,7 +3775,7 @@ describe("BrunoTableServer", () => {
         }}
       />,
     );
-    await expect.element(screen.getByRole("alert")).toHaveTextContent("Source unavailable");
+    await expect.element(screen.getByRole("alert")).toMatchTextContent("Source unavailable");
     await expect.element(screen.getByRole("gridcell", { name: "RETAINED" })).toBeInTheDocument();
     await userEvent.click(screen.getByRole("button", { name: "Retry" }));
     expect(retry).toHaveBeenCalledTimes(1);
@@ -3806,8 +3810,8 @@ describe("BrunoTableServer", () => {
           : status === "closed"
             ? "Live updates stopped"
             : "Live data error";
-      await expect.element(announcement).toHaveTextContent(title);
-      await expect.element(announcement).toHaveTextContent("Source unavailable");
+      await expect.element(announcement).toMatchTextContent(title);
+      await expect.element(announcement).toMatchTextContent("Source unavailable");
       expect(screen.getByRole("grid", { name: "Loading table rows" }).query()).toBeNull();
       if (status === "stale") {
         expect(screen.getByRole("button", { name: "Retry" }).query()).toBeNull();
@@ -4180,8 +4184,12 @@ describe("BrunoTableServer", () => {
       const trigger = screen.getByRole("button", { name: "Filter Symbol" });
       await userEvent.click(trigger);
       const dialog = screen.getByRole("dialog", { name: "Filter Symbol" });
-      await expect.element(dialog.getByRole("checkbox", { name: "Select AAA, 1" })).toBeVisible();
-      await expect.element(dialog.getByRole("checkbox", { name: "Select AAC, 1" })).toBeVisible();
+      await expect
+        .element(dialog.getByRole("checkbox", { name: /^Select AAA, 1(?:\s|$)/u }))
+        .toBeVisible();
+      await expect
+        .element(dialog.getByRole("checkbox", { name: /^Select AAC, 1(?:\s|$)/u }))
+        .toBeVisible();
       expect(dialog.getByRole("checkbox", { name: /BBB/ }).query()).toBeNull();
       await expect
         .poll(
@@ -4199,7 +4207,9 @@ describe("BrunoTableServer", () => {
           desk: "LDN",
         }),
       );
-      await expect.element(dialog.getByRole("checkbox", { name: "Select AAA, 2" })).toBeVisible();
+      await expect
+        .element(dialog.getByRole("checkbox", { name: /^Select AAA, 2(?:\s|$)/u }))
+        .toBeVisible();
 
       await Effect.runPromise(inMemory.client.delete("orders", "facet-3"));
       await expect
@@ -4213,7 +4223,9 @@ describe("BrunoTableServer", () => {
           </inMemory.ViewServerInMemoryProvider>
         </StrictMode>,
       );
-      await expect.element(dialog.getByRole("checkbox", { name: "Select BBB, 1" })).toBeVisible();
+      await expect
+        .element(dialog.getByRole("checkbox", { name: /^Select BBB, 1(?:\s|$)/u }))
+        .toBeVisible();
       await expect
         .poll(
           async () =>
@@ -4235,7 +4247,7 @@ describe("BrunoTableServer", () => {
       await userEvent.click(trigger);
       const reopenedDialog = screen.getByRole("dialog", { name: "Filter Symbol" });
       await expect
-        .element(reopenedDialog.getByRole("checkbox", { name: "Select BBB, 1" }))
+        .element(reopenedDialog.getByRole("checkbox", { name: /^Select BBB, 1(?:\s|$)/u }))
         .toBeVisible();
       await userEvent.click(reopenedDialog.getByRole("button", { name: "Clear All" }));
       await expect.element(screen.getByRole("region", { name: "No rows" })).toBeInTheDocument();
@@ -4294,7 +4306,9 @@ describe("BrunoTableServer", () => {
       );
       await userEvent.click(screen.getByRole("button", { name: "Filter Symbol" }));
       const dialog = screen.getByRole("dialog", { name: "Filter Symbol" });
-      await expect.element(dialog.getByRole("checkbox", { name: "Select A000, 1" })).toBeVisible();
+      await expect
+        .element(dialog.getByRole("checkbox", { name: /^Select A000, 1(?:\s|$)/u }))
+        .toBeVisible();
       await expect
         .poll(
           async () =>
@@ -4350,7 +4364,7 @@ describe("BrunoTableServer", () => {
           "HOT",
         );
         await expect
-          .element(dialog.getByRole("checkbox", { name: "Select HOT, 20" }))
+          .element(dialog.getByRole("checkbox", { name: /^Select HOT, 20(?:\s|$)/u }))
           .toBeVisible();
         expect(unrelated).not.toHaveBeenCalled();
 
