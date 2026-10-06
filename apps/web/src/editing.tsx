@@ -1,19 +1,25 @@
 import {useCallback,useEffect,useState} from "react";
 import {catalog} from "@bruno/rust-view-server/generated/demo-catalog";
 import {BrunoTableBigIntColumn,BrunoTableBooleanColumn,BrunoTableTextColumn,type BrunoTableColumns,type BrunoTableSaveEditsHandler} from "@bruno/table";
-import {BrunoTableBigDecimalColumn} from "@bruno/table/effect";
+import {BrunoTableBigDecimalColumn,type BrunoTableBigDecimalValueType} from "@bruno/table/effect";
 import {encodeCompatRow,type CompatRow} from "@bruno/table/rust";
 
 export type OrderRow=CompatRow<typeof catalog.client_orders.schema>;
-type EditableFieldColumn<F extends keyof OrderRow>=Extract<BrunoTableColumns<OrderRow>[number],{readonly field:F}> ;
-export const editableColumns=[
- BrunoTableTextColumn({columnId:"COL_ID_ORDER",field:"orderId",headerName:"Order",width:180,isEditable:false}) satisfies EditableFieldColumn<"orderId">,
- BrunoTableTextColumn({columnId:"COL_ID_CUSTOMER",field:"customer",headerName:"Customer",width:190,enableSetFilter:true,isEditable:true}) satisfies EditableFieldColumn<"customer">,
- BrunoTableBooleanColumn({columnId:"COL_ID_OPEN",field:"open",headerName:"Open",isEditable:true}) satisfies EditableFieldColumn<"open">,
- BrunoTableBigIntColumn({columnId:"COL_ID_UNITS",field:"units",headerName:"Exact units",width:230,isEditable:true}) satisfies EditableFieldColumn<"units">,
- BrunoTableBigDecimalColumn({columnId:"COL_ID_PRICE",field:"price",headerName:"Exact price",width:300,isEditable:true}) satisfies EditableFieldColumn<"price">,
- BrunoTableTextColumn({columnId:"COL_ID_NOTE",field:"note",headerName:"Note",width:280,isEditable:true,blankValue:null}) satisfies EditableFieldColumn<"note">,
-] as const satisfies BrunoTableColumns<OrderRow>;
+// Checked helper outputs retain exact field/edit capabilities without carrying
+// the helpers' broad conditional metadata into save-change inference.
+const orderOptions={columnId:"COL_ID_ORDER",field:"orderId",headerName:"Order",width:180,isEditable:false} as const;
+const orderColumn: typeof orderOptions & { readonly valueType: "text" } = BrunoTableTextColumn<OrderRow,"orderId","COL_ID_ORDER",typeof orderOptions>(orderOptions);
+const customerOptions={columnId:"COL_ID_CUSTOMER",field:"customer",headerName:"Customer",width:190,enableSetFilter:true,isEditable:true} as const;
+const customerColumn: typeof customerOptions & { readonly valueType: "text" } = BrunoTableTextColumn<OrderRow,"customer","COL_ID_CUSTOMER",typeof customerOptions>(customerOptions);
+const openOptions={columnId:"COL_ID_OPEN",field:"open",headerName:"Open",isEditable:true} as const;
+const openColumn: typeof openOptions & { readonly valueType: "boolean" } = BrunoTableBooleanColumn<OrderRow,"open","COL_ID_OPEN",typeof openOptions>(openOptions);
+const unitsOptions={columnId:"COL_ID_UNITS",field:"units",headerName:"Exact units",width:230,isEditable:true} as const;
+const unitsColumn: typeof unitsOptions & { readonly valueType: "bigint" } = BrunoTableBigIntColumn<OrderRow,"units","COL_ID_UNITS",typeof unitsOptions>(unitsOptions);
+const priceOptions={columnId:"COL_ID_PRICE",field:"price",headerName:"Exact price",width:300,isEditable:true} as const;
+const priceColumn: typeof priceOptions & { readonly valueType: typeof BrunoTableBigDecimalValueType } = BrunoTableBigDecimalColumn<OrderRow,"price","COL_ID_PRICE",typeof priceOptions>(priceOptions);
+const noteOptions={columnId:"COL_ID_NOTE",field:"note",headerName:"Note",width:280,isEditable:true,blankValue:null} as const;
+const noteColumn: typeof noteOptions & { readonly valueType: "text" } = BrunoTableTextColumn<OrderRow,"note","COL_ID_NOTE",typeof noteOptions>(noteOptions);
+export const editableColumns=[orderColumn,customerColumn,openColumn,unitsColumn,priceColumn,noteColumn] as const satisfies BrunoTableColumns<OrderRow>;
 
 export const identifyOrder=(row:OrderRow)=>row.rowId;
 // Source schema has no revision field: the exact canonical source content is the

@@ -14,6 +14,10 @@ Babel8.0.6 passed an isolated numeric probe but failed ordinary component compil
 
 A compiler limitation for try/finally inside a component callback is handled by keeping the asynchronous operation and its finally cleanup in a plain helper outside React. Memo dependencies in imported hooks were made consistent with their actual serialized inputs. These changes preserve behavior without disabling compilation.
 
-## Validation limitations
+## Bounded public declaration and application types
 
-The final strict source/emitted adapter and application type checks must finish before acceptance. Their latest expanded generic consumers exceeded development deadlines; this remains an implementation/qualification issue, not a passing result. See the task ledger for the final state.
+The SDK now publishes named hook interfaces rather than recursively expanded inferred return declarations. The unchanged strict emitted React import check improved from a development timeout to about0.2seconds, independently reproduced without enabling skipLibCheck.
+
+The demo retains every public column helper. Its generated OrderRow type, literal options and assignment-checked value-type surface keep rich conditional helper metadata out of downstream save-change inference. No row interface, business cast or manually supplied query-result type was added. The exact options still preserve field identity, editability and the optional note's explicit null blank policy. The full application and strict source/emitted Rust adapter consumers now type-check.
+
+Remaining campaign/fresh-install status is recorded in the task ledger.

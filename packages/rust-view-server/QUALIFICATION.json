@@ -1,0 +1,99 @@
+{
+  "scope": "Portable Rust core, native regression suite, emitted SDK and Kafka-free Provider fixtures; real broker and two-topic 200000-row qualification is recorded separately.",
+  "qualifiedAt": "2026-10-06",
+  "native": {
+    "command": "python3 scripts/rust.py test --workspace --tests --no-fail-fast",
+    "passed": 208,
+    "failed": 0,
+    "ignored": 11,
+    "counting": "Top-level unfiltered harness results; excludes one nested child harness already represented by its parent test.",
+    "ignoredReasons": {
+      "optInOrbStackF1": 6,
+      "isolatedRealKafka": 1,
+      "subprocessHelperEntrypoints": 4
+    }
+  },
+  "fixtureSocketMode": {
+    "command": "python3 scripts/rust.py test -p view-server-app --no-default-features --test v12_socket",
+    "passed": 5,
+    "failed": 0
+  },
+  "browser": {
+    "cwd": "packages/rust-view-server",
+    "command": "vp test run --config browser.config.ts",
+    "filesPassed": 12,
+    "testsPassed": 94,
+    "failed": 0,
+    "durationSeconds": 4.18,
+    "actualWorkerAndWasm": true,
+    "requiresKafka": false,
+    "requiresOrbStack": false,
+    "staticWasm404AndExplicitRetry": true,
+    "realClockSilentExpiryAndDisposeCleanup": true
+  },
+  "types": {
+    "cwd": "packages/rust-view-server",
+    "commands": [
+      "vp exec tsc --noEmit -p tsconfig.contracts.json",
+      "vp exec tsc --noEmit -p tsconfig.emitted.json --extendedDiagnostics",
+      "vp exec tsc --noEmit -p tsconfig.browser.json"
+    ],
+    "status": "passed",
+    "generatedContractFiles": 14,
+    "emittedSkipLibCheck": false,
+    "emittedImportCheckSeconds": 0.188,
+    "emittedImportMemoryKiB": 104011
+  },
+  "package": {
+    "command": "vp run build:package",
+    "cwd": "packages/rust-view-server",
+    "status": "passed",
+    "exports": "Emitted ESM declarations and modules with bundled Workers and fresh relative WASM assets"
+  },
+  "cleanWasm": {
+    "command": "python3 scripts/build-wasm.py --clean",
+    "compiler": "rustc 1.99.0 (b940084d7 2026-09-28)",
+    "toolchain": "1.99.0",
+    "cleanArtifactDirectory": true,
+    "artifacts": {
+      "generic_engine.wasm": {
+        "sha256": "be8611b9f9ba40877a0a0eb3396d16375b602d9eeb0dcd1e86da2dd066b2043b",
+        "bytes": 2725114
+      },
+      "product_core.wasm": {
+        "sha256": "f941ac598e6f1470081bdbeec0ac24e77285b5f066de7e12053cc9ea39d46af7",
+        "bytes": 1323987
+      }
+    },
+    "sourceInputCount": 36,
+    "sourceManifestSha256": "bea00044ae0a10280f6b71ce9afceb55af41b1ff7d5c720261094248afdc2c1a",
+    "sourceManifestDigestEncoding": "SHA256 of sourceSha256 map serialized as sorted compact JSON; full local receipt is .local/wasm-build.json"
+  },
+  "pairedFixture": {
+    "fixture": "packages/rust-view-server/tests/fixtures/native-wasm-parity.json",
+    "nativeTest": "packages/rust-view-server/crates/wasm/tests/typed_parity.rs",
+    "sourceTimeCuts": 6,
+    "queryKinds": [
+      "raw",
+      "grouped"
+    ],
+    "nativeRuntimeVsLocalBindingExactEquality": true,
+    "browserProviderChecksSameFixture": true
+  },
+  "engineMutation": {
+    "command": "python3 packages/rust-view-server/scripts/check-engine-mutation.py",
+    "mutation": "ignore admitted deletes in generic Runtime.apply_committed",
+    "consumer": "emitted SDK Provider with actual generic Worker/WASM; publishes before mount test",
+    "consumerExitCode": 1,
+    "expectedFailureObserved": true,
+    "scratchSourceRestored": true,
+    "productionSourceUnchanged": true,
+    "mutatedWasmSha256": "194cb50e27cc09bcd1066e3f645285eb57d5a47cb6a3b6ba1af78344f1163197",
+    "positiveRerunBrowserTests": 94
+  },
+  "limits": [
+    "Local retention is ephemeral; Kafka timestamps, canonical durability and recovery are native integration concerns.",
+    "Expanded protobuf decoding remains native; scalar decoded sources share typed admission with WASM.",
+    "Package asset loading qualified with repository Vite application and Chromium; other bundlers are not claimed."
+  ]
+}

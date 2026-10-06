@@ -28,8 +28,12 @@ export async function createTestViewServer<const C extends BrowserCatalog,const 
   let disposed=false,sequence=0;
   const pending=new Set<Promise<void>>();
   let maintenance:ReturnType<typeof setTimeout>|undefined;
+  let disposal:Promise<void>|undefined;
+  function clearMaintenance(){clearTimeout(maintenance);maintenance=undefined;}
+  const stopConnection=provider.subscribeConnectionStatus(()=>{if(provider.connectionStatus==='disconnected'){disposed=true;clearMaintenance();}});
+  function disposeFixture(){if(disposal)return disposal;disposed=true;clearMaintenance();stopConnection();provider.dispose();disposal=Promise.allSettled([...pending]).then(()=>undefined);return disposal;}
   let lastTick=performance.now();
-  function schedule(){if(disposed||options.clock||!options.retention)return;maintenance=setTimeout(()=>{const now=performance.now();const milliseconds=Math.floor(now-lastTick);lastTick+=milliseconds;void submit({command:"advance_time",milliseconds}).delivered.then(schedule,()=>{disposed=true;provider.dispose();});},250);}
+  function schedule(){if(disposed||options.clock||!options.retention)return;maintenance=setTimeout(()=>{maintenance=undefined;const now=performance.now();const milliseconds=Math.floor(now-lastTick);lastTick+=milliseconds;void submit({command:"advance_time",milliseconds}).delivered.then(schedule,()=>{void disposeFixture();});},250);}
   schedule();
   function submit(command:unknown):PublishReceipt {
     if(disposed)throw Error('fixture disposed');
@@ -42,12 +46,13 @@ export async function createTestViewServer<const C extends BrowserCatalog,const 
   }
   return {
     provider,
+    get diagnostics(){return Object.freeze({disposed,pending:pending.size,maintenanceScheduled:maintenance!==undefined});},
     Provider:({children}:PropsWithChildren)=>createElement(ProductProvider,{provider},children),
     publish<T extends keyof C&string>(topic:T,input:{key:GeneratedKey<S[T]>;value:Row<C[T]['schema']>}){return submit({command:'publish',topic,key:input.key,value:input.value});},
     delete<T extends keyof C&string>(topic:T,key:GeneratedKey<S[T]>){return submit({command:'publish',topic,key,value:null});},
     advanceTime(milliseconds:number){if(!options.clock)throw Error("advanceTime requires an explicit controlled clock");if(!Number.isSafeInteger(milliseconds)||milliseconds<0)throw Error("clock advance must be nonnegative safe integer");return submit({command:"advance_time",milliseconds});},
     async awaitApplied(receipt:PublishReceipt){await receipt.applied;},
     async flush(){await submit({command:'flush'}).delivered;await Promise.all([...pending]);},
-    async dispose(){if(disposed)return;disposed=true;clearTimeout(maintenance);provider.dispose();await Promise.allSettled([...pending]);},
+    dispose:disposeFixture,
   };
 }

@@ -12,7 +12,7 @@ import type {queryCases} from '../../apps/web/src/e2e-queries.ts';
 type SourceRow=CompatRow<typeof catalog.client_orders.schema>;
 type SerializedRow=Omit<SourceRow,'units'|'price'> & {units:string;price:string};
 type Diagnostic={snapshot():{client:{status:string;loaded:number;rows:readonly SerializedRow[]};server:{status:string;totalRows:number};health:HealthObservation;connection:string};dispose():void;queryCase:ReturnType<typeof queryCases>};
-declare global {interface Window {__RVS_E2E__?:Diagnostic;__RVS_WORKERS__?:{active:number;resultRows:number;maximumResultRows:number}}}
+declare global {interface Window {__RVS_E2E__?:Diagnostic;__RVS_WORKERS__?:{active:number;resultRows:number;maximumResultRows:number};__RVS_FRAME_INTERVALS__?:number[]}}
 type Expected=Record<string,{count:number;sha256:string;sourceNext:Record<string,number>;producerReceipts:number}>;
 const require=createRequire(new URL('../../packages/rust-view-server/package.json',import.meta.url));
 const {chromium}=require('playwright') as typeof import('playwright');
@@ -30,6 +30,7 @@ async function rpc(action:string,args:Record<string,unknown>={}):Promise<unknown
 const browser=await chromium.launch({headless:true});
 const context=await browser.newContext({viewport:{width:1600,height:1000}});
 await context.addInitScript(()=>{
+ const intervals:number[]=[];window.__RVS_FRAME_INTERVALS__=intervals;let previous:number|undefined;const frame=(now:number)=>{if(previous!==undefined)intervals.push(now-previous);previous=now;if(intervals.length<2048)requestAnimationFrame(frame);};requestAnimationFrame(frame);
  const Original=window.Worker;const stats={active:0,resultRows:0,maximumResultRows:0};window.__RVS_WORKERS__=stats;
  window.Worker=class extends Original{
   private ended=false;
@@ -101,6 +102,8 @@ try{
   const before=await page.evaluate(()=>{const c=window.__RVS_E2E__!.snapshot().client;return {status:c.status,loaded:c.loaded};});
   sample('bootstrap-mutation-start',before);
   await rpc('bootstrap-update',{index:0,revision:2000000});
+  const atCommit=await page.evaluate(()=>{const c=window.__RVS_E2E__!.snapshot().client;return {status:c.status,loaded:c.loaded};});
+  sample('bootstrap-mutation-committed',atCommit);assert.equal(atCommit.status,'loading','Mutation commit must occur before bootstrap completes');
   checks.push('mutation-during-partial-bootstrap');
  }
  let expected=await rpc('expected') as Expected;
@@ -169,7 +172,7 @@ try{
    }
   }
  }
- checks.push('bounded-provider-numeric-multisort-groups-exact-average-2048-facets');
+ checks.push(`bounded-provider-numeric-multisort-groups-exact-average-${Math.min(rows,2048)}-facets`);
  // Exercise the Client's actual editing session and committed HTTP producer adapter.
  const clientGrid=client.getByRole('grid');
  await client.getByRole('switch',{name:'Batch editing',exact:true}).click();
@@ -208,7 +211,7 @@ try{
  const from=await fill.boundingBox(),to=await cell(identity4,'COL_ID_CUSTOMER').boundingBox();
  assert(from&&to,'Fill source and target are mounted');
  await page.mouse.move(from.x+from.width/2,from.y+from.height/2);await page.mouse.down();
- await page.mouse.move(to.x+to.width/2,to.y+to.height/2,{steps:5});
+ await page.mouse.move(from.x+from.width/2,to.y+to.height/2,{steps:5});
  await page.evaluate(()=>new Promise<void>(resolve=>requestAnimationFrame(()=>requestAnimationFrame(()=>resolve()))));
  sample('fill-gesture',{from,to,preview:await clientGrid.locator('[data-bruno-drag-fill-preview]').count()});
  await page.mouse.up();
@@ -242,11 +245,14 @@ try{
  await movedCheckbox.uncheck();
  checks.push('selected-row-identity-survives-live-reorder');
  const stableIdentity=full.first.rowId;
+ const liveUpdateStarted=performance.now();
  const changed=await rpc('update',{index:0,revision:3000000}) as {expected:Expected};
  expected=changed.expected;full=await coherent(expected);assert.equal(full.first.rowId,stableIdentity);
  // Visible observation uses a real table quick filter on the topic-specific note.
  await filterClient('order-000000',1);
  await client.getByText('order-000000',{exact:true}).first().waitFor();
+ await page.waitForFunction(({identity,value})=>Array.from(document.querySelectorAll('[data-testid="client-grid"] [role="gridcell"][data-bruno-column-id="COL_ID_UNITS"]')).some(cell=>cell.getAttribute('data-bruno-row-id')===identity&&cell.textContent?.replace(/\D/g,'')===value),{identity:stableIdentity,value:full.first.units});
+ sample('source-update-request-to-observed-dom-ms',performance.now()-liveUpdateStarted);
  await filterClient('',expected.client_orders.count);
  const deleted=await rpc('delete',{index:1}) as {expected:Expected};expected=deleted.expected;await coherent(expected);
  checks.push('live-upsert-exact-dom-stable-identity-delete');
@@ -260,6 +266,9 @@ try{
  await coherent(expected);
  const later=await rpc('update',{index:2,revision:4000000}) as {expected:Expected};expected=later.expected;await coherent(expected);
  checks.push('owned-native-restart-recovery-later-update');
+ const intervals=await page.evaluate(()=>window.__RVS_FRAME_INTERVALS__??[]);
+ sample('animation-frame-intervals-ms',intervals);
+ sample('frame-cadence-summary',{samples:intervals.length,over32ms:intervals.filter(value=>value>32).length,estimatedMissed60HzOpportunities:intervals.reduce((sum,value)=>sum+Math.max(0,Math.round(value/(1000/60))-1),0),assumption:'60Hz requestAnimationFrame opportunities, not physical dropped paints'});
  sample('native-memory',await rpc('native-memory'));
  sample('browser-performance',await cdp.send('Performance.getMetrics'));
  sample('application-bytes',{websocketReceived:receivedBytes,httpEncoded:responseBytes});
@@ -279,6 +288,6 @@ try{
 }catch(error){writeFileSync(`${directory}/failure-dom.html`,await page.content().catch(()=>''));sample('failure',{message:String(error),stack:error instanceof Error?error.stack:undefined});throw error;}
 finally{
  await context.close();await browser.close();
- writeFileSync(`${directory}/browser-result.json`,JSON.stringify({status:outcome,smoke,rowsPerTopic:rows,checks,seconds:(performance.now()-begun)/1000,root,limits:['editing, paste, fill, draft conflict and moved selection require separate gates','no physical paint or production SLA claim']},null,2)+'\n');
+ writeFileSync(`${directory}/browser-result.json`,JSON.stringify({status:outcome,smoke,rowsPerTopic:rows,checks,seconds:(performance.now()-begun)/1000,root,limits:['provider query probes do not certify every equivalent menu interaction','no physical paint or production SLA claim']},null,2)+'\n');
  process.stdin.destroy();
 }

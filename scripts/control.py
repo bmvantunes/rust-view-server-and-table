@@ -107,7 +107,7 @@ class Producer:
             for topic, rows in self.rows.items():
                 canonical = '\n'.join(f"{row['orderId']}\t{key}\t{json.dumps(row, sort_keys=True, separators=(',', ':'), ensure_ascii=False)}" for key, row in sorted(rows.items(), key=lambda item: item[1]['orderId']))
                 result[topic] = {'count': len(rows), 'sha256': hashlib.sha256(canonical.encode()).hexdigest(),
-                                 'sourceNext': self.cuts[topic], 'producerReceipts': self.counts[topic]}
+                                 'sourceNext': dict(self.cuts[topic]), 'producerReceipts': self.counts[topic]}
             return result
 
     def close(self):

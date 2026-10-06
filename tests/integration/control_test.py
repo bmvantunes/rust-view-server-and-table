@@ -32,6 +32,15 @@ def change(producer, index):
 
 
 class ControlAdmission(unittest.TestCase):
+    def test_expected_snapshot_retains_initial_cuts_after_later_commit(self):
+        producer = fixture()
+        before = producer.expected()
+        row = record('client_orders', 0, revision=1)
+        producer._apply([row], [{'ack': row['ack'], 'topic': row['topic'], 'partition': 0, 'offset': 7, 'key': 'key-0'}])
+        self.assertEqual(before['client_orders']['sourceNext'][0], 0)
+        self.assertEqual(producer.expected()['client_orders']['sourceNext'][0], 8)
+        self.assertNotEqual(before['client_orders']['sha256'], producer.expected()['client_orders']['sha256'])
+
     def test_entire_batch_cas_precedes_any_publish(self):
         producer = fixture()
         producer.publish = Mock()

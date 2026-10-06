@@ -9,7 +9,11 @@ VERSION = '1.99.0'
 def selected(tool):
     return subprocess.check_output(['rustup', 'which', '--toolchain', VERSION, tool], text=True).strip()
 def main():
-    env = {**os.environ, 'RUSTC': selected('rustc'), 'RUSTDOC': selected('rustdoc')}
-    return subprocess.call(['rustup', 'run', VERSION, selected('cargo'), *sys.argv[1:]], cwd=ROOT, env=env)
+    cargo = selected('cargo')
+    env = {**os.environ, 'RUSTC': selected('rustc'), 'RUSTDOC': selected('rustdoc'),
+           'PATH': str(Path(cargo).parent) + os.pathsep + os.environ.get('PATH', '')}
+    # Cargo subcommands (notably cargo-clippy and clippy-driver) must resolve
+    # from this same toolchain; RUSTC alone does not select those executables.
+    return subprocess.call(['rustup', 'run', VERSION, cargo, *sys.argv[1:]], cwd=ROOT, env=env)
 if __name__ == '__main__':
     sys.exit(main())

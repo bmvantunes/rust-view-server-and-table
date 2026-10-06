@@ -170,4 +170,16 @@ describe('production Provider with isolated generic WASM',()=>{
   }finally{await fixture?.dispose();worker.mockRestore();}
  });
 
+ it('owns real-clock maintenance and cancels it immediately when the exposed Provider is disposed',async()=>{
+  const fixture=await createTestViewServer({catalog,sources,module,retention:{client_orders:{maxRetentionMinutes:0.00002}}});
+  let latest:ProductResult|undefined;const release=fixture.provider.watch('real-clock',{topic:'client_orders',schema:catalog.client_orders.fingerprint,select:['customer'],order_by:[],offset:0,limit:10},value=>{latest=value;});
+  try {
+   await fixture.publish('client_orders',input('expires')).delivered;expect(latest?.total_rows).toBe(1);
+   expect(fixture.diagnostics.maintenanceScheduled).toBe(true);
+   await vi.waitFor(()=>expect(latest?.total_rows).toBe(0));
+   fixture.provider.dispose();expect(fixture.diagnostics.maintenanceScheduled).toBe(false);expect(fixture.diagnostics.disposed).toBe(true);
+   await fixture.dispose();expect(fixture.diagnostics.pending).toBe(0);
+  }finally{release();await fixture.dispose();}
+ });
+
 });

@@ -8,6 +8,7 @@ Install the pinned Node runtime and dependencies through Vite+, and Rust 1.99.0 
 
 ```sh
 vp install --frozen-lockfile
+PLAYWRIGHT_SKIP_BROWSER_GC=1 vp exec playwright install chromium
 vp run generate
 vp run build
 vp run test

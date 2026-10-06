@@ -110,6 +110,13 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let writer_lock = std::fs::OpenOptions::new().create(true).read(true).write(true)
         .truncate(false).open(config_path.with_extension("writer.lock"))?;
     writer_lock.try_lock().map_err(|_| "this owned run already has a live native writer")?;
+    let authority_lock = std::fs::OpenOptions::new().create(true).read(true).write(true)
+        .truncate(false).open(config_path.with_extension("control.lock"))?;
+    match authority_lock.try_lock() {
+        Err(std::fs::TryLockError::WouldBlock) => {},
+        Ok(()) => return Err("demo writes require a running control authority; use scripts/dev.py and scripts/seed.py".into()),
+        Err(error) => return Err(error.into()),
+    }
     let c: Value = serde_json::from_slice(&std::fs::read(config_path)?)?;
     let configs: Vec<SourceConfig> = serde_json::from_value(c["sources"].clone())?;
     let catalog = Catalog::new(serde_json::from_value::<Manifest>(c["catalog"].clone())?)?;

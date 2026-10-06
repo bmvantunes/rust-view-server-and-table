@@ -6,6 +6,7 @@ import json
 import os
 from pathlib import Path
 import selectors
+import re
 import signal
 import socket
 import subprocess
@@ -38,12 +39,46 @@ def free_port():
 
 
 
+def validate_build_mode(smoke, no_build):
+    if no_build and not smoke:
+        raise ValueError('--no-build is only permitted for explicitly labelled development smoke runs')
+
+
+def check_candidate(initial, current, smoke, phase):
+    same = initial == current
+    if not same and not smoke:
+        raise RuntimeError(f'Candidate source changed {phase}; frozen acceptance invalid')
+    return same
+
+
+def perform_cleanup(actions):
+    failures = []
+    for name, action in actions:
+        try:
+            action()
+        except BaseException as error:
+            failures.append({'resource': name, 'error': str(error)})
+    return failures
+
+
+def finalize_acceptance(result, cleanup_failures):
+    result['cleanupErrors'] = cleanup_failures
+    if cleanup_failures:
+        result['status'] = 'failed'
+    result['fullCampaignAcceptance'] = (result['status'] == 'passed' and result['mode'] == 'full-200000'
+                                        and result.get('candidateFrozen') is True and not cleanup_failures)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--smoke', type=int, choices=[100], help='Explicit 100/topic development smoke; never full acceptance')
     parser.add_argument('--no-build', action='store_true', help='Reuse existing release native executables; web still rebuilt with isolated run configuration')
     parser.add_argument('--deadline', type=int, default=1800, help='Whole campaign deadline in seconds')
     args = parser.parse_args()
+    try:
+        validate_build_mode(args.smoke, args.no_build)
+    except ValueError as error:
+        parser.error(str(error))
     rows = args.smoke or 200000
     name = 'e2e-' + uuid.uuid4().hex[:16]
     directory = ROOT / '.local/e2e' / name
@@ -55,6 +90,9 @@ def main():
     producer = None
     control = None
     state = None
+    candidate = fingerprint()
+    result['candidateSourceSha256'] = candidate
+    result['candidateFrozen'] = True
 
     def command(argv, **kwargs):
         subprocess.run(argv, cwd=kwargs.pop('cwd', ROOT), check=True, timeout=max(1, args.deadline - (time.monotonic() - started)), **kwargs)
@@ -80,6 +118,8 @@ def main():
             command([sys.executable, str(ROOT / 'scripts/rust.py'), 'build', '--locked', '--release',
                      '-p', 'view-server-app', '-p', 'product-source-ingestion', '--features', 'kafka-canonical',
                      '--bin', 'view_server', '--example', 'seed_producer'])
+        unchanged = check_candidate(candidate, fingerprint(), args.smoke, 'during native build')
+        result['candidateFrozen'] = result['candidateFrozen'] and unchanged
         ports = [free_port() for _ in range(5)]
         if len(set(ports)) != len(ports):
             raise RuntimeError('Port allocation collided; rerun')
@@ -90,9 +130,22 @@ def main():
         for topic in TOPICS:
             for canonical in (topic, topic + '-state'):
                 broker('topic-create', '--topic', canonical, '--cleanup-policy', 'compact')
+        with (directory / 'effective-kafka-config.log').open('w') as effective:
+            effective.write(kafka.compose(state, 'exec', '-T', 'kafka', '/opt/kafka/bin/kafka-configs.sh', '--bootstrap-server', 'kafka:9092', '--entity-type', 'brokers', '--entity-name', '1', '--describe', '--all', capture_output=True).stdout)
+            for topic in TOPICS:
+                description = kafka.compose(state, 'exec', '-T', 'kafka', '/opt/kafka/bin/kafka-topics.sh', '--bootstrap-server', 'kafka:9092', '--topic', topic, '--describe', capture_output=True).stdout
+                effective.write(description)
+                if not re.search(r'PartitionCount:\s*2\b', description):
+                    raise RuntimeError('Effective source topic partition count is not two')
+                effective.write(kafka.compose(state, 'exec', '-T', 'kafka', '/opt/kafka/bin/kafka-configs.sh', '--bootstrap-server', 'kafka:9092', '--entity-type', 'topics', '--entity-name', topic, '--describe', '--all', capture_output=True).stdout)
         config, token, _ = prepare(name, service_port=ports[1], health_port=ports[2], web_port=ports[3])
         service_env = {**os.environ, 'V12_SESSION_TOKEN': token}
         service = spawn([str(ROOT / 'target/release/view_server'), str(config)], 'native-0.log', env=service_env, cwd=ROOT)
+        result['nativeStartedMonotonic'] = time.monotonic()
+        standalone = subprocess.run([str(ROOT / 'target/release/examples/seed_producer'), str(config)], input='', text=True, capture_output=True, timeout=10)
+        if standalone.returncode == 0 or 'running control authority' not in standalone.stderr:
+            raise RuntimeError('A native demo writer bypassed the required journal authority')
+        result['standaloneWriterRejected'] = True
         producer = Producer(config, directory)
         concurrent = subprocess.run([str(ROOT / 'target/release/examples/seed_producer'), str(config)], input='', text=True, capture_output=True, timeout=10)
         if concurrent.returncode == 0 or 'live native writer' not in concurrent.stderr:
@@ -105,14 +158,17 @@ def main():
             if len(producer.rows[topic]) != rows:
                 raise RuntimeError('Seed did not acknowledge the requested distinct identities')
             print(json.dumps({'seededDistinct': {topic: len(producer.rows[topic])}}), flush=True)
+        result['seedCompletedMonotonic'] = time.monotonic()
         result['initialReceipts'] = producer.expected()
         web_env = {**os.environ, 'VITE_RVS_URL': f'ws://127.0.0.1:{ports[1]}/v15', 'VITE_RVS_TOKEN': token,
                    'VITE_RVS_CONTROL_URL': f'http://127.0.0.1:{ports[4]}', 'VITE_RVS_CONTROL_TOKEN': token, 'VITE_RVS_RUN': name,
                    'VITE_RVS_CATALOG': json.dumps(json.loads(config.read_text())['catalog']), 'VITE_RVS_E2E': '1'}
+        unchanged = check_candidate(candidate, fingerprint(), args.smoke, 'before web build')
+        result['candidateFrozen'] = result['candidateFrozen'] and unchanged
         with (directory / 'web-build.log').open('w') as build_log:
             command(['vp', 'build'], cwd=ROOT / 'apps/web', env=web_env, stdout=build_log, stderr=subprocess.STDOUT)
-        candidate = fingerprint()
-        result['candidateSourceSha256'] = candidate
+        unchanged = check_candidate(candidate, fingerprint(), args.smoke, 'during web build')
+        result['candidateFrozen'] = result['candidateFrozen'] and unchanged
         spawn(['vp', 'preview', '--host', '127.0.0.1', '--port', str(ports[3]), '--strictPort'], 'web.log', cwd=ROOT / 'apps/web', env=web_env)
         browser = subprocess.Popen(['vp', 'exec', 'node', str(ROOT / 'tests/integration/e2e-browser.ts')], cwd=ROOT,
                                    env={**os.environ, 'E2E_URL': f'http://127.0.0.1:{ports[3]}', 'E2E_ROWS': str(rows),
@@ -157,9 +213,8 @@ def main():
         if browser.wait(timeout=15) != 0:
             raise RuntimeError('Browser assertions failed; inspect browser.stderr.log and browser-samples.ndjson')
         result['browser'] = json.loads((directory / 'browser-result.json').read_text())
-        result['candidateFrozen'] = fingerprint() == candidate
-        if not result['candidateFrozen'] and not args.smoke:
-            raise RuntimeError('Candidate source changed during the campaign; frozen acceptance invalid')
+        unchanged = check_candidate(candidate, fingerprint(), args.smoke, 'during browser campaign')
+        result['candidateFrozen'] = result['candidateFrozen'] and unchanged
         result['finalReceipts'] = producer.expected()
         result['status'] = 'passed'
     except BaseException as error:
@@ -169,26 +224,30 @@ def main():
     finally:
         signal.alarm(0)
         cleanup = []
+        actions = []
+        def stop_child(child):
+            stop(child)
+            cleanup.append({'pid': child.pid, 'exitCode': child.returncode})
+            if child.poll() is None:
+                raise RuntimeError('Owned child is still alive after shutdown')
         for child in reversed(children):
-            try:
-                stop(child)
-                cleanup.append({'pid': child.pid, 'exitCode': child.returncode})
-            except Exception as error:
-                cleanup.append({'pid': child.pid, 'error': str(error)})
+            actions.append((f'child-{child.pid}', lambda child=child: stop_child(child)))
         if control:
-            control.shutdown()
-            control.server_close()
+            actions.extend([('control-server-shutdown', control.shutdown), ('control-server-close', control.server_close)])
         if producer:
-            producer.close()
-        for handle in handles:
-            handle.close()
+            def close_producer():
+                producer.close()
+                cleanup.append({'pid': producer.process.pid, 'exitCode': producer.process.returncode, 'role': 'persistent-producer'})
+                if producer.process.poll() is None:
+                    raise RuntimeError('Persistent producer remains alive after shutdown')
+            actions.append(('persistent-producer', close_producer))
+        for index, handle in enumerate(handles):
+            actions.append((f'log-handle-{index}', handle.close))
         if state:
-            try:
-                subprocess.run([sys.executable, str(ROOT / 'scripts/kafka.py'), 'down', '--run', name], cwd=ROOT, check=True, timeout=120)
-            except Exception as error:
-                result['cleanupError'] = str(error)
-                result['status'] = 'failed'
+            actions.append(('owned-broker', lambda: subprocess.run([sys.executable, str(ROOT / 'scripts/kafka.py'), 'down', '--run', name], cwd=ROOT, check=True, timeout=120)))
+        failures = perform_cleanup(actions)
         result['ownedChildren'] = cleanup
+        finalize_acceptance(result, failures)
         result['seconds'] = time.monotonic() - started
         (directory / 'result.json').write_text(json.dumps(result, indent=2) + '\n')
         print(json.dumps(result), flush=True)
