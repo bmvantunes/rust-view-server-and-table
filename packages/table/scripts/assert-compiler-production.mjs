@@ -1,0 +1,31 @@
+import assert from 'node:assert/strict';
+import {mkdir,mkdtemp,writeFile,readFile,rm,readdir} from 'node:fs/promises';
+import {resolve,relative,extname} from 'node:path';
+import {createServer} from 'node:http';
+import {fileURLToPath} from 'node:url';
+import {build} from 'vite';
+import react from '@vitejs/plugin-react';
+import {chromium} from 'playwright';
+import {reactCompiler} from '../../../config/react-compiler.ts';
+const packageRoot=fileURLToPath(new URL('..',import.meta.url));
+await mkdir(resolve(packageRoot,'test-results'),{recursive:true});
+const root=await mkdtemp(resolve(packageRoot,'test-results/compiler-production-'));
+let browser,server;
+try {
+ const probe=relative(root,resolve(packageRoot,'src/internal/compiler-numeric-probe.tsx'));
+ await writeFile(resolve(root,'main.tsx'),`import {createRoot} from 'react-dom/client'; import {NumericProbe} from ${JSON.stringify(probe)}; createRoot(document.getElementById('root')!).render(<NumericProbe/>);`);
+ await writeFile(resolve(root,'index.html'),'<!doctype html><html><body><div id="root"></div><script type="module" src="/main.tsx"></script></body></html>');
+ await build({root,configFile:false,mode:'production',plugins:[reactCompiler(),...react()],build:{outDir:'dist',minify:true,sourcemap:true}});
+ const assets=await readdir(resolve(root,'dist/assets'));const maps=await Promise.all(assets.filter(f=>f.endsWith('.map')).map(f=>readFile(resolve(root,'dist/assets',f),'utf8')));
+ assert(maps.some(text=>text.includes('90071992547409931234567890n')),'production source map retains exact BigInt source');
+ server=createServer(async(req,res)=>{try{const pathname=new URL(req.url,'http://localhost').pathname;const file=resolve(root,'dist','.'+(pathname==='/'?'/index.html':pathname));if(!file.startsWith(resolve(root,'dist')+'/'))throw Error('path');const content=await readFile(file);res.setHeader('Content-Type',({'.html':'text/html','.js':'text/javascript','.css':'text/css','.map':'application/json'})[extname(file)]??'application/octet-stream');res.end(content);}catch{res.writeHead(404);res.end();}});
+ await new Promise((ok,fail)=>{server.once('error',fail);server.listen(0,'127.0.0.1',ok);});
+ browser=await chromium.launch({headless:true});const page=await browser.newPage();const errors=[];page.on('pageerror',error=>errors.push(String(error)));
+ await page.goto(`http://127.0.0.1:${server.address().port}`);
+ const output=page.getByRole('status',{name:'Compiled exact values',exact:true});
+ await output.waitFor();assert.equal(await output.textContent(),'90071992547409931234567890|-90071992547409931234567890|264|2000|true|true|true|42');
+ await page.getByRole('button',{name:'Next exact value',exact:true}).click();
+ await page.waitForFunction(()=>document.querySelector('output')?.textContent?.startsWith('90071992547409931234567891|'));
+ assert.equal(await output.textContent(),'90071992547409931234567891|-90071992547409931234567890|264|2000|true|true|true|42');assert.deepEqual(errors,[]);
+ console.log('Production minified React19 browser state/callback BigInt qualification passed.');
+} finally {await browser?.close();if(server)await new Promise(ok=>server.close(ok));await rm(root,{recursive:true,force:true});}

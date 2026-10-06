@@ -1,0 +1,7 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "tests/*.browser.test.tsx"
+  ],
+  "exclude": []
+}

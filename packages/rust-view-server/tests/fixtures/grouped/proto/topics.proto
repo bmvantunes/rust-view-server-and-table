@@ -1,0 +1,19 @@
+syntax = "proto3";
+package topics;
+import "view-options.proto";
+message GroupedKey { optional string key = 1; }
+message GroupedFixture {
+ option (view.schema_id) = "grouped_fixture";
+ optional string group = 1 [(view.optional)=true,(view.nullable)=true];
+ optional bool null_group = 2 [(view.null_for)="group"];
+ optional double number = 3 [(view.optional)=true,(view.nullable)=true];
+ optional bool null_number = 4 [(view.null_for)="number"];
+ optional int64 signed = 5 [(view.optional)=true,(view.nullable)=true];
+ optional bool null_signed = 6 [(view.null_for)="signed"];
+ optional uint64 unsigned = 7 [(view.optional)=true,(view.nullable)=true];
+ optional bool null_unsigned = 8 [(view.null_for)="unsigned"];
+ optional string decimal = 9 [(view.decimal)=true,(view.optional)=true,(view.nullable)=true];
+ optional bool null_decimal = 10 [(view.null_for)="decimal"];
+ optional bool boolean = 11 [(view.optional)=true,(view.nullable)=true];
+ optional bool null_boolean = 12 [(view.null_for)="boolean"];
+}

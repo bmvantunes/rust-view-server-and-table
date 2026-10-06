@@ -1,0 +1,12 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "isolatedDeclarations": false,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolvePackageJsonImports": true,
+    "types": ["node", "react", "react-dom"]
+  },
+  "include": ["src", "tests", "vite.config.ts"]
+}

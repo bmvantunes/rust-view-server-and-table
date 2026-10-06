@@ -1,0 +1,187 @@
+{
+  "queries": {
+    "raw": {
+      "select": [
+        "customer",
+        "units"
+      ],
+      "order_by": [
+        {
+          "field": "units",
+          "direction": "asc"
+        }
+      ]
+    },
+    "groups": {
+      "group_by": [
+        "customer"
+      ],
+      "aggregates": {
+        "sum": {
+          "aggFunc": "sum",
+          "field": "units"
+        }
+      },
+      "order_by": [
+        {
+          "field": "customer",
+          "direction": "asc"
+        }
+      ]
+    }
+  },
+  "actions": [
+    {
+      "command": {
+        "command": "publish",
+        "topic": "client_orders",
+        "key": {
+          "id": "a"
+        },
+        "value": {
+          "orderId": "a",
+          "customer": "a",
+          "open": true,
+          "units": "1",
+          "price": "0.1"
+        }
+      },
+      "raw": [
+        {
+          "customer": "a",
+          "units": "1"
+        }
+      ],
+      "groups": [
+        {
+          "customer": "a",
+          "sum": "1"
+        }
+      ]
+    },
+    {
+      "command": {
+        "command": "publish",
+        "topic": "client_orders",
+        "key": {
+          "id": "b"
+        },
+        "value": {
+          "orderId": "b",
+          "customer": "b",
+          "open": true,
+          "units": "2",
+          "price": "0.1"
+        }
+      },
+      "raw": [
+        {
+          "customer": "a",
+          "units": "1"
+        },
+        {
+          "customer": "b",
+          "units": "2"
+        }
+      ],
+      "groups": [
+        {
+          "customer": "a",
+          "sum": "1"
+        },
+        {
+          "customer": "b",
+          "sum": "2"
+        }
+      ]
+    },
+    {
+      "command": {
+        "command": "advance_time",
+        "milliseconds": 1
+      },
+      "raw": [
+        {
+          "customer": "a",
+          "units": "1"
+        },
+        {
+          "customer": "b",
+          "units": "2"
+        }
+      ],
+      "groups": [
+        {
+          "customer": "a",
+          "sum": "1"
+        },
+        {
+          "customer": "b",
+          "sum": "2"
+        }
+      ]
+    },
+    {
+      "command": {
+        "command": "publish",
+        "topic": "client_orders",
+        "key": {
+          "id": "a"
+        },
+        "value": {
+          "orderId": "a",
+          "customer": "a",
+          "open": true,
+          "units": "3",
+          "price": "0.1"
+        }
+      },
+      "raw": [
+        {
+          "customer": "b",
+          "units": "2"
+        },
+        {
+          "customer": "a",
+          "units": "3"
+        }
+      ],
+      "groups": [
+        {
+          "customer": "a",
+          "sum": "3"
+        },
+        {
+          "customer": "b",
+          "sum": "2"
+        }
+      ]
+    },
+    {
+      "command": {
+        "command": "advance_time",
+        "milliseconds": 1
+      },
+      "raw": [
+        {
+          "customer": "a",
+          "units": "3"
+        }
+      ],
+      "groups": [
+        {
+          "customer": "a",
+          "sum": "3"
+        }
+      ]
+    },
+    {
+      "command": {
+        "command": "advance_time",
+        "milliseconds": 1
+      },
+      "raw": [],
+      "groups": []
+    }
+  ]
+}

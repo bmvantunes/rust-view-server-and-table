@@ -1,0 +1,718 @@
+{
+  "source": "https://github.com/bmvantunes/rust-view-server",
+  "commit": "be2d8f400e9b5ba6e632e541007d20e3e99df465",
+  "files": [
+    {
+      "from": "admission/Cargo.toml",
+      "to": "packages/rust-view-server/crates/admission/Cargo.toml"
+    },
+    {
+      "from": "admission/src/lib.rs",
+      "to": "packages/rust-view-server/crates/admission/src/lib.rs"
+    },
+    {
+      "from": "browser/src/browser-telemetry.ts",
+      "to": "packages/rust-view-server/src/browser-telemetry.ts"
+    },
+    {
+      "from": "browser/src/codegen-symbols-contract.test-d.ts",
+      "to": "packages/rust-view-server/src/codegen-symbols-contract.test-d.ts"
+    },
+    {
+      "from": "browser/src/dependency-reporting.browser.test.tsx",
+      "to": "packages/rust-view-server/src/dependency-reporting.browser.test.tsx"
+    },
+    {
+      "from": "browser/src/field-patches.browser.test.ts",
+      "to": "packages/rust-view-server/src/field-patches.browser.test.ts"
+    },
+    {
+      "from": "browser/src/generated/expanded-topics.ts",
+      "to": "packages/rust-view-server/src/generated/expanded-topics.ts"
+    },
+    {
+      "from": "browser/src/generated/legacy-topics.ts",
+      "to": "packages/rust-view-server/src/generated/legacy-topics.ts"
+    },
+    {
+      "from": "browser/src/generated/topics.ts",
+      "to": "packages/rust-view-server/src/generated/topics.ts"
+    },
+    {
+      "from": "browser/src/global-having-contract.test-d.ts",
+      "to": "packages/rust-view-server/src/global-having-contract.test-d.ts"
+    },
+    {
+      "from": "browser/src/grouped-contract.test-d.ts",
+      "to": "packages/rust-view-server/src/grouped-contract.test-d.ts"
+    },
+    {
+      "from": "browser/src/grouped-dynamic-contract.test-d.ts",
+      "to": "packages/rust-view-server/src/grouped-dynamic-contract.test-d.ts"
+    },
+    {
+      "from": "browser/src/grouped.browser.test.tsx",
+      "to": "packages/rust-view-server/src/grouped.browser.test.tsx"
+    },
+    {
+      "from": "browser/src/join-contract.test-d.ts",
+      "to": "packages/rust-view-server/src/join-contract.test-d.ts"
+    },
+    {
+      "from": "browser/src/join-demo.test-d.ts",
+      "to": "packages/rust-view-server/src/join-demo.test-d.ts"
+    },
+    {
+      "from": "browser/src/join-schema.ts",
+      "to": "packages/rust-view-server/src/join-schema.ts"
+    },
+    {
+      "from": "browser/src/patch-controlled.worker.ts",
+      "to": "packages/rust-view-server/src/patch-controlled.worker.ts"
+    },
+    {
+      "from": "browser/src/product-contract.test-d.ts",
+      "to": "packages/rust-view-server/src/product-contract.test-d.ts"
+    },
+    {
+      "from": "browser/src/product-provider.browser.test.tsx",
+      "to": "packages/rust-view-server/src/product-provider.browser.test.tsx"
+    },
+    {
+      "from": "browser/src/product-provider.tsx",
+      "to": "packages/rust-view-server/src/product-provider.tsx"
+    },
+    {
+      "from": "browser/src/product.remote.worker.ts",
+      "to": "packages/rust-view-server/src/product.remote.worker.ts"
+    },
+    {
+      "from": "browser/src/product.worker.ts",
+      "to": "packages/rust-view-server/src/product.worker.ts"
+    },
+    {
+      "from": "browser/src/reconnect-status.browser.test.tsx",
+      "to": "packages/rust-view-server/src/reconnect-status.browser.test.tsx"
+    },
+    {
+      "from": "browser/src/request-admission.ts",
+      "to": "packages/rust-view-server/src/request-admission.ts"
+    },
+    {
+      "from": "browser/src/retention-contract.test-d.ts",
+      "to": "packages/rust-view-server/src/retention-contract.test-d.ts"
+    },
+    {
+      "from": "browser/src/retention-contract.test.ts",
+      "to": "packages/rust-view-server/src/retention-contract.test.ts"
+    },
+    {
+      "from": "browser/src/row-delta.d.mts",
+      "to": "packages/rust-view-server/src/row-delta.d.mts"
+    },
+    {
+      "from": "browser/src/row-delta.mjs",
+      "to": "packages/rust-view-server/src/row-delta.mjs"
+    },
+    {
+      "from": "browser/src/row-id-selector.ts",
+      "to": "packages/rust-view-server/src/row-id-selector.ts"
+    },
+    {
+      "from": "browser/src/row-id.d.mts",
+      "to": "packages/rust-view-server/src/row-id.d.mts"
+    },
+    {
+      "from": "browser/src/row-id.mjs",
+      "to": "packages/rust-view-server/src/row-id.mjs"
+    },
+    {
+      "from": "browser/src/rowid-contract.test-d.ts",
+      "to": "packages/rust-view-server/src/rowid-contract.test-d.ts"
+    },
+    {
+      "from": "browser/src/rowid.browser.test.tsx",
+      "to": "packages/rust-view-server/src/rowid.browser.test.tsx"
+    },
+    {
+      "from": "browser/src/schema-expansion-contract.test-d.ts",
+      "to": "packages/rust-view-server/src/schema-expansion-contract.test-d.ts"
+    },
+    {
+      "from": "browser/src/shape-contract.test-d.ts",
+      "to": "packages/rust-view-server/src/shape-contract.test-d.ts"
+    },
+    {
+      "from": "browser/src/standalone-contract.test-d.ts",
+      "to": "packages/rust-view-server/src/standalone-contract.test-d.ts"
+    },
+    {
+      "from": "browser/src/telemetry.browser.test.ts",
+      "to": "packages/rust-view-server/src/telemetry.browser.test.ts"
+    },
+    {
+      "from": "browser/src/text-contract.test-d.ts",
+      "to": "packages/rust-view-server/src/text-contract.test-d.ts"
+    },
+    {
+      "from": "browser/src/topic-contract.test-d.ts",
+      "to": "packages/rust-view-server/src/topic-contract.test-d.ts"
+    },
+    {
+      "from": "browser/src/topic-schema.ts",
+      "to": "packages/rust-view-server/src/topic-schema.ts"
+    },
+    {
+      "from": "browser/src/topics.browser.test.tsx",
+      "to": "packages/rust-view-server/src/topics.browser.test.tsx"
+    },
+    {
+      "from": "browser/src/v121-local-quota.browser.test.tsx",
+      "to": "packages/rust-view-server/src/v121-local-quota.browser.test.tsx"
+    },
+    {
+      "from": "browser/src/v5.browser.test.tsx",
+      "to": "packages/rust-view-server/src/v5.browser.test.tsx"
+    },
+    {
+      "from": "browser/src/v51.browser.test.tsx",
+      "to": "packages/rust-view-server/src/v51.browser.test.tsx"
+    },
+    {
+      "from": "experiments/v131/codec/Cargo.toml",
+      "to": "packages/rust-view-server/crates/wire/Cargo.toml"
+    },
+    {
+      "from": "experiments/v131/codec/src/generic.rs",
+      "to": "packages/rust-view-server/crates/wire/src/generic.rs"
+    },
+    {
+      "from": "experiments/v131/codec/src/lib.rs",
+      "to": "packages/rust-view-server/crates/wire/src/lib.rs"
+    },
+    {
+      "from": "experiments/v131/codec/src/main.rs",
+      "to": "packages/rust-view-server/crates/wire/src/main.rs"
+    },
+    {
+      "from": "experiments/v131/codec/src/scan.rs",
+      "to": "packages/rust-view-server/crates/wire/src/scan.rs"
+    },
+    {
+      "from": "experiments/v131/js/msgpack.d.mts",
+      "to": "packages/rust-view-server/src/wire/msgpack.d.mts"
+    },
+    {
+      "from": "experiments/v131/js/msgpack.mjs",
+      "to": "packages/rust-view-server/src/wire/msgpack.mjs"
+    },
+    {
+      "from": "experiments/v131/js/scan.mjs",
+      "to": "packages/rust-view-server/src/wire/scan.mjs"
+    },
+    {
+      "from": "experiments/v131/js/values.mjs",
+      "to": "packages/rust-view-server/src/wire/values.mjs"
+    },
+    {
+      "from": "experiments/v131/vendor/view-wire-prost/Cargo.toml",
+      "to": "packages/rust-view-server/crates/vendor/view-wire-prost/Cargo.toml"
+    },
+    {
+      "from": "experiments/v131/vendor/view-wire-prost/Cargo.toml.orig",
+      "to": "packages/rust-view-server/crates/vendor/view-wire-prost/Cargo.toml.orig"
+    },
+    {
+      "from": "experiments/v131/vendor/view-wire-prost/LICENSE",
+      "to": "packages/rust-view-server/crates/vendor/view-wire-prost/LICENSE"
+    },
+    {
+      "from": "experiments/v131/vendor/view-wire-prost/README.md",
+      "to": "packages/rust-view-server/crates/vendor/view-wire-prost/README.md"
+    },
+    {
+      "from": "experiments/v131/vendor/view-wire-prost/benches/varint.rs",
+      "to": "packages/rust-view-server/crates/vendor/view-wire-prost/benches/varint.rs"
+    },
+    {
+      "from": "experiments/v131/vendor/view-wire-prost/src/encoding.rs",
+      "to": "packages/rust-view-server/crates/vendor/view-wire-prost/src/encoding.rs"
+    },
+    {
+      "from": "experiments/v131/vendor/view-wire-prost/src/encoding/length_delimiter.rs",
+      "to": "packages/rust-view-server/crates/vendor/view-wire-prost/src/encoding/length_delimiter.rs"
+    },
+    {
+      "from": "experiments/v131/vendor/view-wire-prost/src/encoding/varint.rs",
+      "to": "packages/rust-view-server/crates/vendor/view-wire-prost/src/encoding/varint.rs"
+    },
+    {
+      "from": "experiments/v131/vendor/view-wire-prost/src/encoding/wire_type.rs",
+      "to": "packages/rust-view-server/crates/vendor/view-wire-prost/src/encoding/wire_type.rs"
+    },
+    {
+      "from": "experiments/v131/vendor/view-wire-prost/src/error.rs",
+      "to": "packages/rust-view-server/crates/vendor/view-wire-prost/src/error.rs"
+    },
+    {
+      "from": "experiments/v131/vendor/view-wire-prost/src/lib.rs",
+      "to": "packages/rust-view-server/crates/vendor/view-wire-prost/src/lib.rs"
+    },
+    {
+      "from": "experiments/v131/vendor/view-wire-prost/src/message.rs",
+      "to": "packages/rust-view-server/crates/vendor/view-wire-prost/src/message.rs"
+    },
+    {
+      "from": "experiments/v131/vendor/view-wire-prost/src/name.rs",
+      "to": "packages/rust-view-server/crates/vendor/view-wire-prost/src/name.rs"
+    },
+    {
+      "from": "experiments/v131/vendor/view-wire-prost/src/types.rs",
+      "to": "packages/rust-view-server/crates/vendor/view-wire-prost/src/types.rs"
+    },
+    {
+      "from": "ingestion/Cargo.toml",
+      "to": "packages/rust-view-server/crates/runtime/Cargo.toml"
+    },
+    {
+      "from": "ingestion/examples/catalog_check.rs",
+      "to": "packages/rust-view-server/crates/runtime/examples/catalog_check.rs"
+    },
+    {
+      "from": "ingestion/examples/generic_kafka_producer.rs",
+      "to": "packages/rust-view-server/crates/runtime/examples/generic_kafka_producer.rs"
+    },
+    {
+      "from": "ingestion/examples/retention_snapshot.rs",
+      "to": "packages/rust-view-server/crates/runtime/examples/retention_snapshot.rs"
+    },
+    {
+      "from": "ingestion/examples/source_presence_probe.rs",
+      "to": "packages/rust-view-server/crates/runtime/examples/source_presence_probe.rs"
+    },
+    {
+      "from": "ingestion/fixtures/durable-format-v1.db",
+      "to": "packages/rust-view-server/crates/runtime/fixtures/durable-format-v1.db"
+    },
+    {
+      "from": "ingestion/fixtures/durable-format-v2-recovery.json",
+      "to": "packages/rust-view-server/crates/runtime/fixtures/durable-format-v2-recovery.json"
+    },
+    {
+      "from": "ingestion/fixtures/durable-format-v2.db",
+      "to": "packages/rust-view-server/crates/runtime/fixtures/durable-format-v2.db"
+    },
+    {
+      "from": "ingestion/fixtures/key.proto",
+      "to": "packages/rust-view-server/crates/runtime/fixtures/key.proto"
+    },
+    {
+      "from": "ingestion/fixtures/product-v1.proto",
+      "to": "packages/rust-view-server/crates/runtime/fixtures/product-v1.proto"
+    },
+    {
+      "from": "ingestion/fixtures/product-v2.proto",
+      "to": "packages/rust-view-server/crates/runtime/fixtures/product-v2.proto"
+    },
+    {
+      "from": "ingestion/src/bin/view_server.rs",
+      "to": "apps/server/src/main.rs"
+    },
+    {
+      "from": "ingestion/src/coordination.rs",
+      "to": "packages/rust-view-server/crates/runtime/src/coordination.rs"
+    },
+    {
+      "from": "ingestion/src/durable.rs",
+      "to": "packages/rust-view-server/crates/runtime/src/durable.rs"
+    },
+    {
+      "from": "ingestion/src/durable_coordinator.rs",
+      "to": "packages/rust-view-server/crates/runtime/src/durable_coordinator.rs"
+    },
+    {
+      "from": "ingestion/src/evolution_state_tests.rs",
+      "to": "packages/rust-view-server/crates/runtime/src/evolution_state_tests.rs"
+    },
+    {
+      "from": "ingestion/src/expanded_source.rs",
+      "to": "packages/rust-view-server/crates/runtime/src/expanded_source.rs"
+    },
+    {
+      "from": "ingestion/src/faults.rs",
+      "to": "packages/rust-view-server/crates/runtime/src/faults.rs"
+    },
+    {
+      "from": "ingestion/src/generic_evolution.rs",
+      "to": "packages/rust-view-server/crates/runtime/src/generic_evolution.rs"
+    },
+    {
+      "from": "ingestion/src/generic_kafka.rs",
+      "to": "packages/rust-view-server/crates/runtime/src/generic_kafka.rs"
+    },
+    {
+      "from": "ingestion/src/generic_owner.rs",
+      "to": "packages/rust-view-server/crates/runtime/src/generic_owner.rs"
+    },
+    {
+      "from": "ingestion/src/generic_service.rs",
+      "to": "packages/rust-view-server/crates/runtime/src/generic_service.rs"
+    },
+    {
+      "from": "ingestion/src/generic_source.rs",
+      "to": "packages/rust-view-server/crates/runtime/src/generic_source.rs"
+    },
+    {
+      "from": "ingestion/src/health.rs",
+      "to": "packages/rust-view-server/crates/runtime/src/health.rs"
+    },
+    {
+      "from": "ingestion/src/health_tests.rs",
+      "to": "packages/rust-view-server/crates/runtime/src/health_tests.rs"
+    },
+    {
+      "from": "ingestion/src/kafka.rs",
+      "to": "packages/rust-view-server/crates/runtime/src/kafka.rs"
+    },
+    {
+      "from": "ingestion/src/kafka_canonical.rs",
+      "to": "packages/rust-view-server/crates/runtime/src/kafka_canonical.rs"
+    },
+    {
+      "from": "ingestion/src/kafka_state.rs",
+      "to": "packages/rust-view-server/crates/runtime/src/kafka_state.rs"
+    },
+    {
+      "from": "ingestion/src/lib.rs",
+      "to": "packages/rust-view-server/crates/runtime/src/lib.rs"
+    },
+    {
+      "from": "ingestion/src/management.rs",
+      "to": "packages/rust-view-server/crates/runtime/src/management.rs"
+    },
+    {
+      "from": "ingestion/src/registry.rs",
+      "to": "packages/rust-view-server/crates/runtime/src/registry.rs"
+    },
+    {
+      "from": "ingestion/src/retention.rs",
+      "to": "packages/rust-view-server/crates/runtime/src/retention.rs"
+    },
+    {
+      "from": "ingestion/src/retention_work_tests.rs",
+      "to": "packages/rust-view-server/crates/runtime/src/retention_work_tests.rs"
+    },
+    {
+      "from": "ingestion/src/row_delta.rs",
+      "to": "packages/rust-view-server/crates/runtime/src/row_delta.rs"
+    },
+    {
+      "from": "ingestion/src/service.rs",
+      "to": "packages/rust-view-server/crates/runtime/src/service.rs"
+    },
+    {
+      "from": "ingestion/src/subscriptions.rs",
+      "to": "packages/rust-view-server/crates/runtime/src/subscriptions.rs"
+    },
+    {
+      "from": "ingestion/src/telemetry.rs",
+      "to": "packages/rust-view-server/crates/runtime/src/telemetry.rs"
+    },
+    {
+      "from": "ingestion/src/wire.rs",
+      "to": "packages/rust-view-server/crates/runtime/src/wire.rs"
+    },
+    {
+      "from": "ingestion/tests/batching.rs",
+      "to": "packages/rust-view-server/crates/runtime/tests/batching.rs"
+    },
+    {
+      "from": "ingestion/tests/coordination.rs",
+      "to": "packages/rust-view-server/crates/runtime/tests/coordination.rs"
+    },
+    {
+      "from": "ingestion/tests/crash_recovery.rs",
+      "to": "packages/rust-view-server/crates/runtime/tests/crash_recovery.rs"
+    },
+    {
+      "from": "ingestion/tests/durable_coordinator.rs",
+      "to": "packages/rust-view-server/crates/runtime/tests/durable_coordinator.rs"
+    },
+    {
+      "from": "ingestion/tests/durable_kafka.rs",
+      "to": "packages/rust-view-server/crates/runtime/tests/durable_kafka.rs"
+    },
+    {
+      "from": "ingestion/tests/durable_store.rs",
+      "to": "packages/rust-view-server/crates/runtime/tests/durable_store.rs"
+    },
+    {
+      "from": "ingestion/tests/evolution.rs",
+      "to": "packages/rust-view-server/crates/runtime/tests/evolution.rs"
+    },
+    {
+      "from": "ingestion/tests/f1_socket.rs",
+      "to": "packages/rust-view-server/crates/runtime/tests/f1_socket.rs"
+    },
+    {
+      "from": "ingestion/tests/field_patches.rs",
+      "to": "packages/rust-view-server/crates/runtime/tests/field_patches.rs"
+    },
+    {
+      "from": "ingestion/tests/generic_owner.rs",
+      "to": "packages/rust-view-server/crates/runtime/tests/generic_owner.rs"
+    },
+    {
+      "from": "ingestion/tests/generic_source_config.rs",
+      "to": "packages/rust-view-server/crates/runtime/tests/generic_source_config.rs"
+    },
+    {
+      "from": "ingestion/tests/incremental.rs",
+      "to": "packages/rust-view-server/crates/runtime/tests/incremental.rs"
+    },
+    {
+      "from": "ingestion/tests/kafka_client.rs",
+      "to": "packages/rust-view-server/crates/runtime/tests/kafka_client.rs"
+    },
+    {
+      "from": "ingestion/tests/kafka_state.rs",
+      "to": "packages/rust-view-server/crates/runtime/tests/kafka_state.rs"
+    },
+    {
+      "from": "ingestion/tests/partition_metadata.rs",
+      "to": "packages/rust-view-server/crates/runtime/tests/partition_metadata.rs"
+    },
+    {
+      "from": "ingestion/tests/recovery_decode.rs",
+      "to": "packages/rust-view-server/crates/runtime/tests/recovery_decode.rs"
+    },
+    {
+      "from": "ingestion/tests/row_delta.rs",
+      "to": "packages/rust-view-server/crates/runtime/tests/row_delta.rs"
+    },
+    {
+      "from": "ingestion/tests/schema_expansion.rs",
+      "to": "packages/rust-view-server/crates/runtime/tests/schema_expansion.rs"
+    },
+    {
+      "from": "ingestion/tests/source_identity.rs",
+      "to": "packages/rust-view-server/crates/runtime/tests/source_identity.rs"
+    },
+    {
+      "from": "ingestion/tests/source_presence.rs",
+      "to": "packages/rust-view-server/crates/runtime/tests/source_presence.rs"
+    },
+    {
+      "from": "ingestion/tests/source_presence_original.rs",
+      "to": "packages/rust-view-server/crates/runtime/tests/source_presence_original.rs"
+    },
+    {
+      "from": "ingestion/tests/support/durable.rs",
+      "to": "packages/rust-view-server/crates/runtime/tests/support/durable.rs"
+    },
+    {
+      "from": "ingestion/tests/support/row_delta.rs",
+      "to": "packages/rust-view-server/crates/runtime/tests/support/row_delta.rs"
+    },
+    {
+      "from": "ingestion/tests/v11_batching.rs",
+      "to": "packages/rust-view-server/crates/runtime/tests/v11_batching.rs"
+    },
+    {
+      "from": "ingestion/tests/v11_owned_reads.rs",
+      "to": "packages/rust-view-server/crates/runtime/tests/v11_owned_reads.rs"
+    },
+    {
+      "from": "ingestion/tests/v121_fence.rs",
+      "to": "packages/rust-view-server/crates/runtime/tests/v121_fence.rs"
+    },
+    {
+      "from": "ingestion/tests/v12_group.rs",
+      "to": "packages/rust-view-server/crates/runtime/tests/v12_group.rs"
+    },
+    {
+      "from": "ingestion/tests/v12_owner.rs",
+      "to": "packages/rust-view-server/crates/runtime/tests/v12_owner.rs"
+    },
+    {
+      "from": "ingestion/tests/v12_socket.rs",
+      "to": "apps/server/tests/v12_socket.rs"
+    },
+    {
+      "from": "ingestion/tests/v131_source_recursion.rs",
+      "to": "packages/rust-view-server/crates/runtime/tests/v131_source_recursion.rs"
+    },
+    {
+      "from": "ingestion/tests/wire_registry.rs",
+      "to": "packages/rust-view-server/crates/runtime/tests/wire_registry.rs"
+    },
+    {
+      "from": "native/Cargo.toml",
+      "to": "packages/rust-view-server/crates/core/Cargo.toml"
+    },
+    {
+      "from": "native/src/common/mod.rs",
+      "to": "packages/rust-view-server/crates/core/src/common/mod.rs"
+    },
+    {
+      "from": "native/src/common/model.rs",
+      "to": "packages/rust-view-server/crates/core/src/common/model.rs"
+    },
+    {
+      "from": "native/src/common/oracle.rs",
+      "to": "packages/rust-view-server/crates/core/src/common/oracle.rs"
+    },
+    {
+      "from": "native/src/common/ordering.rs",
+      "to": "packages/rust-view-server/crates/core/src/common/ordering.rs"
+    },
+    {
+      "from": "native/src/common/ranked.rs",
+      "to": "packages/rust-view-server/crates/core/src/common/ranked.rs"
+    },
+    {
+      "from": "native/src/differential/fixture.rs",
+      "to": "packages/rust-view-server/crates/core/src/differential/fixture.rs"
+    },
+    {
+      "from": "native/src/differential/mod.rs",
+      "to": "packages/rust-view-server/crates/core/src/differential/mod.rs"
+    },
+    {
+      "from": "native/src/differential/runtime.rs",
+      "to": "packages/rust-view-server/crates/core/src/differential/runtime.rs"
+    },
+    {
+      "from": "native/src/engine_contract.rs",
+      "to": "packages/rust-view-server/crates/core/src/engine_contract.rs"
+    },
+    {
+      "from": "native/src/evolution.rs",
+      "to": "packages/rust-view-server/crates/core/src/evolution.rs"
+    },
+    {
+      "from": "native/src/execution_contract.rs",
+      "to": "packages/rust-view-server/crates/core/src/execution_contract.rs"
+    },
+    {
+      "from": "native/src/generic.rs",
+      "to": "packages/rust-view-server/crates/core/src/generic.rs"
+    },
+    {
+      "from": "native/src/grouped.rs",
+      "to": "packages/rust-view-server/crates/core/src/grouped.rs"
+    },
+    {
+      "from": "native/src/join.rs",
+      "to": "packages/rust-view-server/crates/core/src/join.rs"
+    },
+    {
+      "from": "native/src/lib.rs",
+      "to": "packages/rust-view-server/crates/core/src/lib.rs"
+    },
+    {
+      "from": "native/src/product.rs",
+      "to": "packages/rust-view-server/crates/core/src/product.rs"
+    },
+    {
+      "from": "native/src/product_engine.rs",
+      "to": "packages/rust-view-server/crates/core/src/product_engine.rs"
+    },
+    {
+      "from": "native/src/product_engine/distinct.rs",
+      "to": "packages/rust-view-server/crates/core/src/product_engine/distinct.rs"
+    },
+    {
+      "from": "native/src/schema.rs",
+      "to": "packages/rust-view-server/crates/core/src/schema.rs"
+    },
+    {
+      "from": "native/src/source.rs",
+      "to": "packages/rust-view-server/crates/core/src/source.rs"
+    },
+    {
+      "from": "native/src/topic.rs",
+      "to": "packages/rust-view-server/crates/core/src/topic.rs"
+    },
+    {
+      "from": "native/src/viewport.rs",
+      "to": "packages/rust-view-server/crates/core/src/viewport.rs"
+    },
+    {
+      "from": "native/src/wasm_api.rs",
+      "to": "packages/rust-view-server/crates/core/src/wasm_api.rs"
+    },
+    {
+      "from": "native/tests/engine_contract.rs",
+      "to": "packages/rust-view-server/crates/core/tests/engine_contract.rs"
+    },
+    {
+      "from": "native/tests/global_having.rs",
+      "to": "packages/rust-view-server/crates/core/tests/global_having.rs"
+    },
+    {
+      "from": "native/tests/joins.rs",
+      "to": "packages/rust-view-server/crates/core/tests/joins.rs"
+    },
+    {
+      "from": "native/tests/retention_oracle.rs",
+      "to": "packages/rust-view-server/crates/core/tests/retention_oracle.rs"
+    },
+    {
+      "from": "native/tests/row_id.rs",
+      "to": "packages/rust-view-server/crates/core/tests/row_id.rs"
+    },
+    {
+      "from": "native/tests/source_contract.rs",
+      "to": "packages/rust-view-server/crates/core/tests/source_contract.rs"
+    },
+    {
+      "from": "native/tests/support/reference.rs",
+      "to": "packages/rust-view-server/crates/core/tests/support/reference.rs"
+    },
+    {
+      "from": "native/tests/text_predicates.rs",
+      "to": "packages/rust-view-server/crates/core/tests/text_predicates.rs"
+    },
+    {
+      "from": "examples/symbol-collisions/browser/src/generated/topics.ts",
+      "to": "packages/rust-view-server/tests/fixtures/symbol-collisions/topics.ts"
+    },
+    {
+      "from": "examples/symbol-collisions/proto/topics.proto",
+      "to": "packages/rust-view-server/tests/fixtures/symbol-collisions/proto/topics.proto"
+    },
+    {
+      "from": "examples/symbol-collisions/proto/view-options.proto",
+      "to": "packages/rust-view-server/tests/fixtures/symbol-collisions/proto/view-options.proto"
+    },
+    {
+      "from": "examples/grouped/browser/src/generated/topics.ts",
+      "to": "packages/rust-view-server/tests/fixtures/grouped/topics.ts"
+    },
+    {
+      "from": "examples/grouped/proto/topics.proto",
+      "to": "packages/rust-view-server/tests/fixtures/grouped/proto/topics.proto"
+    },
+    {
+      "from": "examples/grouped/proto/view-options.proto",
+      "to": "packages/rust-view-server/tests/fixtures/grouped/proto/view-options.proto"
+    },
+    {
+      "from": "examples/standalone/browser/src/generated/topics.ts",
+      "to": "packages/rust-view-server/tests/fixtures/standalone/topics.ts"
+    },
+    {
+      "from": "examples/standalone/proto/topics.proto",
+      "to": "packages/rust-view-server/tests/fixtures/standalone/proto/topics.proto"
+    },
+    {
+      "from": "examples/standalone/proto/view-options.proto",
+      "to": "packages/rust-view-server/tests/fixtures/standalone/proto/view-options.proto"
+    },
+    {
+      "from": "browser/src/topic-examples.ts",
+      "to": "packages/rust-view-server/src/topic-examples.ts"
+    }
+  ]
+}

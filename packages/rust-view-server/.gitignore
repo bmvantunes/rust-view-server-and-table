@@ -1,0 +1,11 @@
+node_modules
+dist
+*.log
+.DS_Store
+
+/src/generic_engine.wasm
+
+/src/product_core.wasm
+
+/.vitest/
+/v5-browser-*.json

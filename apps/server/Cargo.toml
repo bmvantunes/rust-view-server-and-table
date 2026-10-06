@@ -1,0 +1,22 @@
+[package]
+name = "view-server-app"
+version = "0.1.0"
+edition = "2024"
+publish = false
+
+[[bin]]
+name = "view_server"
+path = "src/main.rs"
+
+[features]
+default = ["kafka-canonical"]
+kafka-canonical = ["product-source-ingestion/kafka-canonical"]
+
+[dependencies]
+product-source-ingestion = { path = "../../packages/rust-view-server/crates/runtime" }
+
+[dev-dependencies]
+rust-differential-product-core = { path = "../../packages/rust-view-server/crates/core" }
+v13-codec-experiment = { path = "../../packages/rust-view-server/crates/wire", default-features = false, features = ["msgpack"] }
+serde_json = "=1.0.151"
+tungstenite = { version = "=0.30.0", default-features = false, features = ["handshake"] }

@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "skipLibCheck": false
+  },
+  "include": [
+    "tests/consumer/strict-import.ts"
+  ],
+  "exclude": []
+}

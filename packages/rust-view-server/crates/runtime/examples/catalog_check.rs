@@ -1,0 +1,2 @@
+use rust_differential_product_core::schema::{Catalog,strict_json};
+fn main(){let p=std::env::args().nth(1).expect("manifest path");let b=std::fs::read(p).unwrap();let catalog=Catalog::new(serde_json::from_value(strict_json(&b,262144).unwrap()).unwrap()).unwrap();println!("{}",serde_json::json!(catalog.topics().map(|(topic,s)|(topic,s.fingerprint())).collect::<std::collections::BTreeMap<_,_>>()));}

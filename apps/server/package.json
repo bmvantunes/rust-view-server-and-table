@@ -1,0 +1,9 @@
+{
+  "name": "@bruno/server",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@bruno/rust-view-server": "workspace:*"
+  }
+}

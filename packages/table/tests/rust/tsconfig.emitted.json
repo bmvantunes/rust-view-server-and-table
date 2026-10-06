@@ -1,0 +1,24 @@
+{
+  "extends": "../../../../tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "skipLibCheck": false,
+    "lib": [
+      "esnext",
+      "dom",
+      "dom.iterable"
+    ],
+    "jsx": "react-jsx",
+    "paths": {
+      "@bruno/table": [
+        "../../dist/index.d.mts"
+      ],
+      "@bruno/table/rust": [
+        "../../dist/rust.d.mts"
+      ]
+    }
+  },
+  "include": [
+    "./types.test-d.tsx"
+  ]
+}

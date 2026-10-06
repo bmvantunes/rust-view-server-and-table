@@ -7,7 +7,7 @@ import os
 from pathlib import Path
 import subprocess
 import tempfile
-from rust import ROOT
+from rust import ROOT, VERSION, selected
 p=argparse.ArgumentParser();p.add_argument('--clean',action='store_true');args=p.parse_args()
 (ROOT/'.local').mkdir(exist_ok=True)
 outputs={'view_server_generic_wasm':'generic_engine.wasm','rust_differential_product_core':'product_core.wasm'}
@@ -24,8 +24,8 @@ try:
   data=binary.read_bytes();output=ROOT/'packages/rust-view-server/src'/name;output.write_bytes(data)
   artifacts[name]={'sha256':hashlib.sha256(data).hexdigest(),'bytes':len(data)}
  data=(ROOT/'packages/rust-view-server/src/generic_engine.wasm').read_bytes()
- files=sorted((ROOT/'packages/rust-view-server/crates/core/src').rglob('*.rs'))+sorted((ROOT/'packages/rust-view-server/crates/wasm/src').rglob('*.rs'))+[ROOT/'Cargo.lock',ROOT/'rust-toolchain.toml']
- receipt={'compiler':'1.99.0','cleanArtifactDirectory':args.clean,'artifacts':artifacts,'sha256':hashlib.sha256(data).hexdigest(),'sourceSha256':{str(f.relative_to(ROOT)):hashlib.sha256(f.read_bytes()).hexdigest() for f in files}}
+ files=sorted((ROOT/'packages/rust-view-server/crates/core/src').rglob('*.rs'))+sorted((ROOT/'packages/rust-view-server/crates/wasm/src').rglob('*.rs'))+[ROOT/'Cargo.toml',ROOT/'Cargo.lock',ROOT/'rust-toolchain.toml',ROOT/'scripts/rust.py',ROOT/'scripts/build-wasm.py',ROOT/'packages/rust-view-server/crates/core/Cargo.toml',ROOT/'packages/rust-view-server/crates/wasm/Cargo.toml']
+ receipt={'compiler':subprocess.check_output([selected('rustc'),'--version'],text=True).strip(),'toolchain':VERSION,'cleanArtifactDirectory':args.clean,'artifacts':artifacts,'sha256':hashlib.sha256(data).hexdigest(),'sourceSha256':{str(f.relative_to(ROOT)):hashlib.sha256(f.read_bytes()).hexdigest() for f in files}}
  (ROOT/'.local/wasm-build.json').write_text(json.dumps(receipt,indent=2)+'\n');print(json.dumps({'artifacts':artifacts,'clean':args.clean}))
 finally:
  if temporary: temporary.cleanup()

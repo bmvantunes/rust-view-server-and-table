@@ -1,0 +1,16 @@
+{
+  "extends": "../../../../tsconfig.json",
+  "compilerOptions": {
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "lib": ["esnext", "dom"],
+    "noEmit": true,
+    "skipLibCheck": false,
+    "types": [],
+    "paths": {
+      "@bruno/table": ["../../dist/index.d.mts"],
+      "@bruno/table/effect": ["../../dist/effect.d.mts"]
+    }
+  },
+  "include": ["index.ts"]
+}

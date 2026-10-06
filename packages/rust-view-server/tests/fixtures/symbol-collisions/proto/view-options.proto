@@ -1,0 +1,14 @@
+syntax = "proto2";
+package view;
+import "google/protobuf/descriptor.proto";
+// Build-time metadata. Runtime receives a validated, self-contained scalar descriptor.
+extend google.protobuf.MessageOptions {
+  optional string schema_id = 51001;
+  optional string legacy_key = 51002;
+}
+extend google.protobuf.FieldOptions {
+  optional bool optional = 51003;
+  optional bool nullable = 51004;
+  optional bool decimal = 51005;
+  optional string null_for = 51006;
+}

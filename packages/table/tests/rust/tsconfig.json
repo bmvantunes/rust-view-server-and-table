@@ -1,0 +1,10 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true
+  },
+  "include": [
+    "./types.test-d.tsx",
+    "../../src/**/*.d.ts"
+  ]
+}

@@ -1,0 +1,129 @@
+{
+  "name": "@bruno/table",
+  "version": "0.0.0",
+  "description": "A high-performance, strongly typed data grid for React.",
+  "keywords": [
+    "tanstack-intent"
+  ],
+  "homepage": "https://github.com/bmvantunes/shadcn-table/tree/main/packages/table#readme",
+  "bugs": {
+    "url": "https://github.com/bmvantunes/shadcn-table/issues"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bmvantunes/shadcn-table.git",
+    "directory": "packages/table"
+  },
+  "files": [
+    "dist/**/*.mjs",
+    "dist/**/*.d.mts",
+    "!dist/internal/compiler-smoke.mjs",
+    "!dist/internal/compiler-smoke.d.mts",
+    "USAGE.md",
+    "RELEASE.md",
+    "THIRD_PARTY_NOTICES.md"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs",
+      "default": "./dist/index.mjs"
+    },
+    "./effect": {
+      "types": "./dist/effect.d.mts",
+      "import": "./dist/effect.mjs",
+      "default": "./dist/effect.mjs"
+    },
+    "./server": {
+      "types": "./dist/server.d.mts",
+      "import": "./dist/server.mjs",
+      "default": "./dist/server.mjs"
+    },
+    "./rust": {
+      "types": "./dist/rust.d.mts",
+      "import": "./dist/rust.mjs",
+      "default": "./dist/rust.mjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "build": "vp pack",
+    "check": "vp check",
+    "check:build": "node scripts/assert-build-output.mjs",
+    "dev": "vp pack --watch",
+    "test": "vp test --exclude \"src/**/*.browser.test.tsx\"",
+    "test:browser": "vp test --config vitest.browser.config.ts --run",
+    "test:browser:performance": "NODE_ENV=production vp test --config vitest.performance-browser.config.ts --run --mode production",
+    "test:browser:emitted": "vp test --config vitest.emitted-browser.config.ts --run",
+    "test:release:package": "node --test scripts/release-package.test.mjs",
+    "test:build:contracts": "node --test scripts/production-build-contract.test.mjs scripts/runtime-chunk-contract.test.mjs scripts/emitted-consumer-runtime-contract.test.mjs",
+    "test:bench:hotkeys": "vp test bench src/internal/hotkey-adapter.bench.ts --run",
+    "test:bench:hotkeys:browser": "vp test bench --config vitest.browser.config.ts src/internal/hotkey-adapter.browser.bench.tsx --run",
+    "test:bench:column-management": "vp test bench src/internal/column-management.bench.ts --run",
+    "test:bench:toolbar": "vp test bench src/internal/toolbar-capabilities.bench.ts --run",
+    "test:bench:row-selection": "vp test bench src/internal/row-selection.bench.ts --run",
+    "test:bench:cell-range": "vp test bench src/internal/cell-range-clipboard.bench.ts --run",
+    "test:bench:drag-fill": "vp test bench src/internal/drag-fill-planner.bench.ts --run",
+    "test:bench:cell-edit": "NODE_OPTIONS=--expose-gc vp test bench src/internal/edit-memory.bench.ts --run && vp test bench src/internal/cell-edit-traversal.bench.ts --run",
+    "test:bench:client-grouping": "vp test bench src/internal/client-grouping.bench.ts --run",
+    "test:bench:server-viewport": "vp test bench src/internal/server-viewport-store.bench.ts --run",
+    "test:types:source": "tsc --project tsconfig.type-tests.json",
+    "test:types:emitted": "tsc --project tests/emitted-consumer/tsconfig.emitted.json && tsc --project tests/emitted-consumer/tsconfig.emitted-server.json && tsc --project tests/emitted-effect-consumer/tsconfig.emitted.json",
+    "test:types:rust": "tsc --project tests/rust/tsconfig.json && tsc --project tests/rust/tsconfig.emitted.json",
+    "test:packed": "node scripts/assert-build-output.mjs --packed",
+    "test:compiler:production": "node scripts/assert-compiler-production.mjs"
+  },
+  "dependencies": {
+    "@phosphor-icons/react": "^2.1.10",
+    "@tanstack/react-hotkeys": "0.13.0",
+    "@tanstack/react-pacer": "0.24.1",
+    "@tanstack/react-table": "9.2.6",
+    "@tanstack/store": "0.11.2",
+    "xstate": "^5.32.5",
+    "@bruno/shadcn": "workspace:*",
+    "@bruno/rust-view-server": "workspace:*"
+  },
+  "devDependencies": {
+    "@bruno/shadcn": "workspace:*",
+    "@effect/atom-react": "4.0.0-rc.111",
+    "@tailwindcss/vite": "4.3.3",
+    "@tanstack/intent": "^0.3.8",
+    "@types/node": "26.6.4",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@vitejs/plugin-react": "6.1.2",
+    "@vitest/browser-playwright": "5.0.1",
+    "effect": "4.0.0-rc.111",
+    "effect-view-server": "4.2.8",
+    "playwright": "1.63.0",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "redis": "6.2.1",
+    "typescript": "7.0.2",
+    "vite": "catalog:",
+    "vite-plus": "catalog:",
+    "vitest": "5.0.1",
+    "vitest-browser-react": "2.3.0",
+    "@babel/core": "7.29.7",
+    "@types/babel__core": "7.20.5",
+    "babel-plugin-react-compiler": "1.0.0"
+  },
+  "peerDependencies": {
+    "@bruno/shadcn": ">=0.0.0 <1.0.0",
+    "effect": "4.0.0-rc.111",
+    "react": "19.3.0",
+    "react-dom": "19.3.0"
+  },
+  "peerDependenciesMeta": {
+    "effect": {
+      "optional": true
+    }
+  },
+  "inlinedDependencies": {
+    "effect-view-server": "4.2.8"
+  },
+  "private": true
+}

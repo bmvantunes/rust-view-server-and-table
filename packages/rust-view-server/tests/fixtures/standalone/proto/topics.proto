@@ -1,0 +1,12 @@
+syntax = "proto3";
+package topics;
+import "view-options.proto";
+message BalanceKey {
+  optional string tenant = 1;
+  optional uint64 account = 2;
+}
+message Balances {
+  option (view.schema_id) = "balances";
+  optional int64 quantity = 1;
+  optional double risk = 2;
+}

@@ -1,0 +1,27 @@
+[package]
+name = "rust-differential-product-core"
+version = "0.1.0"
+edition = "2024"
+publish = false
+
+[lib]
+crate-type = ["rlib", "cdylib"]
+
+[features]
+default = ["differential-engine"]
+differential-engine = []
+
+[dependencies]
+sha2 = "=0.10.9"
+base64 = "=0.22.1"
+differential-dataflow = { version = "=0.25.1", default-features = false }
+timely = { version = "=0.31.0", default-features = false }
+num-bigint = { version = "=0.4.8", features = ["serde"] }
+num-traits = "=0.2.19"
+serde = { version = "=1.0.229", features = ["derive"] }
+serde_json = { version = "=1.0.151", features = ["float_roundtrip"] }
+
+
+unicode-normalization = "=0.1.25"
+unicode-general-category = "=1.1.0"
+ryu-js = "=1.0.3"

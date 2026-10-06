@@ -1,0 +1,9 @@
+syntax = "proto3";
+package checkpoint;
+message Product {
+  string id = 1;
+  string category = 2;
+  int64 quantity = 3;
+  string amount = 4;
+  optional string label = 5;
+}

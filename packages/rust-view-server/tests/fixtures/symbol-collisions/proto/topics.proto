@@ -1,0 +1,54 @@
+syntax = "proto3";
+package topics;
+import "view-options.proto";
+message BalanceKey {
+  optional string tenant = 1;
+  optional uint64 account = 2;
+}
+message Row0 {
+  option (view.schema_id) = "catalog";
+  optional int64 quantity = 1; optional string businessId = 3;
+  optional double risk = 2;
+}
+message Row1 {
+  option (view.schema_id) = "class";
+  optional int64 quantity = 1; optional string businessId = 3;
+  optional double risk = 2;
+}
+message Row2 {
+  option (view.schema_id) = "balanceKeyFields";
+  optional int64 quantity = 1; optional string businessId = 3;
+  optional double risk = 2;
+}
+message Row3 {
+  option (view.schema_id) = "defineSchema";
+  optional int64 quantity = 1; optional string businessId = 3;
+  optional double risk = 2;
+}
+message Row4 {
+  option (view.schema_id) = "defineCatalog";
+  optional int64 quantity = 1; optional string businessId = 3;
+  optional double risk = 2;
+}
+message Row5 {
+  option (view.schema_id) = "schemas";
+  optional int64 quantity = 1; optional string businessId = 3;
+  optional double risk = 2;
+}
+message Row6 {
+  option (view.schema_id) = "keyFields";
+  optional int64 quantity = 1; optional string businessId = 3;
+  optional double risk = 2;
+}
+message Row7 {
+  option (view.schema_id) = "comparison_products";
+  optional int64 quantity = 1; optional string businessId = 3;
+  optional double risk = 2;
+}
+message Row8 {
+  option (view.schema_id) = "comparisonProducts";
+  optional int64 quantity = 1; optional string businessId = 3;
+  optional double risk = 2;
+}
+
+message balanceKey { optional string different = 1; }
