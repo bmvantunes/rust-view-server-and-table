@@ -1,0 +1,247 @@
+{
+  "qualifiedCommit": "468e40cb9eefc4198499d98fed27141d7b057e5d",
+  "candidateSourceSha256": "85b67cf882147da3fdfcac997912ceaec2580d43050b9328588fb796b111ac6f",
+  "scope": "Full local two-topic campaign and clean-clone install/generate/build/check/fast-test qualification.",
+  "campaign": {
+    "run": "e2e-fcab61f0c80341d7",
+    "command": "vp run test:e2e",
+    "status": "passed",
+    "fullCampaignAcceptance": true,
+    "candidateFrozen": true,
+    "rowsPerTopic": 200000,
+    "partitionsPerTopic": 2,
+    "checks": [
+      "mutation-during-partial-bootstrap",
+      "producer-distinct-cuts-client-completeness",
+      "simultaneous-grids-sparse-dom-deep-scroll",
+      "ui-quick-filter-unicode-match-none-peer-independence",
+      "bounded-provider-numeric-multisort-groups-exact-average-2048-facets",
+      "client-edit-paste-fill-save-committed-source-draft-conflict",
+      "selected-row-identity-survives-live-reorder",
+      "live-upsert-exact-dom-stable-identity-delete",
+      "same-page-transport-interruption-recovery",
+      "native-restart-recovery-with-explicit-browser-retry-and-later-update",
+      "worker-asset-failure-bounded-error-explicit-retry",
+      "provider-disposal-page-unmount"
+    ],
+    "initialReceipts": {
+      "client_orders": {
+        "count": 200000,
+        "sha256": "d55a8a17c2a21d57d0c86b93f035475d8d89deadeec811d6eb837baaa36143e7",
+        "sourceNext": {
+          "0": 100199,
+          "1": 100199
+        },
+        "producerReceipts": 200000
+      },
+      "server_orders": {
+        "count": 200000,
+        "sha256": "8db3a1c1fd3de14573f41db52b783f6668cf26b760a11be072e28c2b768d34e2",
+        "sourceNext": {
+          "0": 100199,
+          "1": 100199
+        },
+        "producerReceipts": 200000
+      }
+    },
+    "finalReceipts": {
+      "client_orders": {
+        "count": 199999,
+        "sha256": "91490357190cb17c90f43d48097f41af616e031da63c11107a15a69fba0618fe",
+        "sourceNext": {
+          "0": 100207,
+          "1": 100209
+        },
+        "producerReceipts": 200009
+      },
+      "server_orders": {
+        "count": 199999,
+        "sha256": "67cfcc0f04d21ca4a37e355e324fb8a082e1de1b39e027b0c17bc6adc6a128a7",
+        "sourceNext": {
+          "0": 100203,
+          "1": 100205
+        },
+        "producerReceipts": 200005
+      }
+    },
+    "cleanupErrors": [],
+    "ownedChildren": [
+      {
+        "pid": 60288,
+        "exitCode": 0
+      },
+      {
+        "pid": 60041,
+        "exitCode": 0
+      },
+      {
+        "pid": 60040,
+        "exitCode": -15
+      },
+      {
+        "pid": 59360,
+        "exitCode": 0
+      },
+      {
+        "pid": 59362,
+        "exitCode": 0,
+        "role": "persistent-producer"
+      }
+    ],
+    "volumePolicy": "Owned broker volume retained after scoped shutdown; no data reset.",
+    "liveCleanupConfirmedByLead": true
+  },
+  "timings": {
+    "documentedCommandSeconds": 260.318,
+    "runnerSeconds": 252.271665417,
+    "browserSeconds": 153.845637125,
+    "nativeInitialCatchupSeconds": 12.14540375,
+    "firstCoherentClientMs": 15637.618958000001,
+    "nativeRestartCatchupSeconds": 31.938713000000007,
+    "sourceUpdateRequestToObservedDomMs": 2925.4186670000054
+  },
+  "initialServerDelivery": {
+    "active": 1,
+    "resultRows": 18,
+    "maximumResultRows": 18,
+    "distinctResultRows": 18,
+    "invalidIdentityResults": 0,
+    "receivedBinaryBytes": 35248912,
+    "completeBinaryBytes": 34173352,
+    "viewportBinaryBytes": 3561
+  },
+  "nativeRestart": {
+    "automaticBrowserRecovery": false,
+    "explicitSamePageRetryRequired": true,
+    "terminalCode": "recovery-attempts",
+    "retryCount": 12,
+    "productRetryBudgetsUnchanged": true
+  },
+  "measurements": {
+    "nativeRssAfterRestartKiB": 309072,
+    "pageMetricsAtPreAssetStage": {
+      "Nodes": 2998,
+      "JSHeapUsedSize": 978386100,
+      "JSHeapTotalSize": 1075265536
+    },
+    "applicationBytesBeforeAssetFailure": {
+      "worker": {
+        "receivedBinaryBytes": 144297376,
+        "completeBinaryBytes": 136735438,
+        "viewportBinaryBytes": 1336316
+      },
+      "pageCdpWebsocketReceived": 0,
+      "httpEncoded": 587232
+    },
+    "frameCadence": {
+      "samples": 2048,
+      "over32ms": 30,
+      "estimatedMissed60HzOpportunities": 1022,
+      "assumption": "60Hz requestAnimationFrame opportunities, not physical dropped paints"
+    }
+  },
+  "evidence": {
+    ".local/e2e/e2e-fcab61f0c80341d7/result.json": {
+      "sha256": "f6312b56076221a839865625edd253e285b0e7dfa2d88a246990dc78e05cda8c",
+      "bytes": 14705
+    },
+    ".local/e2e/e2e-fcab61f0c80341d7/browser-result.json": {
+      "sha256": "401f7a34907e0074ac797deaa1297a6199e284fe92ad6141b40f1b448c099685",
+      "bytes": 988
+    },
+    ".local/e2e/e2e-fcab61f0c80341d7/browser-samples.ndjson": {
+      "sha256": "b78225adc681c4c430bb9742cd41a9fff7319fcf8acaa4642a7ad2b9ed6f201b",
+      "bytes": 1500704
+    },
+    ".local/e2e/e2e-fcab61f0c80341d7/producer-receipts.ndjson": {
+      "sha256": "6390a7415b41eef256e6685e1f06742c813c6c2cb40eea471eea84693806f511",
+      "bytes": 173648698
+    },
+    ".local/e2e/e2e-fcab61f0c80341d7/initial-native-catchup.ndjson": {
+      "sha256": "373810d6b70094f63f36aa142953a6f7abd5849c2039198615c32fa96354e3a1",
+      "bytes": 107317
+    },
+    ".local/e2e/e2e-fcab61f0c80341d7/restart-native-catchup.ndjson": {
+      "sha256": "4be07ab80a9f2a06a92cd451a6b2ef31c7cc1cb337be42823fcfbe25bf923450",
+      "bytes": 266166
+    },
+    ".local/e2e/e2e-fcab61f0c80341d7/effective-kafka-config.log": {
+      "sha256": "cbc50971df90a53d9b921ad26914b0b1a0cee33eca6f174d84cab0ea54c83f4b",
+      "bytes": 43839
+    },
+    ".local/fresh-clone/install.log": {
+      "sha256": "d8b3bc7ef855c2cc2f77d3377f58e7e1c7424774ccd7b3f5ccbed15153b980bd",
+      "bytes": 176
+    },
+    ".local/fresh-clone/generate.log": {
+      "sha256": "80d3e0f748f5be6a8818015ca3e0a5004e292ee59e74e5551d96def22088afe0",
+      "bytes": 1239
+    },
+    ".local/fresh-clone/build.log": {
+      "sha256": "68c660d30176af4299bf47782a73bad5d48c3cf8bebb73b1c21ff70d0794646f",
+      "bytes": 49083
+    },
+    ".local/fresh-clone/check.log": {
+      "sha256": "307d5f0f293f7cd104f0a13645147e4e4edd68c9bfad9380563930ae80f68961",
+      "bytes": 179632
+    },
+    ".local/fresh-clone/test.log": {
+      "sha256": "59978d184a83dc8e3c2c32e4e0ca7b5249f932aab2eb8d92ce4943eb4e3acd46",
+      "bytes": 44909
+    }
+  },
+  "freshClone": {
+    "status": "passed",
+    "directory": "/private/tmp/rvsat-fresh-781b40b",
+    "commit": "468e40cb9eefc4198499d98fed27141d7b057e5d",
+    "frozenInstall": "passed",
+    "packageCacheReused": 572,
+    "registryMetadataNetworkRequired": true,
+    "copiedBuildArtifacts": false,
+    "cargoNetworkDisabled": true,
+    "generate": "passed",
+    "build": "passed",
+    "check": "passed",
+    "test": "passed",
+    "trackedWorkingTreeClean": true,
+    "taskCacheHits": 0,
+    "commands": [
+      "vp install --frozen-lockfile",
+      "CARGO_NET_OFFLINE=true vp run generate",
+      "CARGO_NET_OFFLINE=true vp run build",
+      "CARGO_NET_OFFLINE=true vp run check",
+      "CARGO_NET_OFFLINE=true vp run test"
+    ],
+    "cacheInputs": [
+      "572 package archives reused; online registry policy metadata required",
+      "Previously downloaded Cargo crates; Cargo networking disabled",
+      "Pinned installed toolchains and existing Chromium download"
+    ],
+    "fastTests": {
+      "nativePassed": 208,
+      "nativeIgnored": 11,
+      "nativeNestedChildPassExcludedFromCount": 1,
+      "legacySocketPassed": 5,
+      "providerBrowserPassed": 101,
+      "completeClientPassed": 5,
+      "tablePassed": 1176,
+      "infrastructureAndCampaignPassed": 27
+    },
+    "ignoredNativeTests": "Six opt-in Kafka socket regressions, one isolated real-Kafka regression, four explicitly invoked process helpers; the full campaign is separately qualified."
+  },
+  "limits": [
+    "Native restart required explicit browser retry after the unchanged automatic retry policy exhausted.",
+    "Query probes qualify production provider semantics, not every equivalent menu interaction.",
+    "Chromium only; no Safari, cold-offline/PWA, broker-loss or production SLA claim.",
+    "Memory values are samples, not peak bounds. Frame cadence is a 60Hz opportunity estimate, not physical dropped paints.",
+    "The company-specific Buf Decimal plugin/type mapping remains unavailable.",
+    "Prior failed campaigns are retained and not counted as passing."
+  ],
+  "independentReview": {
+    "status": "passed",
+    "reviewedCommit": "468e40cb9eefc4198499d98fed27141d7b057e5d",
+    "journalTransactionsReconstructed": 409,
+    "scope": "Exact implementation/harness changes and retained full campaign identities, cuts, payload hashes, all 12 checks, bounded measurements and cleanup records. No actionable evidence inconsistency found.",
+    "freshCloneCompletion": "Subsequently verified by lead; all composed commands exited zero."
+  }
+}

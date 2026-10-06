@@ -1,6 +1,6 @@
 # Rust View Server and BrunoTable
 
-Private local workspace joining the proto-first Rust view engine with `BrunoTableClient` and `BrunoTableServer` in one TanStack Start app. See [qualification status](docs/task-ledger.md) before interpreting a passing individual check as integrated acceptance.
+Private local workspace joining the proto-first Rust view engine with `BrunoTableClient` and `BrunoTableServer` in one TanStack Start app. See the [qualification report](docs/qualification.md) for the full 200,000-row-per-topic campaign and its measured limits.
 
 ## Start here
 
@@ -16,6 +16,8 @@ vp run dev
 ```
 
 The development app opens at http://127.0.0.1:3000. The default seed is 200,000 distinct identities in **each** of two source topics. Native Rust services and the app run on the host. Only Apache Kafka runs in Docker, using the explicitly selected OrbStack context. No host Java, `JAVA_HOME` or `KAFKA_HOME` is required.
+
+A long native-service restart can exceed the bounded browser reconnect policy. Once native recovery is ready, use **Reconnect and reacquire**; the full campaign qualified that explicit retry path.
 
 Interrupting the dev command stops its owned services and broker while preserving the run's broker volume. A reset is a separate explicit scoped command. See [Kafka lifecycle and ownership](docs/local-kafka.md).
 
