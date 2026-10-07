@@ -16,7 +16,8 @@
     "babel-plugin-react-compiler": "1.0.0",
     "playwright": "1.63.0",
     "@types/babel__core": "7.20.5",
-    "@bruno/table": "workspace:*"
+    "@bruno/table": "workspace:*",
+    "yaml": "catalog:"
   },
   "devEngines": {
     "packageManager": {
