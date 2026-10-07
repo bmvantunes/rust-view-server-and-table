@@ -1,6 +1,6 @@
 # TypeScript cleanup and package split
 
-Branch: `refactor/typescript-tooling`. Baseline: `202833c9211cae9f9720c46a6ddff4f1dffc7594`. The cleanup/split is qualified at executable commit `31e24ec2962ad7312ec28b213c60ce5982ebb54f`. The final handoff commit adds documentation only. No push was made.
+Branch: `refactor/typescript-tooling`. Baseline: `202833c9211cae9f9720c46a6ddff4f1dffc7594`. Current qualification after integrating master is at `d7617cf28fdec833501ac07adafad1b1d0f14f01`; see [final integration results](merge-qualification.md). The initial cleanup qualification below remains historical evidence from `31e24ec`, before publication and the master integration.
 
 | Owner | Maintained source |
 | --- | --- |
@@ -25,7 +25,7 @@ WASM is built into `artifacts/wasm`, verified against source and artifact hashes
 
 The separate [decimal clarification](decimal-integration.md) records genuine Effect values, exact conversion checks and public result domains. Company source decoder mapping remains pending; decimal support is present.
 
-## Executed qualification
+## Initial cleanup qualification (historical)
 
 The fresh full campaign **e2e-25491a17557af84e passed all 12 browser checks**, with **200,000 distinct initial live rows in each topic**, two partitions each, and no cleanup errors. It ran through the new TypeScript tooling and final package layout at frozen executable commit `31e24ec2962ad7312ec28b213c60ce5982ebb54f`. The machine-readable report is [cleanup-qualification.json](cleanup-qualification.json). Raw evidence remains in ignored `.local/e2e/e2e-25491a17557af84e/` and `.local/cleanup/`.
 

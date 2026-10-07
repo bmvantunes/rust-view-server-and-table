@@ -1,6 +1,6 @@
 # Implementation ledger
 
-Current cleanup/split: branch `refactor/typescript-tooling`, frozen executable commit `31e24ec2962ad7312ec28b213c60ce5982ebb54f`. Fresh full campaign `e2e-25491a17557af84e` passed all 12 checks with 200,000 initial live rows per topic and no cleanup errors. See [current cleanup qualification](cleanup-split.md) and [machine-readable evidence](cleanup-qualification.json). The ledger below is retained historical evidence for the previous delivery.
+Current cleanup/split: branch `refactor/typescript-tooling`, frozen executable commit `d7617cf28fdec833501ac07adafad1b1d0f14f01`, [PR #2](https://github.com/bmvantunes/rust-view-server-and-table/pull/2). Fresh full campaign `e2e-91081aaae760e3e1` passed all 12 checks with 200,000 initial live rows per topic and no cleanup errors after integrating master. See [current qualification](merge-qualification.md) and [machine-readable evidence](merge-qualification.json). Initial cleanup and earlier delivery evidence below remain historical.
 
 The integrated product and full local campaign are qualified at `468e40cb9eefc4198499d98fed27141d7b057e5d`. Final documentation records those frozen executable bytes. See [qualification](qualification.md) and its [machine-readable evidence](qualification.json).
 
