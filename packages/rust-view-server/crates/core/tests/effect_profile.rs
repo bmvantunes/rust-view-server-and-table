@@ -96,3 +96,39 @@ fn rows_exact(runtime:&mut Runtime,fp:&str,input:Vec<Value>){runtime.apply_commi
  assert_eq!(query(&mut r,&fp,q.clone())["rows"],json!([{"group":"g","sum":"0","avg":"0"}]));
  rows(&mut r,&fp,vec![json!({"id":"a","group":"g","n":1})]);assert_eq!(query(&mut r,&fp,q)["rows"],json!([{"group":"g","sum":"1","avg":"1","max":1.0}]));
 }
+
+#[test]
+fn grouped_multi_sort_window_and_live_reranking_preserve_requested_order() {
+    let (mut r, fp) = runtime();
+    rows(&mut r, &fp, vec![
+        json!({"id":"by","group":"B","text":"Y","n":1}),
+        json!({"id":"ax1","group":"A","text":"X","n":2}),
+        json!({"id":"ay","group":"A","text":"Y","n":9}),
+        json!({"id":"bx","group":"B","text":"X","n":9}),
+        json!({"id":"ax2","group":"A","text":"X","n":3}),
+    ]);
+    let base = json!({"group_by":["text","group"],"aggregates":{"total":{"aggFunc":"sum","field":"n"},"mean":{"aggFunc":"avg","field":"n"}},"order_by":[{"aggregate":"total","direction":"desc"},{"field":"group","direction":"desc"}]});
+    let labels = |rows: &[Value]| rows.iter().map(|row| format!("{}/{}:{}", row["group"].as_str().unwrap(), row["text"].as_str().unwrap(), row["total"].as_str().unwrap())).collect::<Vec<_>>();
+    let initial = query(&mut r, &fp, base.clone());
+    assert_eq!(labels(initial["rows"].as_array().unwrap()), ["B/X:9", "A/Y:9", "A/X:5", "B/Y:1"]);
+    assert_eq!(labels(&r.read("profile", 1, 2, 65536).unwrap().rows), ["A/Y:9", "A/X:5"]);
+    let mut ascending = base.clone();
+    ascending["order_by"] = json!([{"aggregate":"total","direction":"asc"},{"field":"group","direction":"asc"}]);
+    let asc = query(&mut r, &fp, ascending);
+    assert_eq!(labels(asc["rows"].as_array().unwrap()), ["B/Y:1", "A/X:5", "A/Y:9", "B/X:9"]);
+    assert_eq!(asc["keys"].as_array().unwrap(), &initial["keys"].as_array().unwrap().iter().rev().cloned().collect::<Vec<_>>());
+    let mut fields = base.clone();
+    fields["order_by"] = json!([{"field":"group","direction":"desc"},{"field":"text","direction":"asc"}]);
+    assert_eq!(labels(query(&mut r, &fp, fields)["rows"].as_array().unwrap()), ["B/X:9", "B/Y:1", "A/X:5", "A/Y:9"]);
+    query(&mut r, &fp, base.clone());
+    rows(&mut r, &fp, vec![json!({"id":"by","group":"B","text":"Y","n":12})]);
+    assert_eq!(labels(&r.read("profile", 0, 10, 65536).unwrap().rows), ["B/Y:12", "B/X:9", "A/Y:9", "A/X:5"]);
+    r.apply_committed("test", &fp, &[Mutation::Delete{key:"by".into()}]).unwrap();
+    assert_eq!(labels(&r.read("profile", 0, 10, 65536).unwrap().rows), ["B/X:9", "A/Y:9", "A/X:5"]);
+    let previous = r.read("profile", 0, 10, 65536).unwrap().keys;
+    let mut regrouped = base;
+    regrouped["group_by"] = json!(["group","text"]);
+    let regrouped = query(&mut r, &fp, regrouped);
+    assert_eq!(labels(regrouped["rows"].as_array().unwrap()), ["B/X:9", "A/Y:9", "A/X:5"]);
+    assert_ne!(regrouped["keys"], json!(previous));
+}

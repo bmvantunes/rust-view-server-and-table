@@ -1,0 +1,4 @@
+{
+  "extends": "../../tsconfig.json",
+  "include": ["../../src/rust-grouped-order.browser.test.tsx", "../../src/**/*.d.ts"]
+}

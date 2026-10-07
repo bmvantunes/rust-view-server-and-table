@@ -69,7 +69,7 @@
     "test:bench:server-viewport": "vp test bench src/internal/server-viewport-store.bench.ts --run",
     "test:types:source": "tsc --project tsconfig.type-tests.json",
     "test:types:emitted": "tsc --project tests/emitted-consumer/tsconfig.emitted.json && tsc --project tests/emitted-consumer/tsconfig.emitted-server.json && tsc --project tests/emitted-effect-consumer/tsconfig.emitted.json",
-    "test:types:rust": "tsc --project tests/rust/tsconfig.json && tsc --project tests/rust/tsconfig.emitted.json",
+    "test:types:rust": "tsc --project tests/rust/tsconfig.json && tsc --project tests/rust/tsconfig.emitted.json && tsc --project tests/rust/tsconfig.browser.json",
     "test:packed": "node scripts/assert-build-output.ts --packed",
     "test:compiler:production": "node scripts/assert-compiler-production.ts",
     "check:tooling": "tsc --project tsconfig.tooling.json"
