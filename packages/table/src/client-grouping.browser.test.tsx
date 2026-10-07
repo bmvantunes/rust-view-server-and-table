@@ -1194,6 +1194,7 @@ describe("BrunoTableClient grouping and aggregation", () => {
     await userEvent.click(page.getByRole("button", { name: "Column menu for Desk" }));
     expect(page.getByRole("menuitem", { name: /^Sort by Desk(?:,|$)/u }).all()).toHaveLength(0);
     await userEvent.keyboard("{Escape}");
+    await expect.element(page.getByRole("menu", { includeHidden: true })).not.toBeInTheDocument();
 
     await chooseGroup("Desk");
     await userEvent.click(page.getByRole("button", { name: "Column menu for Desk" }));
@@ -1201,6 +1202,7 @@ describe("BrunoTableClient grouping and aggregation", () => {
       .element(page.getByRole("menuitem", { name: /^Sort by Desk(?:,|$)/u }))
       .toBeInTheDocument();
     await userEvent.keyboard("{Escape}");
+    await expect.element(page.getByRole("menu", { includeHidden: true })).not.toBeInTheDocument();
     await userEvent.click(page.getByRole("button", { name: "Sort rows, 1 active" }));
     const sortPanel = page.getByRole("dialog", { name: "Sort rows" });
     await expect

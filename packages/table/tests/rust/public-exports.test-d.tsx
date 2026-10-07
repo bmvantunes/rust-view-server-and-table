@@ -11,7 +11,7 @@ import {
   type BrunoTableRustViewport,
   type BrunoTableRustWhere,
 } from "@bruno/table/rust";
-import { catalog } from "@bruno/rust-view-server/generated/topics";
+import { catalog } from "@bruno/view-server-client/generated/topics";
 
 // @ts-expect-error public Rust adapter exports carry the BrunoTable brand
 import type { CompatRow } from "@bruno/table/rust";

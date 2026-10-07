@@ -220,10 +220,12 @@ describe("React Compiler entry-point and escape-hatch contract", () => {
     ).toBe(true);
   });
 
-  test("enables React Compiler in every package React build and Browser entry-point config", () => {
+  test("enables React Compiler in every package React build and Browser entry-point config", async () => {
     const configFiles = collectSourceFiles(resolve(workspaceRoot, "packages"))
       .map((path) => relative(workspaceRoot, path))
-      .filter((path) => /packages\/(?:table|ui)\/(?:vite|vitest[^/]*browser[^/]*)\.config\.ts$/u.test(path))
+      .filter((path) =>
+        /packages\/(?:table|ui)\/(?:vite|vitest[^/]*browser[^/]*)\.config\.ts$/u.test(path),
+      )
       .sort();
 
     expect(configFiles).toEqual([
@@ -240,9 +242,27 @@ describe("React Compiler entry-point and escape-hatch contract", () => {
       const configuredReactPlugins = source.match(/\breact\(\s*\{/gu)?.length ?? 0;
       const compilerOptions = source.match(/\breactCompiler\(\)/gu)?.length ?? 0;
 
-      expect(source, `${configFile} must import the shared strict compiler policy`).toContain(
-        'import { reactCompiler } from "../../config/react-compiler";',
+      const ast = await parseAstAsync(source, { lang: "ts" });
+      const importsSharedCompiler = ast.body.some(
+        (statement) =>
+          statement.type === "ImportDeclaration" &&
+          statement.importKind !== "type" &&
+          ["../../config/react-compiler", "../../config/react-compiler.ts"].includes(
+            statement.source.value,
+          ) &&
+          statement.specifiers.some(
+            (specifier) =>
+              specifier.type === "ImportSpecifier" &&
+              specifier.importKind !== "type" &&
+              specifier.imported.type === "Identifier" &&
+              specifier.imported.name === "reactCompiler" &&
+              specifier.local.name === "reactCompiler",
+          ),
       );
+      expect(
+        importsSharedCompiler,
+        `${configFile} must import the shared strict compiler policy`,
+      ).toBe(true);
       expect(source, `${configFile} must not register an uncompiled React plugin`).not.toMatch(
         /\breact\(\s*\)/u,
       );

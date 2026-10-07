@@ -1,5 +1,5 @@
-import type {BrowserProductProvider, ProductViewportWindow} from '@bruno/rust-view-server/react';
-import type {Schema} from '@bruno/rust-view-server/schema';
+import type {BrowserProductProvider, ProductViewportWindow} from '@bruno/view-server-client/react';
+import type {Schema} from '@bruno/view-server-client/schema';
 import {compile,decodeRows} from './translate.ts';
 import type {Chrome,CompatResult,Query,Viewport} from './types.ts';
 export type ProviderPort=Pick<BrowserProductProvider,'watch'|'apply'|'deliveryGuard'|'connectionStatus'>;

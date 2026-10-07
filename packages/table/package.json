@@ -2,9 +2,6 @@
   "name": "@bruno/table",
   "version": "0.0.0",
   "description": "A high-performance, strongly typed data grid for React.",
-  "keywords": [
-    "tanstack-intent"
-  ],
   "homepage": "https://github.com/bmvantunes/shadcn-table/tree/main/packages/table#readme",
   "bugs": {
     "url": "https://github.com/bmvantunes/shadcn-table/issues"
@@ -52,14 +49,14 @@
   "scripts": {
     "build": "vp pack",
     "check": "vp check",
-    "check:build": "node scripts/assert-build-output.mjs",
+    "check:build": "node scripts/assert-build-output.ts",
     "dev": "vp pack --watch",
     "test": "vp test --exclude \"src/**/*.browser.test.tsx\"",
     "test:browser": "vp test --config vitest.browser.config.ts --run",
     "test:browser:performance": "NODE_ENV=production vp test --config vitest.performance-browser.config.ts --run --mode production",
     "test:browser:emitted": "vp test --config vitest.emitted-browser.config.ts --run",
-    "test:release:package": "node --test scripts/release-package.test.mjs",
-    "test:build:contracts": "node --test scripts/production-build-contract.test.mjs scripts/runtime-chunk-contract.test.mjs scripts/emitted-consumer-runtime-contract.test.mjs",
+    "test:release:package": "node --test scripts/release-package.test.ts",
+    "test:build:contracts": "node --test scripts/production-build-contract.test.ts scripts/runtime-chunk-contract.test.ts scripts/emitted-consumer-runtime-contract.test.ts scripts/tooling-data.test.ts scripts/installed-hydration-fixture.test.ts",
     "test:bench:hotkeys": "vp test bench src/internal/hotkey-adapter.bench.ts --run",
     "test:bench:hotkeys:browser": "vp test bench --config vitest.browser.config.ts src/internal/hotkey-adapter.browser.bench.tsx --run",
     "test:bench:column-management": "vp test bench src/internal/column-management.bench.ts --run",
@@ -73,8 +70,9 @@
     "test:types:source": "tsc --project tsconfig.type-tests.json",
     "test:types:emitted": "tsc --project tests/emitted-consumer/tsconfig.emitted.json && tsc --project tests/emitted-consumer/tsconfig.emitted-server.json && tsc --project tests/emitted-effect-consumer/tsconfig.emitted.json",
     "test:types:rust": "tsc --project tests/rust/tsconfig.json && tsc --project tests/rust/tsconfig.emitted.json",
-    "test:packed": "node scripts/assert-build-output.mjs --packed",
-    "test:compiler:production": "node scripts/assert-compiler-production.mjs"
+    "test:packed": "node scripts/assert-build-output.ts --packed",
+    "test:compiler:production": "node scripts/assert-compiler-production.ts",
+    "check:tooling": "tsc --project tsconfig.tooling.json"
   },
   "dependencies": {
     "@phosphor-icons/react": "^2.1.10",
@@ -84,13 +82,12 @@
     "@tanstack/store": "0.11.2",
     "xstate": "^5.32.5",
     "@bruno/shadcn": "workspace:*",
-    "@bruno/rust-view-server": "workspace:*"
+    "@bruno/view-server-client": "workspace:*"
   },
   "devDependencies": {
     "@bruno/shadcn": "workspace:*",
     "@effect/atom-react": "4.0.0-rc.111",
     "@tailwindcss/vite": "4.3.3",
-    "@tanstack/intent": "^0.3.8",
     "@types/node": "26.6.4",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",

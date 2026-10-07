@@ -14,7 +14,9 @@
     "@rolldown/plugin-babel": "0.2.4",
     "@vitejs/plugin-react": "6.1.2",
     "babel-plugin-react-compiler": "1.0.0",
-    "playwright": "1.63.0"
+    "playwright": "1.63.0",
+    "@types/babel__core": "7.20.5",
+    "@bruno/table": "workspace:*"
   },
   "devEngines": {
     "packageManager": {

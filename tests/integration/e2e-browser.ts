@@ -1,12 +1,12 @@
-/** Executed by Node's native TypeScript support; Playwright comes from the SDK workspace. */
+/** Executed by the pinned Node runtime; browser orchestration belongs to the workspace. */
 import assert from 'node:assert/strict';
-import {createRequire} from 'node:module';
+import {chromium} from 'playwright';
 import {appendFileSync,writeFileSync} from 'node:fs';
 import {createInterface} from 'node:readline';
 import {fileURLToPath} from 'node:url';
-import type {catalog} from '../../packages/rust-view-server/src/generated/demo-catalog.ts';
+import type {catalog} from '../../packages/view-server-client/src/generated/demo-catalog.ts';
 import type {BrunoTableRustCompatRow} from '@bruno/table/rust';
-import type {BrowserProductProvider,HealthObservation} from '../../packages/rust-view-server/src/product-provider.tsx';
+import type {BrowserProductProvider,HealthObservation} from '../../packages/view-server-client/src/product-provider.tsx';
 import type {queryCases} from '../../apps/web/src/e2e-queries.ts';
 
 type SourceRow=BrunoTableRustCompatRow<typeof catalog.client_orders.schema>;
@@ -15,8 +15,6 @@ type StatusDiagnostic={client:{status:string;loaded:number;error?:string};server
 type Diagnostic={status():StatusDiagnostic;row(orderId:string):SerializedRow|undefined;snapshot():Omit<StatusDiagnostic,'client'> & {client:StatusDiagnostic['client'] & {rows:readonly SerializedRow[]}};dispose():void;queryCase:ReturnType<typeof queryCases>};
 declare global {interface Window {__RVS_E2E__?:Diagnostic;__RVS_WORKERS__?:{active:number;resultRows:number;maximumResultRows:number;distinctResultRows:number;invalidIdentityResults:number;receivedBinaryBytes:number;completeBinaryBytes:number;viewportBinaryBytes:number};__RVS_FRAME_INTERVALS__?:number[]}}
 type Expected=Record<string,{count:number;sha256:string;sourceNext:Record<string,number>;producerReceipts:number}>;
-const require=createRequire(new URL('../../packages/rust-view-server/package.json',import.meta.url));
-const {chromium}=require('playwright') as typeof import('playwright');
 const root=fileURLToPath(new URL('../../',import.meta.url));
 const directory=process.env.E2E_DIRECTORY!;
 const rows=Number(process.env.E2E_ROWS);
@@ -266,10 +264,13 @@ try{
  await filterClient('',expected.client_orders.count);
  const deleted=await rpc('delete',{index:1}) as {expected:Expected};expected=deleted.expected;await coherent(expected);
  checks.push('live-upsert-exact-dom-stable-identity-delete');
- await context.setOffline(true);
- await page.waitForFunction(()=>window.__RVS_E2E__!.status().connection!=='connected',undefined,{timeout:30000});
- await context.setOffline(false);
- await coherent(expected);checks.push('same-page-transport-interruption-recovery');
+ const transportAttempt=await page.evaluate(()=>window.__RVS_E2E__!.status().diagnostics.attempt);
+ const interruption=await rpc('interrupt-transport');
+ assert(interruption&&typeof interruption==='object'&&'closedConnections'in interruption&&typeof interruption.closedConnections==='number'&&interruption.closedConnections>0,'The fault must close an actual Worker transport');
+ await page.waitForFunction(previous=>{const status=window.__RVS_E2E__!.status();return status.diagnostics.attempt>previous&&status.recoveryEvents.some(event=>event.phase==='attempt-lost'&&event.attempt>=previous);},transportAttempt,{timeout:30000});
+ await coherent(expected);
+ sample('transport-only-recovery',{interruption,beforeAttempt:transportAttempt,after:await page.evaluate(()=>window.__RVS_E2E__!.status())});
+ checks.push('same-page-transport-interruption-recovery');
  const instance=await page.evaluate(()=>window.__RVS_E2E__!.status().health.snapshot?.instance);
  assert(instance,'Restart comparison requires the previous native instance');
  const restartStarted=performance.now();

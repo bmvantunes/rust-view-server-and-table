@@ -1,5 +1,5 @@
 import {useCallback,useEffect,useState} from "react";
-import {catalog} from "@bruno/rust-view-server/generated/demo-catalog";
+import {catalog} from "@bruno/view-server-client/generated/demo-catalog";
 import {BrunoTableBigIntColumn,BrunoTableBooleanColumn,BrunoTableTextColumn,type BrunoTableColumns,type BrunoTableSaveEditsHandler} from "@bruno/table";
 import {BrunoTableBigDecimalColumn,type BrunoTableBigDecimalValueType} from "@bruno/table/effect";
 import {BrunoTableRustEncodeCompatRow,type BrunoTableRustCompatRow} from "@bruno/table/rust";

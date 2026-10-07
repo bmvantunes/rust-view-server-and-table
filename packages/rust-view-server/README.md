@@ -1,23 +1,7 @@
-# vite-plus-starter
+# Rust view-server implementation
 
-A starter for creating a Vite Plus project.
+This private workspace task adapter owns the existing core, runtime, admission, wire and WASM crates under `crates/`. Cargo owns their dependencies and native tests. The root Cargo workspace and `rust-toolchain.toml` are authoritative.
 
-## Development
+The TypeScript SDK, Workers, Provider and browser tests live in `../view-server-client`, package name `@bruno/view-server-client`. This Rust package has no runtime npm exports.
 
-- Install dependencies:
-
-```bash
-vp install
-```
-
-- Run the unit tests:
-
-```bash
-vp test
-```
-
-- Build the library:
-
-```bash
-vp pack
-```
+Use root VP commands. The Rust WASM build writes artifacts to `artifacts/wasm`; the explicit client staging task checks hashes and binding exports before packaging. Native Cargo compilation uses already-generated schema fixtures and does not require SDK/table builds.

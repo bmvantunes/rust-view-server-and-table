@@ -1,12 +1,11 @@
-import react, {reactCompilerPreset} from "@vitejs/plugin-react";
-import babel from "@rolldown/plugin-babel";
+import { react, reactCompiler } from "../../../../../config/react-compiler.ts";
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "vite-plus";
 import { playwright } from "vite-plus/test/browser-playwright";
 
 export default defineConfig({
   plugins: [
-    ...(process.env["BRUNO_COMPILER_NEGATIVE_CONTROL"] === "1" ? [] : [babel({presets:[reactCompilerPreset({compilationMode:"infer",eslintSuppressionRules:[],panicThreshold:"all_errors",target:"19"})]})]),
+    ...(process.env["BRUNO_COMPILER_NEGATIVE_CONTROL"] === "1" ? [] : [reactCompiler()]),
     react(),
     {
       name: "assert-consumer-compiler-transform",

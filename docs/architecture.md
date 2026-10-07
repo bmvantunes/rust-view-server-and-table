@@ -17,3 +17,9 @@ This design bounds transport frames and retained protocol queues, but snapshot c
 ## Semantic profile
 
 Ordinary table queries explicitly request `effect-4.2.8`. The profile participates in query identity and native/WASM execution. It selects reference Unicode text normalization, UTF-16 ordering and exact numeric aggregation behavior without silently changing legacy native query defaults. The pinned Effect oracle remains separate correctness evidence.
+
+## Workspace ownership
+
+Cargo owns the native dependency graph under `packages/rust-view-server/crates` and the thin `apps/server` binary. The private Rust package is only a VP task adapter, with no npm runtime exports. The separately named `@bruno/view-server-client` owns SDK, React, Worker, wire validation and local WASM fixture code. Table and web consumers import its public exports; the client has no dependency on the table. Shared proto authority and generators remain at the workspace root.
+
+The build graph is Rust → verified WASM artifacts → client SDK/Workers → table/app and integration tests. The client’s workspace Rust dependency is development-only; published assets contain the WASM and Workers. Installation has no Cargo hook. Generated `.mjs` and declarations remain valid build outputs.

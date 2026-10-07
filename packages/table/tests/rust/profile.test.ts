@@ -1,8 +1,8 @@
 import {expect,test} from 'vite-plus/test';
-import {defineSchema,resultShape,validateQuery,validateGroupedRow,requiresTextPredicate} from '@bruno/rust-view-server/schema';
+import {defineSchema,resultShape,validateQuery,validateGroupedRow,requiresTextPredicate} from '@bruno/view-server-client/schema';
 import {compile,decodeRows} from '../../src/rust/translate.ts';
 import * as BigDecimal from 'effect/BigDecimal';
-import type {ProductResult} from '@bruno/rust-view-server/react';
+import type {ProductResult} from '@bruno/view-server-client/react';
 const schema=defineSchema({format:2,id:'profile_test',version:2,key:'rowId',fields:[{name:'group',kind:'string',optional:false,nullable:false},{name:'number',kind:'number',optional:false,nullable:false},{name:'optional',kind:'number',optional:true,nullable:false},{name:'nullable',kind:'number',optional:true,nullable:true},{name:'text',kind:'string',optional:true,nullable:true}]} as const);
 const fingerprint='a'.repeat(64);
 test('profile identity is explicit, leaves native descriptor unchanged and validates text flags',()=>{

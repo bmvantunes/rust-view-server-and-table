@@ -114,7 +114,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .truncate(false).open(config_path.with_extension("control.lock"))?;
     match authority_lock.try_lock() {
         Err(std::fs::TryLockError::WouldBlock) => {},
-        Ok(()) => return Err("demo writes require a running control authority; use scripts/dev.py and scripts/seed.py".into()),
+        Ok(()) => return Err("demo writes require a running control authority; use VP dev and seed commands".into()),
         Err(error) => return Err(error.into()),
     }
     let c: Value = serde_json::from_slice(&std::fs::read(config_path)?)?;

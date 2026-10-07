@@ -1,6 +1,6 @@
 import * as BigDecimal from 'effect/BigDecimal';
-import {defineCatalog, validateScalar, validateQuery, validateRow, validateGroupedRow, queryFields, type Schema, type Row, type Field, type BrowserCatalog, type TopicQuery} from '@bruno/rust-view-server/schema';
-import type {TopicRuntimeQuery, ProductResult} from '@bruno/rust-view-server/react';
+import {defineCatalog, validateScalar, validateQuery, validateRow, validateGroupedRow, queryFields, type Schema, type Row, type Field, type BrowserCatalog, type TopicQuery} from '@bruno/view-server-client/schema';
+import type {TopicRuntimeQuery, ProductResult} from '@bruno/view-server-client/react';
 import type {CompleteSelect, CompatRow, CompatResult, Query} from './types.ts';
 
 type WirePredicate = {readonly op:'text';readonly field:string;readonly value:string;readonly match_kind:'eq'|'ne'|'contains'|'notContains'|'startsWith'|'endsWith';readonly case_sensitive?:boolean;readonly accent_sensitive?:boolean}|{readonly op:'in';readonly field:string;readonly values:readonly (string|number|boolean)[]}|{readonly op:'text_in';readonly field:string;readonly values:readonly string[];readonly case_sensitive?:boolean;readonly accent_sensitive?:boolean}|{readonly op:'eq'|'ge'|'gt'|'le'|'lt';readonly field:string;readonly value:string|number|boolean}|{readonly op:'is_value'|'is_missing'|'is_null';readonly field:string}|{readonly op:'and'|'or';readonly clauses:readonly WirePredicate[]}|{readonly op:'not';readonly clause:WirePredicate};

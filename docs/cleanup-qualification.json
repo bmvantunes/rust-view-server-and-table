@@ -1,0 +1,363 @@
+{
+  "baseline": "202833c9211cae9f9720c46a6ddff4f1dffc7594",
+  "branch": "refactor/typescript-tooling",
+  "implementationCommit": "675aaa39c0c88c93a631d49c38d8b14973dd692d",
+  "qualifiedExecutableCommit": "31e24ec2962ad7312ec28b213c60ce5982ebb54f",
+  "pushed": false,
+  "pins": {
+    "rust": "1.99.0",
+    "typescript": "7.0.2",
+    "effect": "4.0.0-rc.111",
+    "node": "26.10.0",
+    "pnpm": "12.9.1"
+  },
+  "ownership": {
+    "rust": "packages/rust-view-server: Rust crates/native tests/private Cargo task adapter",
+    "client": "packages/view-server-client: @bruno/view-server-client SDK/Provider/Workers/WASM assets and client tests",
+    "table": "packages/table: table implementation and public client integration",
+    "workspace": "shared proto generation, staging, tooling and cross-package integration"
+  },
+  "authoring": {
+    "python": {
+      "before": 14,
+      "after": 0
+    },
+    "javascript": {
+      "before": 31,
+      "after": 1
+    },
+    "standaloneDMts": {
+      "before": 5,
+      "after": 1
+    },
+    "exceptions": [
+      "Frozen independent fixtures/rowid-before/projector.mjs and its declaration",
+      "Generated outputs, installed dependencies and retained third-party sources/notices",
+      "One ambient table development.d.ts declaration"
+    ]
+  },
+  "verification": {
+    "freshCheckout": {
+      "sameRepositoryDetachedWorktree": true,
+      "productCommit": "675aaa39c0c88c93a631d49c38d8b14973dd692d",
+      "commands": [
+        "vp install --frozen-lockfile",
+        "vp run generate",
+        "CARGO_NET_OFFLINE=true vp run build",
+        "CARGO_NET_OFFLINE=true vp run check",
+        "CARGO_NET_OFFLINE=true vp run test"
+      ],
+      "status": "passed",
+      "cacheInputs": "569 cached pnpm packages, cached downloaded Cargo crates, pinned toolchains and existing Chromium; registry policy metadata queried; no copied build outputs or task-cache hits",
+      "repairCommit": "31e24ec2962ad7312ec28b213c60ce5982ebb54f",
+      "repairChecks": [
+        "strict root tooling TypeScript",
+        "46 infrastructure tests",
+        "authoring and package-boundary policy"
+      ],
+      "repairStatus": "passed",
+      "nativeWithoutSdkTableOutputs": "passed; actual view-server-app recompilation through vp run build:native, SDK/table dist temporarily absent then restored"
+    },
+    "fastTests": {
+      "native": 208,
+      "nativeIgnored": 11,
+      "legacySockets": 5,
+      "providerBrowser": 101,
+      "completeClient": 5,
+      "table": 1176,
+      "uiBrowser": 16,
+      "infrastructureFinal": 46,
+      "sdkRuntime": 15,
+      "tableTooling": 16,
+      "note": "Native count excludes one separately invoked nested process helper; fast suites require no Kafka."
+    },
+    "sourceAndEmittedTypeConsumers": "passed with pinned TypeScript 7.0.2",
+    "packagedClient": {
+      "status": "passed",
+      "consumer": "/private/var/folders/r5/4v9pk32n2s7_l9485g12z3fh0000gn/T/bruno-client-pack-OzJt4l/consumer",
+      "tarballSha256": "a9741ae1d50d557081805eef230d949b15b6a9591d0aa1060b65d54c247d0c1c",
+      "result": {
+        "status": "passed",
+        "checks": [
+          "installed-public-exports",
+          "default-relative-wasm-url",
+          "actual-generic-workers",
+          "exact-values",
+          "publish-before-mount",
+          "react-live-update",
+          "same-topic-key-isolation",
+          "delete",
+          "unmount-subscriptions",
+          "disposal"
+        ],
+        "exactRoundTrip": "9007199254740993.123456789012345678"
+      },
+      "workers": [
+        "http://127.0.0.1:60186/assets/generic.worker-BkGGEF34.js",
+        "http://127.0.0.1:60186/assets/generic.worker-BkGGEF34.js"
+      ],
+      "requests": [
+        "http://127.0.0.1:60186/",
+        "http://127.0.0.1:60186/assets/index-CbXiaPjk.js",
+        "http://127.0.0.1:60186/assets/generic_engine-BNyWh8i7.wasm",
+        "http://127.0.0.1:60186/assets/generic.worker-BkGGEF34.js",
+        "http://127.0.0.1:60186/assets/generic_engine-BNyWh8i7.wasm",
+        "http://127.0.0.1:60186/assets/generic.worker-BkGGEF34.js"
+      ],
+      "webSockets": [],
+      "rustInvocations": 0,
+      "installedFromTarball": true,
+      "checkoutSourceFallback": false,
+      "consumerTypecheck": true,
+      "interrupted": false,
+      "cleaned": true,
+      "cleanupErrors": []
+    },
+    "packagedTable": "passed installed TypeScript/runtime, production compiler/SSR/hydration/styles/diagnostics gates",
+    "reactCompilerProduction": "passed minified React 19 BigInt state/callback probe",
+    "mutation": {
+      "mutation": "ignore admitted deletes in generic Runtime.apply_committed",
+      "consumer": "emitted SDK Provider with actual generic Worker/WASM; publishes before mount test",
+      "consumerExitCode": 1,
+      "expectedFailureObserved": true,
+      "scratchSourceRestored": true,
+      "productionSourceUnchanged": true,
+      "mutatedWasmSha256": "194cb50e27cc09bcd1066e3f645285eb57d5a47cb6a3b6ba1af78344f1163197"
+    },
+    "packagedCancellation": "actual SIGTERM negative control passed: interrupted true, cleaned true, cleanupErrors empty",
+    "decimal": "44 existing focused tests, 8 actual Effect prototype/isBigDecimal values, exact beyond-Number roundtrip and source/emitted inference passed; see decimal-integration.md"
+  },
+  "campaign": {
+    "run": "e2e-25491a17557af84e",
+    "mode": "full-200000",
+    "rowsPerTopic": 200000,
+    "status": "passed",
+    "candidateSourceSha256": "d8ba6ffe8e3645e9923ee179cc8fee20ccdb8333636e6a6b57859a7660c8ff34",
+    "candidateFrozen": true,
+    "fullCampaignAcceptance": true,
+    "charterAcceptance": false,
+    "initialReceipts": {
+      "client_orders": {
+        "count": 200000,
+        "sha256": "d55a8a17c2a21d57d0c86b93f035475d8d89deadeec811d6eb837baaa36143e7",
+        "sourceNext": {
+          "0": 100199,
+          "1": 100199
+        },
+        "producerReceipts": 200000
+      },
+      "server_orders": {
+        "count": 200000,
+        "sha256": "8db3a1c1fd3de14573f41db52b783f6668cf26b760a11be072e28c2b768d34e2",
+        "sourceNext": {
+          "0": 100199,
+          "1": 100199
+        },
+        "producerReceipts": 200000
+      }
+    },
+    "finalReceipts": {
+      "client_orders": {
+        "count": 199999,
+        "sha256": "91490357190cb17c90f43d48097f41af616e031da63c11107a15a69fba0618fe",
+        "sourceNext": {
+          "0": 100207,
+          "1": 100209
+        },
+        "producerReceipts": 200009
+      },
+      "server_orders": {
+        "count": 199999,
+        "sha256": "67cfcc0f04d21ca4a37e355e324fb8a082e1de1b39e027b0c17bc6adc6a128a7",
+        "sourceNext": {
+          "0": 100203,
+          "1": 100205
+        },
+        "producerReceipts": 200005
+      }
+    },
+    "transportInterruptions": [
+      {
+        "closedConnections": 1,
+        "atMonotonic": 151.947029167
+      }
+    ],
+    "nativeInitialCatchupSeconds": 13.061180792,
+    "nativeRestartCatchupSeconds": 32.68296637500002,
+    "ownedChildren": [
+      {
+        "pid": 16192,
+        "exitCode": 0,
+        "signalCode": null
+      },
+      {
+        "pid": 16153,
+        "exitCode": 0,
+        "signalCode": null
+      },
+      {
+        "pid": 16152,
+        "exitCode": null,
+        "signalCode": "SIGTERM"
+      },
+      {
+        "pid": 16027,
+        "exitCode": 0,
+        "signalCode": null
+      },
+      {
+        "pid": 16034,
+        "exitCode": 0,
+        "signalCode": null,
+        "role": "persistent-producer"
+      }
+    ],
+    "cleanupErrors": [],
+    "seconds": 239.643854334,
+    "checks": [
+      "mutation-during-partial-bootstrap",
+      "producer-distinct-cuts-client-completeness",
+      "simultaneous-grids-sparse-dom-deep-scroll",
+      "ui-quick-filter-unicode-match-none-peer-independence",
+      "bounded-provider-numeric-multisort-groups-exact-average-2048-facets",
+      "client-edit-paste-fill-save-committed-source-draft-conflict",
+      "selected-row-identity-survives-live-reorder",
+      "live-upsert-exact-dom-stable-identity-delete",
+      "same-page-transport-interruption-recovery",
+      "native-restart-recovery-with-explicit-browser-retry-and-later-update",
+      "worker-asset-failure-bounded-error-explicit-retry",
+      "provider-disposal-page-unmount"
+    ],
+    "browserSeconds": 144.320141042,
+    "explicitBrowserRetry": true,
+    "liveCleanupConfirmed": true,
+    "retainedVolume": "rvs-95fd7b7501ba-e2e-25491a17557af84e_data",
+    "measurements": {
+      "firstCoherentMs": 17072.639417,
+      "initialServerDelivery": {
+        "active": 1,
+        "resultRows": 18,
+        "maximumResultRows": 18,
+        "distinctResultRows": 18,
+        "invalidIdentityResults": 0,
+        "receivedBinaryBytes": 35363220,
+        "completeBinaryBytes": 34173352,
+        "viewportBinaryBytes": 3561
+      },
+      "mountedServerRows": 18,
+      "updateRequestToDomMs": 3222.9652920000008,
+      "nativeMemory": {
+        "pid": 16192,
+        "rssKiB": 931376
+      },
+      "applicationBytes": {
+        "worker": {
+          "receivedBinaryBytes": 144425395,
+          "completeBinaryBytes": 136718067,
+          "viewportBinaryBytes": 1336316
+        },
+        "pageCdpWebsocketReceived": 0,
+        "httpEncoded": 587247
+      },
+      "frameCadence": {
+        "samples": 2048,
+        "over32ms": 16,
+        "estimatedMissed60HzOpportunities": 521,
+        "assumption": "60Hz requestAnimationFrame opportunities, not physical dropped paints"
+      }
+    }
+  },
+  "kafka": {
+    "engine": "OrbStack Docker29.4.0",
+    "compose": "5.1.2",
+    "context": "orbstack",
+    "image": "apache/kafka:4.1.2@sha256:5cc2a2fd93fa2687b44015eee04fb2c3edd9e526bd64bf8bec5ff1e268772e0e",
+    "hostBinding": "127.0.0.1 only",
+    "dataReset": false
+  },
+  "retainedFailedRun": {
+    "commit": "675aaa39c0c88c93a631d49c38d8b14973dd692d",
+    "run": "e2e-a911768a59f2bdd1",
+    "status": "failed",
+    "cause": "Baseline full-browser offline fault also disabled replacement Worker downloads; fixed transport-only injector. Browser EOF/exit race separately repaired.",
+    "noProductRecoveryChange": true
+  },
+  "review": {
+    "implementation": "Independent review passed on675aaa3; focused repair reviewed independently and exact31e24ec verified; 14 focused repair tests passed independently.",
+    "campaign": "Independent audit passed: streamed producer journal without production evaluator/helper imports; reconstructed 409 committed batches / 400014 records, both initial 200000 distinct sets, exact initial/final hashes and source cuts, 12 browser checks, frozen Git-blob source fingerprint and clean cleanup.",
+    "campaignEvidence": ".local/cleanup/independent-campaign-review.json"
+  },
+  "limitations": [
+    "Company-specific source decoder mapping remains pending; genuine Effect BigDecimal support is implemented. charterAcceptance remains false for that broader scope.",
+    "Native restart required existing explicit browser retry after the unchanged automatic budget expired. Short transport interruption recovered automatically.",
+    "Query probes do not certify every equivalent menu interaction. Measurements are local observations, not physical paint/peak memory/production SLA claims.",
+    "Safari, cold-offline/PWA and broker-loss behavior remain outside this qualification."
+  ],
+  "evidence": [
+    {
+      "path": ".local/e2e/e2e-25491a17557af84e/result.json",
+      "bytes": 15043,
+      "sha256": "9777bbd76d8393a111f613337ceb6bc847752edee1501e18f99811835294b396"
+    },
+    {
+      "path": ".local/e2e/e2e-25491a17557af84e/browser-result.json",
+      "bytes": 988,
+      "sha256": "fdc124eeb4eb582a98665d826d07dc1524f064e367a674032405a6672019805a"
+    },
+    {
+      "path": ".local/e2e/e2e-25491a17557af84e/browser-samples.ndjson",
+      "bytes": 1505634,
+      "sha256": "2bf1bb3405391cc0e2989f770ed32405968167cad57cd74b012f3fb314f79389"
+    },
+    {
+      "path": ".local/e2e/e2e-25491a17557af84e/producer-receipts.ndjson",
+      "bytes": 155746095,
+      "sha256": "6f0fb142e4420253f583ce3be2b7d200269b86ea9fb06196e5a4bc0e79d5b352"
+    },
+    {
+      "path": ".local/e2e/e2e-25491a17557af84e/initial-native-catchup.ndjson",
+      "bytes": 108237,
+      "sha256": "4a5be94eb3b1f5e2ef1a7f02b1a2ee6428c5616aa4d08948300d77d94e0a36b8"
+    },
+    {
+      "path": ".local/client-packed.json",
+      "bytes": 1343,
+      "sha256": "41150260a14fd3f2420f3440655e62c8090a038b7600374c657304f01236fba9"
+    },
+    {
+      "path": ".local/client-packed-negative.json",
+      "bytes": 394,
+      "sha256": "a7a353e0af514d75f4d80f197c400f4f78517c1ad8fa376802b6fdcf3e28af46"
+    },
+    {
+      "path": ".local/engine-mutation.json",
+      "bytes": 399,
+      "sha256": "7d7c4bdb0dfa85256284205e7ffbcfaccd23897a06a7afbc8ebba29033f4c922"
+    },
+    {
+      "path": ".local/cleanup/675aaa3/evidence-index.json",
+      "bytes": 5014,
+      "sha256": "f20faa20f3502b01d31cfddb72618fb62f368c7071bd74bea977f5e5994f5b6f"
+    },
+    {
+      "path": ".local/cleanup/31e24ec/rvs-split-e2e-transport-repair.log",
+      "bytes": 60856,
+      "sha256": "f2dfcbb0f37df65269db412b52565ce19e77afc5125b1859969537c1c8847320"
+    },
+    {
+      "path": ".local/cleanup/31e24ec/rvs-split-native-without-sdk.log",
+      "bytes": 1756,
+      "sha256": "0a838ff19b0dbaa8e09baa9029ea97f595935e3e7d7d637a9adc42e98fad07f6"
+    },
+    {
+      "path": ".local/cleanup/31e24ec/rvs-split-repair-infra.log",
+      "bytes": 3904,
+      "sha256": "bd7491e9657158ea457b0a1959dee50709c48c08ed4b28145c2cf4d6d7249203"
+    },
+    {
+      "path": ".local/cleanup/independent-campaign-review.json",
+      "bytes": 2485,
+      "sha256": "683095106f2055039ab8903ac8dd4d7db5fce3d3069b18cce1ab261814d73b60"
+    }
+  ]
+}

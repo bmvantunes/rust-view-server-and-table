@@ -2,7 +2,7 @@
 
 Exact registry observations are retained in `registry-resolutions.json`; lockfiles record transitive resolution. Global and project-local Vite+ are both 1.0.0, installed using the official user-scoped installer. Node Current is26.10.0, pnpm12.9.1, stable Rust1.99.0 and native TypeScript7.0.2. The TypeScript package's `tsc` launcher dispatches the pinned Darwin ARM64 native binary; it is not a TS5 fallback.
 
-Rust commands use `scripts/rust.py` through VP. That wrapper selects rustup's exact Cargo, rustc and rustdoc and runs within rustup's dynamic-library environment, avoiding an older Homebrew compiler earlier on PATH. Existing host toolchains remain installed. WASM builds target `wasm32-unknown-unknown` from current workspace source.
+Rust commands use `scripts/rust.ts` through VP. That wrapper selects rustup's exact Cargo, rustc and rustdoc and runs within rustup's dynamic-library environment, avoiding an older Homebrew compiler earlier on PATH. Existing host toolchains remain installed. WASM builds target `wasm32-unknown-unknown` from current workspace source.
 
 React/React DOM and types are19.3.0. The table migration uses the selected current TanStack Table9.2.6, Hotkeys0.13, Pacer0.24.1, Store0.11.2, Base UI1.8 and Tailwind4.3.3. The single lockfile is authoritative for full versions. Effect4.0.0-rc.111 and effect-view-server4.2.8 remain the pinned reference compatibility pair; choosing a v4 RC is explicitly permitted by the charter. The newer stable Effect version was inspected, but the reference pair remains coupled to the existing public table numeric/query contract. Its older exact React peer declaration requires behavioral qualification with the selected single React19.3 runtime.
 

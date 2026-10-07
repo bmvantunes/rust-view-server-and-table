@@ -1,9 +1,8 @@
 import tailwindcss from "@tailwindcss/vite";
-import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite-plus";
 import { playwright } from "vite-plus/test/browser-playwright";
 
-import { reactCompiler } from "../../config/react-compiler";
+import { react, reactCompiler } from "../../config/react-compiler";
 import { shadcnSourceAliases } from "../../config/shadcn-source-aliases.js";
 import { BRUNO_TABLE_CAPABLE_HARDWARE_PROFILE } from "./src/internal/benchmark-profile";
 

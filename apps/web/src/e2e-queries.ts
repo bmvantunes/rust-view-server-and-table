@@ -1,7 +1,7 @@
-import {createQueryClient} from '@bruno/rust-view-server/react';
-import type {BrowserProductProvider} from '@bruno/rust-view-server/react';
-import {catalog} from '@bruno/rust-view-server/generated/demo-catalog';
-import {uint64} from '@bruno/rust-view-server/schema';
+import {createQueryClient} from '@bruno/view-server-client/react';
+import type {BrowserProductProvider} from '@bruno/view-server-client/react';
+import {catalog} from '@bruno/view-server-client/generated/demo-catalog';
+import {uint64} from '@bruno/view-server-client/schema';
 export function queryCases(provider:BrowserProductProvider){
  const client=createQueryClient(provider,catalog);
  return (name:string)=>{

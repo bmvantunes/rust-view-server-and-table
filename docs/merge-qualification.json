@@ -1,0 +1,717 @@
+{
+  "branch": "refactor/typescript-tooling",
+  "pullRequest": "https://github.com/bmvantunes/rust-view-server-and-table/pull/2",
+  "qualifiedExecutableCommit": "d7617cf28fdec833501ac07adafad1b1d0f14f01",
+  "integratedMaster": "5b994153d9dcd087e69c7d319de64dbdc546de14",
+  "ordinaryMergeCommit": "74f5d1e0685db5035a0b048d7353c669733a1556",
+  "initialCleanupQualification": "docs/cleanup-qualification.json",
+  "reviewedRepairs": [
+    {
+      "commit": "17c784ddd65e0697f74c7638c700ace0b329668d",
+      "change": "Await actual menu teardown before the grouping membership test continues; behavior assertions and timeouts unchanged."
+    },
+    {
+      "commit": "d7617cf28fdec833501ac07adafad1b1d0f14f01",
+      "change": "Catch complete-source admission failure as an owned empty error state, retaining visible retry UI and fencing late callbacks; SDK/Rust retry policy and arithmetic unchanged."
+    }
+  ],
+  "verification": {
+    "rootCheck": {
+      "commit": "74f5d1e0685db5035a0b048d7353c669733a1556",
+      "command": "vp run check",
+      "status": "passed"
+    },
+    "rootTests": {
+      "commit": "17c784ddd65e0697f74c7638c700ace0b329668d",
+      "command": "vp run test",
+      "status": "passed",
+      "counts": {
+        "native": 211,
+        "legacySockets": 5,
+        "nativeIgnored": 11,
+        "providerBrowser": 101,
+        "completeSdk": 5,
+        "uiBrowser": 16,
+        "infrastructure": 46,
+        "sdkRuntime": 15,
+        "tableTooling": 16,
+        "tableFast": 1180,
+        "tableBrowser": 767
+      },
+      "note": "Native count excludes one nested helper. Native and SDK implementation unchanged by the subsequent narrow table repair."
+    },
+    "finalRepair": {
+      "commit": "d7617cf28fdec833501ac07adafad1b1d0f14f01",
+      "status": "passed",
+      "checks": [
+        "vp run build:packages",
+        "vp run @bruno/table#test:types:rust (source and emitted)",
+        "vp exec tsc -p apps/web/tsconfig.json --noEmit",
+        "vp run @bruno/table#test --run --maxWorkers=1",
+        "vp run @bruno/table#test:browser",
+        "vp run check:policy"
+      ],
+      "counts": {
+        "focusedLifecycleAndAdapter": 21,
+        "focusedActualReact": 1,
+        "tableFast": 1182,
+        "tableBrowser": 768
+      },
+      "note": "The fixture comment alone was clarified after passing affected checks; executable bytes unchanged."
+    }
+  },
+  "retainedFailures": [
+    {
+      "evidence": ".local/cleanup/master-integration/rvs-pr2-merge-tests.log",
+      "cause": "Unchanged native callback wall-clock spacing assertion failed once; consistent with scheduling/rounding sensitivity, but the log does not establish the exact cause. Isolated and subsequent full native suites passed; no assertion or implementation change."
+    },
+    {
+      "evidence": ".local/cleanup/master-integration/rvs-pr2-merge-tests-browser-repeated-failure.log",
+      "cause": "Grouping membership test raced menu teardown twice; repaired with two explicit unmount waits, then full root tests passed."
+    },
+    {
+      "run": "e2e-12a08cd14e7bd409",
+      "status": "failed",
+      "checks": 10,
+      "cause": "Asset failure preceded complete-source subscription and escaped React effect admission; fixed with owned error state. Earlier failed campaign remains failed."
+    },
+    {
+      "evidence": ".local/cleanup/master-integration/rvs-pr2-admission-table-fast.log",
+      "cause": "Unchanged wide-column timing test measured 160.723542ms against 150ms; full 1182-test suite passed with one worker. Limit unchanged."
+    },
+    {
+      "evidence": ".local/cleanup/master-integration/complete-source-browser-before.log",
+      "cause": "New actual React regression failed before lifecycle repair and passed afterward."
+    }
+  ],
+  "campaign": {
+    "run": "e2e-91081aaae760e3e1",
+    "mode": "full-200000",
+    "rowsPerTopic": 200000,
+    "status": "passed",
+    "charterAcceptance": false,
+    "artifacts": ".local/e2e/e2e-91081aaae760e3e1",
+    "transportInterruptions": [
+      {
+        "closedConnections": 1,
+        "atMonotonic": 138.51545116699998
+      }
+    ],
+    "candidateSourceSha256": "8e8c2bc296727217435f689cd08edf56173ab4d9f3f266b917249d8a61b82d88",
+    "candidateFrozen": true,
+    "nativeStartedMonotonic": 20.511691875,
+    "standaloneWriterRejected": true,
+    "concurrentWriterRejected": true,
+    "seedCompletedMonotonic": 76.236675959,
+    "initialReceipts": {
+      "client_orders": {
+        "count": 200000,
+        "sha256": "d55a8a17c2a21d57d0c86b93f035475d8d89deadeec811d6eb837baaa36143e7",
+        "sourceNext": {
+          "0": 100199,
+          "1": 100199
+        },
+        "producerReceipts": 200000
+      },
+      "server_orders": {
+        "count": 200000,
+        "sha256": "8db3a1c1fd3de14573f41db52b783f6668cf26b760a11be072e28c2b768d34e2",
+        "sourceNext": {
+          "0": 100199,
+          "1": 100199
+        },
+        "producerReceipts": 200000
+      }
+    },
+    "nativeInitialCatchupSeconds": 13.059023833,
+    "nativeInitialCatchupHealth": {
+      "version": 1,
+      "instance": "6805fdbee8adad7ea504592365661b22",
+      "sequence": 10688,
+      "sampled_at_unix_ms": 1791333610712,
+      "observed_at_ms": 68803,
+      "phase": "serving",
+      "startup_complete": true,
+      "ready": true,
+      "live": true,
+      "reason": "ready",
+      "authority_safe": true,
+      "sources": [
+        {
+          "topic": "client_orders",
+          "configured_topic": "client_orders",
+          "source_id": "vFINDmvrc9aJu_0NaexXIQ-client_orders",
+          "dependencies": [
+            "kafka-45be77ba78f112a4f7c64ff224083b7ef04c84bd41173b880634b98d05039855-source_read",
+            "kafka-45be77ba78f112a4f7c64ff224083b7ef04c84bd41173b880634b98d05039855-canonical_store"
+          ],
+          "policy": {
+            "enter_offset_distance": 10,
+            "exit_offset_distance": 1000,
+            "max_sample_age_ms": 5000,
+            "enter_hold_ms": 1000,
+            "exit_hold_ms": 1000
+          },
+          "partitions": [
+            {
+              "partition": 0,
+              "assigned": true,
+              "bootstrap_complete": true,
+              "fetched_next": "100200",
+              "durable_next": "100199",
+              "derived_next": "100199",
+              "serving_next": "100200",
+              "readable_end": "100200",
+              "readable_sample_ms": 67773,
+              "high_watermark": "100200",
+              "fetch_queue_messages": 0,
+              "fetch_queue_bytes": 0,
+              "transaction_blocked": false
+            },
+            {
+              "partition": 1,
+              "assigned": true,
+              "bootstrap_complete": true,
+              "fetched_next": "100200",
+              "durable_next": "100199",
+              "derived_next": "100199",
+              "serving_next": "100200",
+              "readable_end": "100200",
+              "readable_sample_ms": 67773,
+              "high_watermark": "100200",
+              "fetch_queue_messages": 0,
+              "fetch_queue_bytes": 0,
+              "transaction_blocked": false
+            }
+          ],
+          "retention": {
+            "enabled": true,
+            "safe": true,
+            "pending_due": false,
+            "active_payload_rows": 200000,
+            "sticky_keys": 200000,
+            "scheduled_expiries": 0,
+            "canonical_version": 930,
+            "derived_version": 930,
+            "maintenance_sequence": 0,
+            "overdue_ms": null,
+            "next_expiry_unix_ms": null,
+            "last_commit_unix_ms": null,
+            "last_expiry_delay_ms": null
+          }
+        },
+        {
+          "topic": "server_orders",
+          "configured_topic": "server_orders",
+          "source_id": "vFINDmvrc9aJu_0NaexXIQ-server_orders",
+          "dependencies": [
+            "kafka-45be77ba78f112a4f7c64ff224083b7ef04c84bd41173b880634b98d05039855-source_read",
+            "kafka-45be77ba78f112a4f7c64ff224083b7ef04c84bd41173b880634b98d05039855-canonical_store"
+          ],
+          "policy": {
+            "enter_offset_distance": 10,
+            "exit_offset_distance": 1000,
+            "max_sample_age_ms": 5000,
+            "enter_hold_ms": 1000,
+            "exit_hold_ms": 1000
+          },
+          "partitions": [
+            {
+              "partition": 0,
+              "assigned": true,
+              "bootstrap_complete": true,
+              "fetched_next": "100200",
+              "durable_next": "100199",
+              "derived_next": "100199",
+              "serving_next": "100200",
+              "readable_end": "100200",
+              "readable_sample_ms": 68451,
+              "high_watermark": "100200",
+              "fetch_queue_messages": 0,
+              "fetch_queue_bytes": 0,
+              "transaction_blocked": false
+            },
+            {
+              "partition": 1,
+              "assigned": true,
+              "bootstrap_complete": true,
+              "fetched_next": "100200",
+              "durable_next": "100199",
+              "derived_next": "100199",
+              "serving_next": "100200",
+              "readable_end": "100200",
+              "readable_sample_ms": 68451,
+              "high_watermark": "100200",
+              "fetch_queue_messages": 0,
+              "fetch_queue_bytes": 0,
+              "transaction_blocked": false
+            }
+          ],
+          "retention": {
+            "enabled": true,
+            "safe": true,
+            "pending_due": false,
+            "active_payload_rows": 200000,
+            "sticky_keys": 200000,
+            "scheduled_expiries": 0,
+            "canonical_version": 931,
+            "derived_version": 931,
+            "maintenance_sequence": 0,
+            "overdue_ms": null,
+            "next_expiry_unix_ms": null,
+            "last_commit_unix_ms": null,
+            "last_expiry_delay_ms": null
+          }
+        }
+      ],
+      "dependencies": [
+        {
+          "id": "kafka-45be77ba78f112a4f7c64ff224083b7ef04c84bd41173b880634b98d05039855-canonical_store",
+          "resource_id": "kafka-45be77ba78f112a4f7c64ff224083b7ef04c84bd41173b880634b98d05039855",
+          "role": "canonical_store",
+          "state": "available",
+          "reason": null,
+          "attribution": "unknown"
+        },
+        {
+          "id": "kafka-45be77ba78f112a4f7c64ff224083b7ef04c84bd41173b880634b98d05039855-source_read",
+          "resource_id": "kafka-45be77ba78f112a4f7c64ff224083b7ef04c84bd41173b880634b98d05039855",
+          "role": "source_read",
+          "state": "available",
+          "reason": null,
+          "attribution": "unknown"
+        }
+      ],
+      "owner_progress_ms": 68804,
+      "owner_stall_ms": 600000,
+      "records_committed": 400000,
+      "maintenance_transactions": 0,
+      "maintenance_rows_evicted": 0,
+      "maintenance_ns": "0",
+      "live_rows": 400000,
+      "subscriptions": 0,
+      "connections": 0,
+      "output_queue_frames": 0,
+      "output_queue_bytes": 0,
+      "backpressured_connections": 0,
+      "durable_transactions": 1861,
+      "durable_ns": "21560753496",
+      "derived_ns": "1939342494",
+      "source_failures": 0,
+      "callback_failures": 0
+    },
+    "transportProxy": {
+      "listenPort": 51694,
+      "nativePort": 51608
+    },
+    "nativeRestartCatchupSeconds": 34.206000333000006,
+    "nativeRestartCatchupHealth": {
+      "version": 1,
+      "instance": "fa3d6e5a6ad763972c66447fe060c5bf",
+      "sequence": 1658,
+      "sampled_at_unix_ms": 1791333710230,
+      "observed_at_ms": 34774,
+      "phase": "serving",
+      "startup_complete": true,
+      "ready": true,
+      "live": true,
+      "reason": "ready",
+      "authority_safe": true,
+      "sources": [
+        {
+          "topic": "client_orders",
+          "configured_topic": "client_orders",
+          "source_id": "vFINDmvrc9aJu_0NaexXIQ-client_orders",
+          "dependencies": [
+            "kafka-45be77ba78f112a4f7c64ff224083b7ef04c84bd41173b880634b98d05039855-source_read",
+            "kafka-45be77ba78f112a4f7c64ff224083b7ef04c84bd41173b880634b98d05039855-canonical_store"
+          ],
+          "policy": {
+            "enter_offset_distance": 10,
+            "exit_offset_distance": 1000,
+            "max_sample_age_ms": 5000,
+            "enter_hold_ms": 1000,
+            "exit_hold_ms": 1000
+          },
+          "partitions": [
+            {
+              "partition": 0,
+              "assigned": true,
+              "bootstrap_complete": true,
+              "fetched_next": "100206",
+              "durable_next": "100206",
+              "derived_next": "100206",
+              "serving_next": "100206",
+              "readable_end": "100206",
+              "readable_sample_ms": 33993,
+              "high_watermark": "100206",
+              "fetch_queue_messages": 0,
+              "fetch_queue_bytes": 0,
+              "transaction_blocked": false
+            },
+            {
+              "partition": 1,
+              "assigned": true,
+              "bootstrap_complete": true,
+              "fetched_next": "100210",
+              "durable_next": "100210",
+              "derived_next": "100210",
+              "serving_next": "100210",
+              "readable_end": "100210",
+              "readable_sample_ms": 33993,
+              "high_watermark": "100210",
+              "fetch_queue_messages": 0,
+              "fetch_queue_bytes": 0,
+              "transaction_blocked": false
+            }
+          ],
+          "retention": {
+            "enabled": true,
+            "safe": true,
+            "pending_due": false,
+            "active_payload_rows": 199999,
+            "sticky_keys": 200000,
+            "scheduled_expiries": 0,
+            "canonical_version": 938,
+            "derived_version": 938,
+            "maintenance_sequence": 0,
+            "overdue_ms": null,
+            "next_expiry_unix_ms": null,
+            "last_commit_unix_ms": null,
+            "last_expiry_delay_ms": null
+          }
+        },
+        {
+          "topic": "server_orders",
+          "configured_topic": "server_orders",
+          "source_id": "vFINDmvrc9aJu_0NaexXIQ-server_orders",
+          "dependencies": [
+            "kafka-45be77ba78f112a4f7c64ff224083b7ef04c84bd41173b880634b98d05039855-source_read",
+            "kafka-45be77ba78f112a4f7c64ff224083b7ef04c84bd41173b880634b98d05039855-canonical_store"
+          ],
+          "policy": {
+            "enter_offset_distance": 10,
+            "exit_offset_distance": 1000,
+            "max_sample_age_ms": 5000,
+            "enter_hold_ms": 1000,
+            "exit_hold_ms": 1000
+          },
+          "partitions": [
+            {
+              "partition": 0,
+              "assigned": true,
+              "bootstrap_complete": true,
+              "fetched_next": "100202",
+              "durable_next": "100202",
+              "derived_next": "100202",
+              "serving_next": "100202",
+              "readable_end": "100202",
+              "readable_sample_ms": 33978,
+              "high_watermark": "100202",
+              "fetch_queue_messages": 0,
+              "fetch_queue_bytes": 0,
+              "transaction_blocked": false
+            },
+            {
+              "partition": 1,
+              "assigned": true,
+              "bootstrap_complete": true,
+              "fetched_next": "100206",
+              "durable_next": "100206",
+              "derived_next": "100206",
+              "serving_next": "100206",
+              "readable_end": "100206",
+              "readable_sample_ms": 33978,
+              "high_watermark": "100206",
+              "fetch_queue_messages": 0,
+              "fetch_queue_bytes": 0,
+              "transaction_blocked": false
+            }
+          ],
+          "retention": {
+            "enabled": true,
+            "safe": true,
+            "pending_due": false,
+            "active_payload_rows": 199999,
+            "sticky_keys": 200000,
+            "scheduled_expiries": 0,
+            "canonical_version": 935,
+            "derived_version": 935,
+            "maintenance_sequence": 0,
+            "overdue_ms": null,
+            "next_expiry_unix_ms": null,
+            "last_commit_unix_ms": null,
+            "last_expiry_delay_ms": null
+          }
+        }
+      ],
+      "dependencies": [
+        {
+          "id": "kafka-45be77ba78f112a4f7c64ff224083b7ef04c84bd41173b880634b98d05039855-canonical_store",
+          "resource_id": "kafka-45be77ba78f112a4f7c64ff224083b7ef04c84bd41173b880634b98d05039855",
+          "role": "canonical_store",
+          "state": "available",
+          "reason": null,
+          "attribution": "unknown"
+        },
+        {
+          "id": "kafka-45be77ba78f112a4f7c64ff224083b7ef04c84bd41173b880634b98d05039855-source_read",
+          "resource_id": "kafka-45be77ba78f112a4f7c64ff224083b7ef04c84bd41173b880634b98d05039855",
+          "role": "source_read",
+          "state": "available",
+          "reason": null,
+          "attribution": "unknown"
+        }
+      ],
+      "owner_progress_ms": 34837,
+      "owner_stall_ms": 600000,
+      "records_committed": 0,
+      "maintenance_transactions": 0,
+      "maintenance_rows_evicted": 0,
+      "maintenance_ns": "0",
+      "live_rows": 399998,
+      "subscriptions": 0,
+      "connections": 0,
+      "output_queue_frames": 0,
+      "output_queue_bytes": 0,
+      "backpressured_connections": 0,
+      "durable_transactions": 0,
+      "durable_ns": "0",
+      "derived_ns": "0",
+      "source_failures": 0,
+      "callback_failures": 0
+    },
+    "browser": {
+      "status": "passed",
+      "smoke": false,
+      "rowsPerTopic": 200000,
+      "checks": [
+        "mutation-during-partial-bootstrap",
+        "producer-distinct-cuts-client-completeness",
+        "simultaneous-grids-sparse-dom-deep-scroll",
+        "ui-quick-filter-unicode-match-none-peer-independence",
+        "bounded-provider-numeric-multisort-groups-exact-average-2048-facets",
+        "client-edit-paste-fill-save-committed-source-draft-conflict",
+        "selected-row-identity-survives-live-reorder",
+        "live-upsert-exact-dom-stable-identity-delete",
+        "same-page-transport-interruption-recovery",
+        "native-restart-recovery-with-explicit-browser-retry-and-later-update",
+        "worker-asset-failure-bounded-error-explicit-retry",
+        "provider-disposal-page-unmount"
+      ],
+      "seconds": 132.548896375,
+      "root": "/Users/bruno/Projects/rust-view-server-and-table/",
+      "limits": [
+        "provider query probes do not certify every equivalent menu interaction",
+        "no physical paint or production SLA claim"
+      ]
+    },
+    "finalReceipts": {
+      "client_orders": {
+        "count": 199999,
+        "sha256": "91490357190cb17c90f43d48097f41af616e031da63c11107a15a69fba0618fe",
+        "sourceNext": {
+          "0": 100207,
+          "1": 100209
+        },
+        "producerReceipts": 200009
+      },
+      "server_orders": {
+        "count": 199999,
+        "sha256": "67cfcc0f04d21ca4a37e355e324fb8a082e1de1b39e027b0c17bc6adc6a128a7",
+        "sourceNext": {
+          "0": 100203,
+          "1": 100205
+        },
+        "producerReceipts": 200005
+      }
+    },
+    "ownedChildren": [
+      {
+        "pid": 45520,
+        "exitCode": 0,
+        "signalCode": null
+      },
+      {
+        "pid": 45465,
+        "exitCode": 0,
+        "signalCode": null
+      },
+      {
+        "pid": 45464,
+        "exitCode": null,
+        "signalCode": "SIGTERM"
+      },
+      {
+        "pid": 45360,
+        "exitCode": 0,
+        "signalCode": null
+      },
+      {
+        "pid": 45367,
+        "exitCode": 0,
+        "signalCode": null,
+        "role": "persistent-producer"
+      }
+    ],
+    "cleanupErrors": [],
+    "fullCampaignAcceptance": true,
+    "seconds": 227.92156
+  },
+  "liveCleanup": {
+    "run": "e2e-91081aaae760e3e1",
+    "children": [
+      {
+        "pid": 45520,
+        "absent": true
+      },
+      {
+        "pid": 45465,
+        "absent": true
+      },
+      {
+        "pid": 45464,
+        "absent": true
+      },
+      {
+        "pid": 45360,
+        "absent": true
+      },
+      {
+        "pid": 45367,
+        "absent": true
+      }
+    ],
+    "containersAbsent": true,
+    "networksAbsent": true,
+    "retainedVolume": "rvs-95fd7b7501ba-e2e-91081aaae760e3e1_data",
+    "owner": "95fd7b7501ba4901b94b811197d69210",
+    "context": "orbstack",
+    "dataReset": false
+  },
+  "independentReview": {
+    "reviewedCommit": "d7617cf28fdec833501ac07adafad1b1d0f14f01",
+    "run": "e2e-91081aaae760e3e1",
+    "status": "passed",
+    "method": "Independent streaming journal replay and canonical hash; no production evaluator/helper imports",
+    "batches": 409,
+    "submitted": 400014,
+    "initial": {
+      "client_orders": {
+        "count": 200000,
+        "sha256": "d55a8a17c2a21d57d0c86b93f035475d8d89deadeec811d6eb837baaa36143e7",
+        "sourceNext": {
+          "0": 100199,
+          "1": 100199
+        },
+        "producerReceipts": 200000
+      },
+      "server_orders": {
+        "count": 200000,
+        "sha256": "8db3a1c1fd3de14573f41db52b783f6668cf26b760a11be072e28c2b768d34e2",
+        "sourceNext": {
+          "0": 100199,
+          "1": 100199
+        },
+        "producerReceipts": 200000
+      }
+    },
+    "final": {
+      "client_orders": {
+        "count": 199999,
+        "sha256": "91490357190cb17c90f43d48097f41af616e031da63c11107a15a69fba0618fe",
+        "sourceNext": {
+          "0": 100207,
+          "1": 100209
+        },
+        "producerReceipts": 200009
+      },
+      "server_orders": {
+        "count": 199999,
+        "sha256": "67cfcc0f04d21ca4a37e355e324fb8a082e1de1b39e027b0c17bc6adc6a128a7",
+        "sourceNext": {
+          "0": 100203,
+          "1": 100205
+        },
+        "producerReceipts": 200005
+      }
+    },
+    "sourceSha256": "8e8c2bc296727217435f689cd08edf56173ab4d9f3f266b917249d8a61b82d88",
+    "sourceHashMatchesFrozenCommit": true,
+    "checks": [
+      "mutation-during-partial-bootstrap",
+      "producer-distinct-cuts-client-completeness",
+      "simultaneous-grids-sparse-dom-deep-scroll",
+      "ui-quick-filter-unicode-match-none-peer-independence",
+      "bounded-provider-numeric-multisort-groups-exact-average-2048-facets",
+      "client-edit-paste-fill-save-committed-source-draft-conflict",
+      "selected-row-identity-survives-live-reorder",
+      "live-upsert-exact-dom-stable-identity-delete",
+      "same-page-transport-interruption-recovery",
+      "native-restart-recovery-with-explicit-browser-retry-and-later-update",
+      "worker-asset-failure-bounded-error-explicit-retry",
+      "provider-disposal-page-unmount"
+    ],
+    "fullCampaignAcceptance": true,
+    "cleanupErrors": [],
+    "browserEvidence": {
+      "separateBrowserReceiptMatches": true,
+      "uniqueChecks": 12,
+      "smoke": false,
+      "transport": {
+        "closedConnections": 1,
+        "beforeAttempt": 1,
+        "afterAttempt": 3,
+        "priorAttemptLost": true
+      },
+      "nativeRestart": {
+        "seconds": 34.206000333000006,
+        "explicitBrowserRetry": true,
+        "exhaustedRetryCount": 12,
+        "newNativeInstance": true
+      },
+      "finalCoherentClient": {
+        "count": 199999,
+        "distinct": 199999,
+        "sha256": "91490357190cb17c90f43d48097f41af616e031da63c11107a15a69fba0618fe"
+      },
+      "bothSourceServingCutsCoverFinalJournal": true,
+      "reportedOwnedChildrenExited": 5,
+      "charterAcceptance": false
+    }
+  },
+  "evidenceSha256": {
+    ".local/cleanup/master-integration/final-live-cleanup.json": "55d3c7db9af809002183f29e302a7324a7b0e62649d4b4609d42dcbc5dcec7ce",
+    ".local/e2e/e2e-91081aaae760e3e1/result.json": "aea8428b38addec5a29edaa662609638e8ae3e4c3857e909042557065e1063e7",
+    ".local/e2e/e2e-91081aaae760e3e1/browser-result.json": "31a80f9e64223188a4b798e35b53a27e773b6d34341254a7f7424a71c30fffae",
+    ".local/e2e/e2e-91081aaae760e3e1/producer-receipts.ndjson": "583566dcb28b531771a43c91a349a597f79f0186a4d8f10b8823f53edeb40af2",
+    ".local/cleanup/independent-campaign-review-e2e-91081aaae760e3e1.json": "0e666bd2673f19b2ec14ebcc6b10624e0c18227a4cf72487045812a7e18ed1f7",
+    ".local/cleanup/master-integration/complete-source-browser-after.log": "b22aa4e89e1777fd695c0a2fc3fa2f57fec5a28d751883f7fd6876259f01c2e0",
+    ".local/cleanup/master-integration/complete-source-browser-before.log": "b73b52b0148753986ec91c944ee1155152967871253b36b7fd900324b157ef84",
+    ".local/cleanup/master-integration/complete-source-focused-after.log": "508fae02708b91057c37065df3996ea0d74de61878335c713fb340a79d67035d",
+    ".local/cleanup/master-integration/rvs-pr2-admission-build.log": "b1a73a7610cc3822d9f3a5552aba73144f8ce5ce463d48059b3587ebbd4648d1",
+    ".local/cleanup/master-integration/rvs-pr2-admission-e2e.log": "5004e0a977cbe1b681ef564329a2105a900fccf5987b0dcfb83c58ba7c969895",
+    ".local/cleanup/master-integration/rvs-pr2-admission-policy.log": "607220b08fd5210a64248066cdf4a93ab117d2416893d98e6fc01a6fcecb18dc",
+    ".local/cleanup/master-integration/rvs-pr2-admission-table-browser.log": "102d7113d18e6af82e4adfb512c9694a220b0f35588dc5698773befddeffc047",
+    ".local/cleanup/master-integration/rvs-pr2-admission-table-fast-serial.log": "c2e062e84408146584a614fe302d614f38d8a576cd36df899c8be1758fabdca2",
+    ".local/cleanup/master-integration/rvs-pr2-admission-table-fast.log": "d960b0078cf918d870ef798c8877182611cad22c1c7193a6993f1f7d793ecbe6",
+    ".local/cleanup/master-integration/rvs-pr2-admission-types.log": "3b0ed5a7f3a993a4a30112779231d82d12b38652395d8d485d7a9e753940144b",
+    ".local/cleanup/master-integration/rvs-pr2-first-e2e-failed.log": "ea9f9ff8cecffdf30e97bbaba7fd2e9e6ae80169d0b1bfa515dbc055cdd49d7b",
+    ".local/cleanup/master-integration/rvs-pr2-grouping-focused.log": "443ed7d23789f851f6497845b4d6fa2f7c2da5c65e87e9160471315a1712ee27",
+    ".local/cleanup/master-integration/rvs-pr2-grouping-synchronized.log": "0223db7e0b0a87a1cf1a6fe6ce685dbf694ff10b9d626f7894695652b2c87665",
+    ".local/cleanup/master-integration/rvs-pr2-health-isolated.log": "1a6fe462411d97d6041cbfa436b0dfd03bb51841411d89ec40c1022d6adc875b",
+    ".local/cleanup/master-integration/rvs-pr2-merge-check-final.log": "4f9d2a8e5f31652d167cacfc013c7bcf2599ce1eb314ba262860194928f45980",
+    ".local/cleanup/master-integration/rvs-pr2-merge-check.log": "a29cfcd8a7fda1cbc3bc825dc4adf4e1797e90eefe948570028dfd68ab3484ba",
+    ".local/cleanup/master-integration/rvs-pr2-merge-install.log": "e518ae332a0dc6db27ce57db1d9db87af11bf81069596216b49d36d743740d32",
+    ".local/cleanup/master-integration/rvs-pr2-merge-tests-browser-failure.log": "7e9c7f21cf49bb6cd7e95b2c0af0cc4017b1de8cdb1e06439578ff9897f0b4e1",
+    ".local/cleanup/master-integration/rvs-pr2-merge-tests-browser-repeated-failure.log": "13d3a48dee8935ef6ef5684d122d9cba32bc8ff86adf56bbd315badf7b4d117e",
+    ".local/cleanup/master-integration/rvs-pr2-merge-tests-synchronized.log": "aad3cbd8a1450170109d6d03408a7314f251539d948d201b7527e7fb172c781f",
+    ".local/cleanup/master-integration/rvs-pr2-merge-tests.log": "04d9d40f4cb2b64b34c4bd879b8e6a080e3764c7acb09f98aca93751f6749e58"
+  },
+  "limitations": [
+    "Native restart requires the existing explicit browser retry after its automatic budget expires; no expanded recovery policy.",
+    "Company-specific source decoder mapping remains pending. Genuine Effect BigDecimal support and exact conversions remain implemented; broader charterAcceptance remains false.",
+    "Timing-sensitive native and table performance failures are retained above; final passing runs do not establish performance SLA or absence of scheduling variance.",
+    "Safari, cold-offline/PWA and broker-loss behavior are outside this qualification. Run-owned Kafka data remains preserved."
+  ]
+}
