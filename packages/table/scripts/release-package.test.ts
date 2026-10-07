@@ -35,15 +35,12 @@ void test("both private packages identify their source and issue tracker", async
       await readFile(new URL(`../../${directory}/package.json`, import.meta.url), "utf8"),
     );
     assert.equal(manifest.private, true);
-    assert.equal(manifest.bugs?.url, "https://github.com/bmvantunes/shadcn-table/issues");
-    assert.equal(
-      manifest.repository?.directory,
-      `packages/${directory === "ui" ? "shadcn" : directory}`,
-    );
-    assert.equal(manifest.repository?.url, "git+https://github.com/bmvantunes/shadcn-table.git");
+    assert.equal(manifest.bugs?.url, "https://github.com/bmvantunes/rust-view-server-and-table/issues");
+    assert.equal(manifest.repository?.directory, `packages/${directory}`);
+    assert.equal(manifest.repository?.url, "git+https://github.com/bmvantunes/rust-view-server-and-table.git");
     assert.equal(
       manifest.homepage,
-      `https://github.com/bmvantunes/shadcn-table/tree/main/packages/${directory === "ui" ? "shadcn" : directory}#readme`,
+      `https://github.com/bmvantunes/rust-view-server-and-table/tree/master/packages/${directory}#readme`,
     );
   }
 });

@@ -2,14 +2,14 @@
   "name": "@bruno/table",
   "version": "0.0.0",
   "description": "A high-performance, strongly typed data grid for React.",
-  "homepage": "https://github.com/bmvantunes/shadcn-table/tree/main/packages/table#readme",
+  "homepage": "https://github.com/bmvantunes/rust-view-server-and-table/tree/master/packages/table#readme",
   "bugs": {
-    "url": "https://github.com/bmvantunes/shadcn-table/issues"
+    "url": "https://github.com/bmvantunes/rust-view-server-and-table/issues"
   },
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bmvantunes/shadcn-table.git",
+    "url": "git+https://github.com/bmvantunes/rust-view-server-and-table.git",
     "directory": "packages/table"
   },
   "files": [

@@ -26,7 +26,7 @@ export default defineConfig({
       verify: task("vp run generate && vp run build && vp run check && vp run test && vp run test:packaged && vp run test:e2e"),
       "test:ui": task("vp run @bruno/shadcn#test:browser"),
       "test:provider": task("vp -C packages/view-server-client exec tsc --noEmit -p tsconfig.browser.json && vp -C packages/view-server-client test run --config browser.config.ts", ["build:sdk"]),
-      "test:tooling": task("vp run @bruno/table#test:build:contracts && vp run @bruno/table#test:release:package", ["build:packages"]),
+      "test:tooling": task("vp run @bruno/table#test:build:contracts && vp run @bruno/table#test:release:package && vp run @bruno/table#test:browser:emitted", ["build:packages"]),
       "test:sdk": task("vp test run packages/view-server-client/src/complete-client.test.ts"),
       test: task("vp run @bruno/table#test --run && vp run @bruno/table#test:browser", ["generate", "test:rust", "test:infra", "test:sdk", "test:sdk-runtime", "test:provider", "test:ui", "test:tooling"]),
       build: task("vp run @bruno/shadcn#build && vp run @bruno/table#build && vp run @bruno/web#build", ["generate", "build:sdk", "build:native"]),

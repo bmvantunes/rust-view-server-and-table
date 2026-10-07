@@ -8,7 +8,11 @@ Both packages ship the owner-confirmed MIT license, Copyright (c) 2026 Bruno Ant
 bundled View Server code uses the same owner-confirmed license and is recorded in its third-party
 notice. The shadcn package separately preserves the upstream MIT notice, Copyright (c) 2023 shadcn.
 
-## Supported and validated environment
+## Recorded package-qualification baseline
+
+This table records the pre-migration shadcn-table qualification. For the current workspace's
+dependency pins and validation evidence, use the package manifests and
+[workspace qualification report](../../docs/merge-qualification.md).
 
 | Boundary                     | Package contract                                                                                     | Release validation baseline                                                                |
 | ---------------------------- | ---------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
@@ -19,7 +23,7 @@ notice. The shadcn package separately preserves the upstream MIT notice, Copyrig
 | Styles                       | `@bruno/shadcn` and Tailwind CSS v4                                                                  | Tailwind 4.3.3, Vite+ 0.2.8                                                                |
 | React Compiler               | React 19 target, fatal bailout policy                                                                | `@vitejs/plugin-react` 6.1.0 and `oxc-transform-react` 0.145.0                             |
 | Optional BigDecimal          | `effect@4.0.0-rc.111` through `@bruno/table/effect`                                                  | Exact prerelease pin; root works without Effect installed                                  |
-| Application Viewport Source  | Compatible `effect-view-server` source contract, floor 4.2.8                                         | 4.2.8, source-owned route/where/identity/generation witnesses                              |
+| Effect Viewport Source       | Existing compatible `effect-view-server` source contract, floor 4.2.8                               | 4.2.8, source-owned route/where/identity/generation witnesses                              |
 
 The validated baseline is evidence for these exact versions, not a claim that every browser,
 framework, or version permitted by a peer range was separately tested. React 18, CommonJS `require`,
@@ -27,9 +31,12 @@ older TypeScript compilers, alternate SSR runtimes, and mobile/touch interaction
 release's validated matrix. A preserved `"use client"` boundary enables server-component packaging;
 it is not a claim of a separately validated Next.js application.
 
-Install Effect only for BigDecimal or an application source that needs it. The root runtime and its
-declaration closure do not require Effect or View Server. The optional entry inlines View Server's
-audited value-semantics implementation; the application Server source is installed separately.
+The root runtime and its declaration closure do not require Effect or View Server. Install Effect for
+BigDecimal columns, or when using the current `@bruno/table/rust` adapter, which imports Effect
+BigDecimal at runtime even when the catalog has no Decimal fields. The optional Effect entry inlines
+View Server's audited value-semantics implementation; the existing Effect Viewport Source adapter
+remains separate. For the workspace's Rust-backed source setup, see the
+[Rust integration guide](./USAGE.md#rust-view-server-integration).
 The exact Effect prerelease pin is retained until broader compatibility is demonstrated with the
 same immutable exact-value and installed-consumer checks. Never interpret that pin as a stable
 Effect v4 compatibility range.
@@ -43,26 +50,29 @@ JavaScript has no required module-evaluation side effects.
 
 ## Public contracts
 
-The public runtime surface is the BrunoTable-branded root API, the Server-only `@bruno/table/server`
-entry, and the optional branded Effect subpath. The Server subpath shares public column, filter,
-grouping, and toolbar primitives while excluding Client edit runtime from Server-only bundles. The
-root entry continues to export `BrunoTableServer` for compatibility. Package metadata is available
-at `@bruno/table/package.json`. Private Grid Runtime,
+The public runtime surface is the BrunoTable-branded root API, the Server-only
+`@bruno/table/server` entry, the Rust hook adapter at `@bruno/table/rust`, and the optional branded
+Effect subpath. The Server subpath shares public column, filter, grouping, and toolbar primitives while
+excluding Client edit runtime from Server-only bundles. The root entry continues to export
+`BrunoTableServer` for compatibility. Package metadata is available at `@bruno/table/package.json`.
+Private Grid Runtime,
 geometry, stores, XState actors, TanStack instances, View Server translation, and internal React
 components are not public entry points. Deep imports into `dist` or `src` are unsupported and blocked
 by the exports map.
 
-The complete V1 capability set is described in [the integration guide](./USAGE.md) and the
+The complete table capability set is described in [the integration guide](./USAGE.md) and the
 [README](./README.md): read-only and editable Clients, sparse read-only Server, typed helpers and
 presets, exact numeric semantics, filters, always-on sorting, preference persistence, grouping,
-selection/copy, keyboard navigation, and save/conflict workflows. Shipped Agent Skills carry their
-own skill versions and match the library version; all cited authoritative documents ship with them.
+selection/copy, keyboard navigation, and save/conflict workflows. The package archive includes the
+README, integration guide, release guide, notices, and built public entries; repository Agent Skill
+resources and duplicated reference documents are not included.
 
 Exclude prototypes and research code from compatibility promises. V1 has no pagination, expandable
 group hierarchy, variable-height Server fast path, editable Server, grouped editing, Server row/range
 selection, rectangular Client ranges, destructive Clear/Delete, arithmetic Drag Fill, or public grid
 controller. The two private Server facet Compiler escape hatches remain tracked by
-[issue #96](https://github.com/bmvantunes/shadcn-table/issues/96); this release does not close it.
+[legacy shadcn-table issue #96](https://github.com/bmvantunes/shadcn-table/issues/96); this release
+does not close it.
 
 ## Migrating repository prototypes
 
