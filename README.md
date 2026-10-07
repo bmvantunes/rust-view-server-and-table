@@ -25,6 +25,8 @@ Interrupting the dev command stops its owned services and broker while preservin
 
 | Command | Purpose |
 | --- | --- |
+| `vp run css:sources` | Refresh dependency-derived Tailwind source blocks |
+| `vp run check:css-sources` | Read-only CSS source drift check (also runs in CI) |
 | `vp run generate` | Buf descriptor validation and generated TS/catalog sources |
 | `vp run check` | Rust clippy and source/emitted integration types |
 | `vp run test` | Kafka-free native, real browser WASM/provider, infrastructure and table checks |
@@ -48,4 +50,6 @@ Fast checks do not access Kafka or OrbStack. Browser tests still require their p
 
 The Server grid delivers bounded windows and independent facets. The Client grid acquires a bounded chunked snapshot plus ordered live tail, and stays loading until a coherent completion boundary. Its fully materialized data necessarily consumes browser memory.
 
-Source provenance and exclusions are in [provenance](docs/provenance.md). Imported licenses retain their original scope; no new root project license has been selected. Package publication is not configured. The cleanup/split branch is local and is not pushed.
+Source provenance and exclusions are in [provenance](docs/provenance.md). Imported licenses retain their original scope; no new root project license has been selected. Package publication is not configured. The cleanup/split was merged through PR #2.
+
+Tailwind source registration is maintained by the [workspace source tool](tools/tailwind-sources/README.md), including transitive UI dependencies and a GitHub Actions drift check.

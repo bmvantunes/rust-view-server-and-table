@@ -16,6 +16,7 @@
     "proto/**/*.ts",
     "tests/integration/**/*.ts",
     "vite.config.ts",
-    "packages/ui/*.config.ts"
+    "packages/ui/*.config.ts",
+    "tools/**/*.ts"
   ]
 }
