@@ -190,10 +190,10 @@ broadcasts; other shape mismatches require explicit confirmation. Batch undo/red
 at a time. Live convergence removes that cell's draft and history evidence. Mode switches cannot
 discard outstanding edits, conflicts, operations, or redo work.
 
-## Sparse Server
+## Sparse Server: Effect View Server compatibility
 
-Create a typed Viewport Source with `effect-view-server@4.2.8` in the application's source module.
-Pass its returned source directly, using the same column pattern:
+For applications that already use the Effect View Server source adapter, create a typed Viewport
+Source with the compatible `effect-view-server@4.2.8` contract and pass its returned source directly:
 
 ```tsx
 <BrunoTableServer
@@ -211,8 +211,89 @@ array or a cast. For leased feeds pass its exact Feed Route as `routeBy` as well
 types through a table wrapper. Both raw and grouped identities are supplied authoritatively by the
 source; Server rejects `getRowId`, editing, and row/range selection.
 
+This compatibility path remains supported. It is not a dependency of the Rust-backed workspace
+integration described next.
+
 The Server owns filtering, sorting, grouping, aggregation, and complete-domain facets. A semantic
 query change invalidates the old generation and shows fixed-height loading rows. Window movement
 retains same-generation overlap. Both variants use one continuous virtual row space with one native
 two-axis scroll owner, fixed-height rows, and pinned-column suspension when there is insufficient
 room. There are no pages or pagination controls.
+
+## Rust View Server integration
+
+In this workspace, create one `BrowserProductProvider` for the app and dispose it when the app-level
+owner unmounts. Build the hook factory from the generated catalog once, then use its complete-source
+hook for the Client table and viewport hook for the sparse Server table:
+
+```tsx
+import { BrowserProductProvider } from "@bruno/view-server-client/react";
+import { catalog } from "@bruno/view-server-client/generated/demo-catalog";
+import {
+  BrunoTableCreateRustHooks,
+  type BrunoTableRustCompatRow,
+} from "@bruno/table/rust";
+import {
+  BrunoTableClient,
+  BrunoTableServer,
+  type BrunoTableColumns,
+} from "@bruno/table";
+
+const hooks = BrunoTableCreateRustHooks(catalog);
+type Order = BrunoTableRustCompatRow<typeof catalog.client_orders.schema>;
+const columns = [
+  {
+    columnId: "COL_ID_ORDER",
+    field: "orderId",
+    headerName: "Order",
+    valueType: "text",
+  },
+  {
+    columnId: "COL_ID_UNITS",
+    field: "units",
+    headerName: "Units",
+    valueType: "bigint",
+  },
+] as const satisfies BrunoTableColumns<Order>;
+
+function OrderTables({
+  provider,
+}: {
+  readonly provider: BrowserProductProvider;
+}) {
+  const client = hooks.useCompleteSource(provider, "client_orders");
+  const server = hooks.useViewportSource(provider, "server_orders");
+  return (
+    <>
+      <BrunoTableClient
+        tableId="TABLE_ID_CLIENT_ORDERS"
+        columns={columns}
+        initialOrderBy={[{ columnId: "COL_ID_UNITS", direction: "asc" }]}
+        getRowId={(row: Order) => row.rowId}
+        clientSource={client}
+      />
+      <BrunoTableServer
+        tableId="TABLE_ID_SERVER_ORDERS"
+        columns={columns}
+        initialOrderBy={[{ columnId: "COL_ID_UNITS", direction: "asc" }]}
+        viewportSource={server}
+      />
+    </>
+  );
+}
+```
+
+The generated catalog and column tuple must describe the same fields and value types. Client rows
+carry the source row identity, so pass it through `getRowId`; Server row identities come from the
+viewport source, so Server accepts no identity callback. Give each table a stable `tableId` and a
+non-empty `initialOrderBy` over sortable columns. The Client hook acquires the complete source and
+allows `getRowId`; the Server hook supplies sparse windows and authoritative identity. One provider
+can serve both hooks, with one complete acquisition per provider.
+
+For Decimal fields, use `BrunoTableBigDecimalColumn` from `@bruno/table/effect`; it preserves exact
+BigDecimal values. Effect remains optional for the root table API and for the BigDecimal entry when
+unused, but the current `@bruno/table/rust` adapter imports Effect BigDecimal at runtime. Applications
+using that adapter must therefore install the matching Effect peer, including catalogs without Decimal
+fields. See the [View Server client guide](../view-server-client/README.md) and the
+[workspace demonstration](../../apps/web/src/demonstration.tsx) for the provider lifecycle and live
+source setup.

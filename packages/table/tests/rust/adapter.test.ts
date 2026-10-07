@@ -9,15 +9,32 @@ const raw={select:['units','price'],where:[],orderBy:[{field:'units',direction:'
 const c=(query:unknown)=>compile(entry.schema,'orders',entry.fingerprint,query);
 function result(subscription:string,rows:readonly unknown[],keys:readonly string[],start=0,total=rows.length):ProductResult{const out:ProductResult={subscription,query_generation:1,sequence:1,start_rank:start,version:1,total_rows:total,rows:[],keys:[...keys]};Reflect.set(out,'rows',rows);return out;}
 class Fake implements ProviderPort{
- connectionStatus:ConnectionStatus='connected';
+ connectionStatus:ConnectionStatus='connected';readonly watchedQueries:unknown[]=[];
  readonly listeners=new Map<string,Parameters<ProviderPort['watch']>[2]>();readonly commands:unknown[]=[];closed:string[]=[];
- watch:ProviderPort['watch']=(id,_q,listener)=>{this.listeners.set(id,listener);return()=>{if(this.listeners.get(id)===listener)this.listeners.delete(id);this.closed.push(id);listener.onStatus?.('closed');};};
+ watch:ProviderPort['watch']=(id,query,listener)=>{this.watchedQueries.push(query);this.listeners.set(id,listener);return()=>{if(this.listeners.get(id)===listener)this.listeners.delete(id);this.closed.push(id);listener.onStatus?.('closed');};};
  apply:ProviderPort['apply']=async command=>{this.commands.push(command);return {};};
  deliveryGuard:ProviderPort['deliveryGuard']=(id,listener)=>()=>this.listeners.get(id)===listener;
  push(id:string,r:ProductResult){this.listeners.get(id)?.(r);}
  ids(){return [...this.listeners.keys()];}
 }
 describe('exact admission and conversion',()=>{
+ it('preserves ordered Group By keys while canonicalizing raw projections',()=>{
+  const grouped={aggregates:{count:{aggFunc:'count'}},where:[],orderBy:[]} as const;
+  const first=c({...grouped,groupBy:['open','customer']});
+  const reordered=c({...grouped,groupBy:['customer','open']});
+  expect(first.query).toMatchObject({groupBy:['open','customer']});
+  expect(first.wire).toMatchObject({group_by:['open','customer']});
+  expect(reordered.query).toMatchObject({groupBy:['customer','open']});
+  expect(reordered.wire).toMatchObject({group_by:['customer','open']});
+  expect(first.key).not.toBe(reordered.key);
+
+  const projection={where:[],orderBy:raw.orderBy} as const;
+  const rawFirst=c({...projection,select:['units','price']});
+  const rawReordered=c({...projection,select:['price','units']});
+  expect(rawFirst.query).toMatchObject({select:['price','units']});
+  expect(rawReordered.key).toBe(rawFirst.key);
+ });
+
  it('normalizes mathematical Decimal identity and property order without changing bigint',()=>{
   const a=c({...raw,where:[{field:'price',type:'equals',filter:BigDecimal.make(10n,1)}]});
   const b=c({where:[{type:'equals',filter:BigDecimal.make(1n,0),field:'price'}],orderBy:raw.orderBy,select:raw.select});expect(a.key).toBe(b.key);expect(a.wire.where).toEqual({op:'eq',field:'price',value:'1'});
@@ -45,6 +62,27 @@ it('uses half-open bigint and Decimal ranges and canonical conjunction/IN equali
  const one={field:'units',type:'equals',filter:1n},two={field:'open',type:'equals',filter:true};expect(c({...raw,where:[one,two]}).key).toBe(c({...raw,where:[{type:'AND',conditions:[two,one]}]}).key);expect(c({...raw,where:[{field:'units',type:'in',filter:[1n,2n,1n]}]}).key).toBe(c({...raw,where:[{field:'units',type:'in',filter:[2n,1n]}]}).key);
 });
 describe('bounded public provider ownership' ,()=>{
+ it('replaces the active watch when the ordered Group By tuple changes',()=>{
+  const p=new Fake(),v=createController(p,'orders',entry.schema,entry.fingerprint,'group-order',()=>{});
+  const sink={setRowCount(){},setRowData(){}};
+  const common={aggregates:{count:{aggFunc:'count'}},where:[],orderBy:[]} as const;
+  const firstQuery={...common,groupBy:['open','customer']} as const;
+  const reorderedQuery={...common,groupBy:['customer','open']} as const;
+  expect(v.semanticKey(firstQuery)).not.toBe(v.semanticKey(reorderedQuery));
+  v.replace({query:firstQuery,window:{firstRow:0,lastRow:1},sink});
+  const first=p.ids()[0]!;
+  p.push(first,result(first,[{open:true,customer:'first',compatAgg0:'1'}],['gid1:first']));
+  expect(p.ids()).toEqual([first]);
+  v.replace({query:reorderedQuery,window:{firstRow:0,lastRow:1},sink});
+  const second=p.ids().find(id=>id!==first)!;
+  expect(p.ids()).toHaveLength(2);
+  p.push(second,result(second,[{customer:'second',open:false,compatAgg0:'1'}],['gid1:second']));
+  expect(p.ids()).toEqual([second]);expect(p.closed).toContain(first);
+  expect(p.watchedQueries[0]).toMatchObject({group_by:['open','customer']});
+  expect(p.watchedQueries[1]).toMatchObject({group_by:['customer','open']});
+  v.destroy();
+ });
+
  it('keeps rejected replacement predecessor, swaps on acceptance and rejects stale callbacks',()=>{
   const p=new Fake(),events:unknown[]=[],chrome:unknown[]=[];const v=createController(p,'orders',entry.schema,entry.fingerprint,'one',s=>chrome.push(s));const sink={setRowCount:(n:number)=>events.push(n),setRowData:(r:unknown,k:unknown)=>events.push([r,k])};const a=v.replace({query:raw,window:{firstRow:0,lastRow:1},sink});const first=p.ids()[0],stale=p.listeners.get(first)!;p.push(first,result(first,[{units:'1',price:'7'}],['rid2:a']));
   const rejected=v.replace({query:{...raw,where:[{field:'units',type:'equals',filter:2n}]},window:{firstRow:0,lastRow:1},sink});const candidate=p.ids().find(k=>k!==first)!;p.listeners.get(candidate)?.onError?.(new Error('server admission rejected'));expect(p.ids()).toEqual([first]);expect(chrome.at(-1)).toMatchObject({status:'error'});rejected.release();expect(p.ids()).toEqual([first]);

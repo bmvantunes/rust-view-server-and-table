@@ -2,9 +2,9 @@
 
 The React data-grid package for BrunoTable.
 
-Start with the [integration guide](https://github.com/bmvantunes/shadcn-table/blob/main/packages/table/USAGE.md)
+Start with the [integration guide](./USAGE.md)
 for Client, Server, editing, grouping, and copy examples. See the
-[release and migration guide](https://github.com/bmvantunes/shadcn-table/blob/main/packages/table/RELEASE.md)
+[release and migration guide](./RELEASE.md)
 for compatibility, exclusions, and the non-publishing release procedure. Both guides ship in the package.
 
 The public interface is intentionally small and BrunoTable-owned. TanStack Table, virtualization,
@@ -12,6 +12,8 @@ stores, and server-query translation are private implementation details.
 
 The package establishes strict TypeScript contracts for columns, client sources, server viewport
 sources, filters, sorts, and the `BrunoTableClient` and `BrunoTableServer` composition roots.
+For the workspace's Rust-backed source integration, use `@bruno/view-server-client` with the
+`@bruno/table/rust` adapter; see the [Rust integration guide](./USAGE.md#rust-view-server-integration).
 
 Use one plain column array with `satisfies`. Optional helpers supply coherent exact value semantics
 and presentation defaults without generating identity or hiding the resulting column definition:
@@ -129,16 +131,12 @@ Consumers pass the typed result of a
 compatible Viewport Source directly; they never provide `getRowId` or observe Effect, TanStack, or
 viewport-controller types through BrunoTable's public declarations.
 
-The Server integration requires `effect-view-server@4.2.8` at the application's source
-boundary. It contains the insertion-cleanup guarantee from issue #408, source-native Match None
-from issue #409, and the declaration-bundle-safe invariant base-row witness completed by issue 465,
-issue 469, and issue 471. Issue 473 adds the source-owned complete raw projection used whenever a
-formatter, functional class, or renderer lawfully reads the complete row. BrunoTable maps empty Set
-inclusion intent to the source's `{ type: "FALSE" }` expression and does not emulate it by enumerating
-current facet values. Issue 477 adds the topic-bound whole-result hook that keeps an open live facet
-independent from the primary viewport generation. Issue 479 exposes exact Route and Where witnesses,
-and issue 481 exposes the exact source-owned raw/grouped `semanticKey` and `replace` authority through
-the dependency-free viewport witness subpath.
+The existing Effect View Server source adapter remains compatible with
+`effect-view-server@4.2.8`; the workspace's new Rust-backed source path is documented in the
+[integration guide](./USAGE.md#rust-view-server-integration). The optional `@bruno/table/effect`
+entry provides BigDecimal columns. The root table entry does not require Effect, while the current
+`@bruno/table/rust` adapter imports Effect BigDecimal at runtime and therefore requires the matching
+Effect peer even when a catalog has no decimal fields.
 
 The Client root accepts optional children for page-specific toolbar composition; absent children do
 not reserve vertical space.
