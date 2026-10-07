@@ -39,11 +39,17 @@ function createWholeResultHook<S extends Schema>(provider:ProviderPort,topic:str
 type CompleteState<S extends Schema>={readonly status:'loading'|'ready'|'error';readonly rows:readonly CompatRow<S>[];readonly loaded:number;readonly totalRows:number;readonly version:number;readonly error?:string};
 function subscribeComplete<S extends Schema>(provider:Pick<BrowserProductProvider,'watchComplete'>,topic:string,entry:{schema:S;fingerprint:string},changed:(value:CompleteState<S>)=>void){
  let live=true,version=0;const cache=new WeakMap<object,CompatRow<S>>();
- const stop=provider.watchComplete(topic,entry.schema,entry.fingerprint,snapshot=>{
+ let stop:(()=>void)|undefined;
+ try{stop=provider.watchComplete(topic,entry.schema,entry.fingerprint,snapshot=>{
   if(!live)return;
   try{const rows=snapshot.status==='ready'?decodeCompleteRows<S>(entry.schema,snapshot.rows,cache):[];if(snapshot.status==='ready')version+=1;changed({status:snapshot.status,loaded:snapshot.loaded,totalRows:rows.length,version:snapshot.status==='ready'?version:0,rows,...(snapshot.error?{error:snapshot.error}:{})});}
   catch(error){changed({status:'error',loaded:snapshot.loaded,totalRows:0,version:0,rows:[],error:error instanceof Error?error.message:String(error)});}
- });return()=>{live=false;stop();};
+ });}catch(error){
+  // A terminal Provider may reject admission before any snapshot can be delivered.
+  live=false;
+  changed({status:'error',rows:[],loaded:0,totalRows:0,version:0,error:error instanceof Error?error.message:String(error)});
+ }
+ return()=>{if(!live)return;live=false;stop?.();};
 }
 function createBrunoTableHooks<const C extends BrowserCatalog>(input:C){
  const catalog=admitCatalog(input);
