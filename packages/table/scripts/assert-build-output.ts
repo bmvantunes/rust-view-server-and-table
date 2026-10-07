@@ -1908,7 +1908,10 @@ void toolbar;
     const usage = await readFile(new URL("../USAGE.md", import.meta.url), "utf8");
     const examples = [...usage.matchAll(/```tsx\n([\s\S]*?)```/gu)];
     for (const [index, example] of examples.entries()) {
-      if (example[1].startsWith("import ")) {
+      if (
+        example[1].startsWith("import ") &&
+        !example[1].includes('"@bruno/table/rust"')
+      ) {
         await writeFile(join(consumerRoot, `documentation-${index}.tsx`), example[1]);
       }
     }
@@ -2023,6 +2026,17 @@ const columns = [
 void columns;
 `,
     );
+    const usage = await readFile(new URL("../USAGE.md", import.meta.url), "utf8");
+    const rustExamples = [...usage.matchAll(/```tsx\n([\s\S]*?)```/gu)].filter(
+      (example) =>
+        example[1].startsWith("import ") && example[1].includes('"@bruno/table/rust"'),
+    );
+    if (rustExamples.length === 0) {
+      throw new Error("The packed Effect consumer must compile the documented Rust integration.");
+    }
+    for (const [index, example] of rustExamples.entries()) {
+      await writeFile(join(consumerRoot, `documentation-rust-${index}.tsx`), example[1]);
+    }
     await writeFile(
       join(consumerRoot, "runtime.ts"),
       `import assert from "node:assert/strict";
